@@ -16,7 +16,13 @@ def plot_g_sg(file, num):
 
     # setting thresholds
     thresholds = np.arange(0, max_w, 1)
-    num_g, num_sg = num_g_sg(generate_network(block_ids, dest_cbgs, thresholds))
+
+    num_g = []
+    num_sg = []
+    for i in range(max_w):
+        tmp_g, tmp_sg = num_g_sg(generate_network(block_ids, dest_cbgs, max_w))
+        num_g.append(tmp_g)
+        num_sg.append(tmp_sg)
 
     # plotting
     plt.xlabel('threshold')
