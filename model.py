@@ -42,7 +42,8 @@ This function is to return the number of elements in the largest and second larg
 def num_g_sg(g):
     scc = list(nx.strongly_connected_components(g))
     len_scc = list(map(len, scc))
-    len_scc.sort().reverse()
+    len_scc.sort()
+    len_scc.reverse()
 
     if len(len_scc) == 0:
         return 0, 0
