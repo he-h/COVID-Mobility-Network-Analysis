@@ -20,7 +20,7 @@ def plot_g_sg(file, num):
     num_g = []
     num_sg = []
     for i in range(max_w):
-        tmp_g, tmp_sg = num_g_sg(generate_network(block_ids, dest_cbgs, max_w))
+        tmp_g, tmp_sg = num_g_sg(generate_network(block_ids, dest_cbgs, i))
         num_g.append(tmp_g)
         num_sg.append(tmp_sg)
 
