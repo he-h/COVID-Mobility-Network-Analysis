@@ -27,8 +27,8 @@ def plot_g_sg(file, num):
     # plotting
     plt.xlabel('threshold')
     plt.ylabel('size of scc')
-    plt.plot(thresholds, num_g, 'G')
-    plt.plot(thresholds, num_sg, 'SG')
+    plt.scatter(thresholds, num_g, 'G')
+    plt.scatter(thresholds, num_sg, 'SG')
     plt.legend()
     plt.show()
 
