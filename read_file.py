@@ -35,7 +35,7 @@ def read_file(path, dest_cbgs, num):
         block = str(df['origin_census_block_group'][ind])
         if not block.startswith(str(num)):
             continue
-            
+
         dests = parse_str(df['destination_cbgs'][ind])
         for i in dests.keys():
             if not i.startswith(str(num)):
@@ -63,8 +63,7 @@ def read_id(path, num):
 
     for i in range(len(block_ids)):
         for j in range(len(block_ids)):
-            if i == j:
-                dest_cbgs[(block_ids[i], block_ids[j])] = 0
+            dest_cbgs[(block_ids[i], block_ids[j])] = 0
 
     return block_ids, dest_cbgs
 
@@ -86,5 +85,5 @@ def read_files(paths, num):
     return block_ids, dest_cbgs
 
 
-# file = 'data/01/01/2020-01-01-social-distancing.csv.gz'
-# print(len(read_file(file, 25)[1]))
+file = ['data/01/01/2020-01-01-social-distancing.csv.gz', 'data/01/02/2020-01-02-social-distancing.csv.gz']
+print(len(read_files(file, 25)[1]))
