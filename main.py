@@ -4,20 +4,21 @@ from model import *
 import matplotlib.pyplot as plt
 
 
+max_w = 30
+
+
 '''
 This function is to calculate the number of elements in largest and second largest SCC changing with thresholds
 '''
 
 
 def calc_g_sg(g, block_ids, dest_cbgs):
-    max_w = max_weight(g)
-
     # setting thresholds
-    thresholds = np.arange(0, max_w, 1)
+    thresholds = np.arange(0, max_w, 0.1)
 
     num_g = []
     num_sg = []
-    for i in range(max_w):
+    for i in thresholds:
         tmp_g, tmp_sg = num_g_sg(generate_network(block_ids, dest_cbgs, i))
         num_g.append(tmp_g)
         num_sg.append(tmp_sg)
@@ -80,7 +81,7 @@ def calc_bottleneck(block_ids, dest_cbgs, num_sg):
     G_sg_largest = generate_network(block_ids, dest_cbgs, max_index)
     G_b_sg_largest = generate_network(block_ids, dest_cbgs, max_index-1)
 
-    G_sg_largest.sort(key=lambda a:len(a))
+    G_sg_largest.sort(key=lambda a: len(a))
     scc_sg_largest = G_sg_largest[-1]
     scc_sg_s_largest = G_sg_largest[-2]
 
@@ -90,6 +91,31 @@ def calc_bottleneck(block_ids, dest_cbgs, num_sg):
                 return i, j
 
     return None
+
+
+'''
+This function plot the histograph of weights of edges with a logrithmic scale
+'''
+
+
+def plot_hist(dest_cbgs):
+    value = list(dest_cbgs.values())
+    
+    return
+
+
+'''
+This function is to generate file names with multiple dates
+'''
+
+
+def generate_file_name(num):
+    names = []
+    for i in range(1, len(num)+1):
+        tmp = 'data/01/0'+str(i)+'/2020-01-0'+str(i)+'-social-distancing.csv.gz'
+        names.append(tmp)
+
+    return names
 
 
 def main(file, state_id):
@@ -102,6 +128,6 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    path = 'data/03/31/2020-03-31-social-distancing.csv.gz'
+    path = 'data/01/01/2020-01-01-social-distancing.csv.gz'
     state_id = 36
     main(path, state_id)
