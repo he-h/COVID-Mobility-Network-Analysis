@@ -4,7 +4,7 @@ from model import *
 import matplotlib.pyplot as plt
 
 
-max_w = 20
+max_w = 10
 
 
 '''
@@ -98,7 +98,7 @@ def plot_hist(dest_cbgs):
     value = list(dest_cbgs.values())
 
     plt.hist(value, label='number of weights', log=True, bins=100)
-    # plt.yscale('log')
+    plt.xscale('log')
     plt.legend()
     plt.show()
 
@@ -119,20 +119,20 @@ def generate_file_name(num):
     return names
 
 
-def main(file, state_id):
-    block_ids, dest_cbgs = read_files(path, state_id)
-    G = generate_network(block_ids, dest_cbgs)
-    thresholds, num_g, num_sg = calc_g_sg(G, block_ids, dest_cbgs)
-    plot_g_sg(thresholds, num_g, num_sg)
-    # print(calc_g_sg())
+# def main(file, state_id):
+    # #     block_ids, dest_cbgs = read_files(path, state_id)
+    # #     G = generate_network(block_ids, dest_cbgs)
+    # #     thresholds, num_g, num_sg = calc_g_sg(G, block_ids, dest_cbgs)
+    # #     plot_g_sg(thresholds, num_g, num_sg)
+    # #     # print(calc_g_sg())
 
-    return
+    # return
 
 
 if __name__ == '__main__':
-    state_id = 25
-    path = generate_file_name(7)
-    main(path, state_id)
-    # files = generate_file_name(7)
-    # block_ids, dest_cbgs = read_files(files, 25)
-    # plot_hist(dest_cbgs)
+    # state_id = 36
+    # path = generate_file_name(7)
+    # main(path, state_id)
+    files = generate_file_name(7)
+    block_ids, dest_cbgs = read_files(files, 36)
+    plot_hist(dest_cbgs)
