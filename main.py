@@ -58,10 +58,10 @@ def plot_g_sg(x, g, sg):
     fig, ax1 = plt.subplots()
     ax1.set_xlabel('threshold')
     ax1.set_ylabel('size')
-    ax1.scatter(x, g, s=1)
+    ax1.plot(x, g)
     ax1.tick_params(axis='y')
     ax2 = ax1.twinx()
-    ax2.scatter(x, sg, s=1, color='orange')
+    ax2.plot(x, sg, color='orange')
     ax2.tick_params(axis='y')
     fig.tight_layout()
 
@@ -100,7 +100,12 @@ This function plot the histograph of weights of edges with a logrithmic scale
 
 def plot_hist(dest_cbgs):
     value = list(dest_cbgs.values())
-    
+
+    plt.hist(value, label='number of weights', log=True, bins=100)
+    # plt.yscale('log')
+    plt.legend()
+    plt.show()
+
     return
 
 
@@ -111,7 +116,7 @@ This function is to generate file names with multiple dates
 
 def generate_file_name(num):
     names = []
-    for i in range(1, len(num)+1):
+    for i in range(1, num+1):
         tmp = 'data/01/0'+str(i)+'/2020-01-0'+str(i)+'-social-distancing.csv.gz'
         names.append(tmp)
 
@@ -119,7 +124,7 @@ def generate_file_name(num):
 
 
 def main(file, state_id):
-    block_ids, dest_cbgs = read_file(path, state_id)
+    block_ids, dest_cbgs = read_files(path, state_id)
     G = generate_network(block_ids, dest_cbgs)
     thresholds, num_g, num_sg = calc_g_sg(G, block_ids, dest_cbgs)
     plot_g_sg(thresholds, num_g, num_sg)
@@ -128,6 +133,9 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    path = 'data/01/01/2020-01-01-social-distancing.csv.gz'
-    state_id = 36
+    state_id = 25
+    path = generate_file_name(7)
     main(path, state_id)
+    # files = generate_file_name(7)
+    # block_ids, dest_cbgs = read_files(files, 25)
+    # plot_hist(dest_cbgs)
