@@ -1,118 +1,138 @@
-import pandas as pd
-
-'''
-This function is to transform a string into a dict based on destination_cbgs
-return a dict with key = destination and value = number of people been there
-'''
+import numpy as np
+from read_file import *
+from model import *
+import matplotlib.pyplot as plt
 
 
-def parse_str(tmp):
-    tmp = tmp.lstrip('{').rstrip('}')
-    dest_dict = dict()
-
-    tmp = tmp.split(',')
-    for i in tmp:
-        i = i.split(':')
-        key = i[0].strip('"')
-        value = int(i[1])
-        dest_dict[key] = value
-
-    return dest_dict
+max_w = 30
 
 
 '''
-This function is designed for reading and processing csv.gz file to the data frame we want especially
-origin_census_block_group and destination_cbgs from https://docs.safegraph.com/docs/social-distancing-metrics
-return with a set of block ids and a dict with key = (start, destination) value = number of people
+This function is to calculate the number of elements in largest and second largest SCC changing with thresholds
 '''
 
 
-def read_file(path, num):
-    df = pd.read_csv(path)
-    block_ids = set()
-    dest_cbgs = dict()
+def calc_g_sg(g, block_ids, dest_cbgs):
+    # setting thresholds
+    thresholds = np.arange(0, max_w, 0.1)
 
-    for ind in df.index:
-        block = str(df['origin_census_block_group'][ind])
-        if not block.startswith(str(num)):
-            continue
-        block_ids.add(block)
+    num_g = []
+    num_sg = []
+    for i in thresholds:
+        tmp_g, tmp_sg = num_g_sg(generate_network(block_ids, dest_cbgs, i))
+        num_g.append(tmp_g)
+        num_sg.append(tmp_sg)
 
-        dests = parse_str(df['destination_cbgs'][ind])
-        for i in dests.keys():
-            if not i.startswith(str(num)):
-                continue
-            dest_cbgs[(block, i)] = dests[i]
-
-    return block_ids, dest_cbgs
-
-
-# '''
-# this function reads all the ids and return a dict with edges with weight=0
-# '''
-#
-#
-# def read_id(path, num, prev_block_ids):
-#     df = pd.read_csv(path)
-#     block_ids = set()
-#
-#     for ind in df.index:
-#         block = str(df['origin_census_block_group'][ind])
-#         if not block.startswith(str(num)):
-#             continue
-#         block_ids.add(block)
-#
-#     return block_ids.union(prev_block_ids)
-#
-#
-# '''
-# This function is to create a dest_cbgs with all the value entry with 0
-# '''
-#
-#
-# def create_dest_cbgs(ids):
-#     dest_cbgs = dict()
-#
-#     for i in ids:
-#         for j in ids:
-#             dest_cbgs[(i, j)] = 0
-#
-#     return dest_cbgs
+    return thresholds, num_g, num_sg
 
 
 '''
-This function merges two dictionaries with new value = sum of previous two dicts
+This function is aim to plot number of element of G and SG with changing threshold described in the paper
 '''
 
 
-def merge(dict1, dict2):
-    for i in dict2.keys():
-        if i not in dict1.keys():
-            dict1[i] = dict2[i]
-        else:
-            dict1[i] += dict2[i]
+def plot_g_sg(x, g, sg):
+
+    # fig, ax1 = plt.subplots()
+    # ax1.set_xlabel('threshold')
+    # ax1.set_ylabel('size')
+    # ax1.plot(x, g)
+    # ax1.tick_params(axis='y')
+    # ax2 = ax1.twinx()
+    # ax2.plot(x, sg, color='orange')
+    # ax2.tick_params(axis='y')
+    # fig.tight_layout()
+    #
+    # plt.show()
+
+    figure, axis_1 = plt.subplots()
+
+    axis_1.plot(x, g, color='blue', label='largest SCC')
+    axis_1.set_xlabel('threshold')
+    axis_1.set_ylabel('size')
+
+    axis_2 = axis_1.twinx()
+    axis_2.plot(x, sg, color='orange', label='second largest SCC')
+    lines_1, labels_1 = axis_1.get_legend_handles_labels()
+    lines_2, labels_2 = axis_2.get_legend_handles_labels()
+
+    lines = lines_1 + lines_2
+    labels = labels_1 + labels_2
+
+    axis_1.legend(lines, labels, loc=0)
+
+    plt.show()
 
     return
 
 
 '''
-This function basically uses the function above to read multiple files with returning value block ids and destination cbgs
+This function is to find the bottleneck by analyzing the threshold around when the second SCC is the largest
 '''
 
 
-def read_files(paths, id):
-    block_ids = set()
-    dest_cbgs = dict()
-    for i in paths:
-        tmp_ids, tmp_dests = read_file(i, id)
-        block_ids = block_ids.union(tmp_ids)
-        merge(dest_cbgs, tmp_dests)
+def calc_bottleneck(block_ids, dest_cbgs, num_sg):
+    max_index = [i for i, j in enumerate(num_sg) if j == max(num_sg)][0]
 
-    for i in dest_cbgs.keys():
-        dest_cbgs[i] /= len(paths)
+    G_sg_largest = generate_network(block_ids, dest_cbgs, max_index)
+    G_b_sg_largest = generate_network(block_ids, dest_cbgs, max_index-1)
 
-    return block_ids, dest_cbgs
+    G_sg_largest.sort(key=lambda a: len(a))
+    scc_sg_largest = G_sg_largest[-1]
+    scc_sg_s_largest = G_sg_largest[-2]
+
+    for i, j in dest_cbgs.keys():
+        if dest_cbgs[(i, j)] == max_index:
+            if (i in scc_sg_largest and j in scc_sg_s_largest) or (j in scc_sg_largest and i in scc_sg_s_largest):
+                return i, j
+
+    return None
 
 
-# file = ['data/01/01/2020-01-01-social-distancing.csv.gz', 'data/01/02/2020-01-02-social-distancing.csv.gz']
-# print(len(read_files(file, 36)[0]))
+'''
+This function plot the histograph of weights of edges with a logrithmic scale
+'''
+
+
+def plot_hist(dest_cbgs):
+    value = list(dest_cbgs.values())
+
+    plt.hist(value, label='number of weights', log=True, bins=100)
+    # plt.yscale('log')
+    plt.legend()
+    plt.show()
+
+    return
+
+
+'''
+This function is to generate file names with multiple dates
+'''
+
+
+def generate_file_name(num):
+    names = []
+    for i in range(1, num+1):
+        tmp = 'data/01/0'+str(i)+'/2020-01-0'+str(i)+'-social-distancing.csv.gz'
+        names.append(tmp)
+
+    return names
+
+
+def main(file, state_id):
+    block_ids, dest_cbgs = read_files(path, state_id)
+    G = generate_network(block_ids, dest_cbgs)
+    thresholds, num_g, num_sg = calc_g_sg(G, block_ids, dest_cbgs)
+    plot_g_sg(thresholds, num_g, num_sg)
+    # print(calc_g_sg())
+
+    return
+
+
+if __name__ == '__main__':
+    state_id = 25
+    path = generate_file_name(7)
+    main(path, state_id)
+    # files = generate_file_name(7)
+    # block_ids, dest_cbgs = read_files(files, 25)
+    # plot_hist(dest_cbgs)
