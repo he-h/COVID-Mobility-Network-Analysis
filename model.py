@@ -7,15 +7,28 @@ This function is to generate a graph with data produced by read_file.py
 '''
 
 
-def generate_network(block_ids, dest_cbgs, threshold=0):
+def generate_network(block_ids, dest_cbgs, thershold=0):
     G = nx.DiGraph()
     # add nodes
     G.add_nodes_from(block_ids)
     # add edges
     for i in dest_cbgs:
-        if dest_cbgs[i] < threshold:
+        if dest_cbgs[i] < thershold:
             continue
         G.add_edge(*i, weight=dest_cbgs[i])
+
+    return G
+
+
+'''
+this function is to generate network with threshold
+'''
+
+
+def generate_network_threshold(g, threshold=0):
+    G = nx.DiGraph()
+
+    G.add_edges_from(g)
 
     return G
 
@@ -52,7 +65,6 @@ def num_g_sg(g):
     else:
         return len_scc[0], len_scc[1]
 
-
 # file = 'data/01/01/2020-01-01-social-distancing.csv.gz'
-# G = generate_network(*read_file(file, 25))
+# G = generate_network(*read_file(file, 25), 10)
 # print(num_g_sg(G))
