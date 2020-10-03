@@ -26,6 +26,13 @@ This function has almost same function as above but generate a Directed Graph
 
 def generate_d_network(block_ids, dest_cbgs, thershold=0):
     G = nx.DiGraph()
+    # add nodes
+    G.add_nodes_from(block_ids)
+    # add edges
+    for i in dest_cbgs:
+        if dest_cbgs[i] < thershold:
+            continue
+        G.add_edge(*i, weight=dest_cbgs[i])
 
     return G
 
