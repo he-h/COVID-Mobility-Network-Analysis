@@ -19,6 +19,16 @@ def generate_network(block_ids, dest_cbgs, thershold=0):
 
     return G
 
+'''
+This function has almost same function as above but generate a Directed Graph
+'''
+
+
+def generate_d_network(block_ids, dest_cbgs, thershold=0):
+    G = nx.DiGraph()
+
+    return G
+
 
 '''
 this function is to generate network with threshold
