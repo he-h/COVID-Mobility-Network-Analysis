@@ -26,6 +26,7 @@ def calc_g_sg(g, block_ids, dest_cbgs):
 
     return thresholds, num_g, num_sg
 
+
 '''
 This function is to find the bottleneck by analyzing the threshold around when the second SCC is the largest
 '''

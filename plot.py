@@ -7,18 +7,6 @@ This function is aim to plot number of element of G and SG with changing thresho
 
 def plot_g_sg(x, g, sg):
 
-    # fig, ax1 = plt.subplots()
-    # ax1.set_xlabel('threshold')
-    # ax1.set_ylabel('size')
-    # ax1.plot(x, g)
-    # ax1.tick_params(axis='y')
-    # ax2 = ax1.twinx()
-    # ax2.plot(x, sg, color='orange')
-    # ax2.tick_params(axis='y')
-    # fig.tight_layout()
-    #
-    # plt.show()
-
     figure, axis_1 = plt.subplots()
 
     axis_1.plot(x, g, color='blue', label='largest SCC')

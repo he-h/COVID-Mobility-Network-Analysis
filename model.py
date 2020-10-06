@@ -38,17 +38,29 @@ def generate_d_network(block_ids, dest_cbgs, thershold=0):
 
 
 '''
-this function is to generate network with threshold
+this function is to generate percolation step of undirected network with threshold
 '''
 
 
 def generate_network_threshold(g, threshold=0):
-    G = nx.DiGraph()
+    G = nx.Graph()
 
     G.add_edges_from(g)
 
     return G
 
+
+'''
+this function is to generate percolation step of directed network with threshold
+'''
+
+
+def generate_d_network_threshold(g, threshold=0):
+    G = nx.DiGraph()
+
+    G.add_edges_from(g)
+
+    return G
 
 '''
 This function is find max weight of a graph
