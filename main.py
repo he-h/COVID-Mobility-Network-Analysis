@@ -32,11 +32,11 @@ This function is to find the bottleneck by analyzing the threshold around when t
 '''
 
 
-def calc_bottleneck(block_ids, dest_cbgs, num_sg):
+def calc_bottleneck(g, dest_cbgs, num_sg):
     max_index = [i for i, j in enumerate(num_sg) if j == max(num_sg)][0]
 
-    G_sg_largest = generate_network(block_ids, dest_cbgs, max_index)
-    G_b_sg_largest = generate_network(block_ids, dest_cbgs, max_index-1)
+    G_sg_largest = generate_network_threshold(g, max_index)
+    G_b_sg_largest = generate_network_threshold(g, max_index-1)
 
     G_sg_largest.sort(key=lambda a: len(a))
     scc_sg_largest = G_sg_largest[-1]
@@ -65,13 +65,13 @@ def generate_file_name(num):
 
 
 # def main(file, state_id):
-    # #     block_ids, dest_cbgs = read_files(path, state_id)
-    # #     G = generate_network(block_ids, dest_cbgs)
-    # #     thresholds, num_g, num_sg = calc_g_sg(G, block_ids, dest_cbgs)
-    # #     plot_g_sg(thresholds, num_g, num_sg)
-    # #     # print(calc_g_sg())
-
-    # return
+#         block_ids, dest_cbgs = read_files(path, state_id)
+#         G = generate_network(block_ids, dest_cbgs)
+#         thresholds, num_g, num_sg = calc_g_sg(G, block_ids, dest_cbgs)
+#         plot_g_sg(thresholds, num_g, num_sg)
+#         # print(calc_g_sg())
+#
+#     return
 
 
 if __name__ == '__main__':
