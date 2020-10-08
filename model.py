@@ -93,7 +93,11 @@ This function is to return the number of elements in the largest and second larg
 
 
 def num_g_sg(g):
-    scc = list(nx.strongly_connected_components(g))
+    if type(g) == nx.classes.digraph.DiGraph:
+        scc = list(nx.strongly_connected_components(g))
+    else:
+        scc = list(nx.connected_components(g))
+
     len_scc = list(map(len, scc))
     len_scc.sort()
     len_scc.reverse()

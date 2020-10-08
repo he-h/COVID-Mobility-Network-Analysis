@@ -20,7 +20,7 @@ def calc_g_sg(g, block_ids, dest_cbgs):
     num_g = []
     num_sg = []
     for i in thresholds:
-        tmp_g, tmp_sg = num_g_sg(generate_network(block_ids, dest_cbgs, i))
+        tmp_g, tmp_sg = num_g_sg(generate_network_threshold(g, i))
         num_g.append(tmp_g)
         num_sg.append(tmp_sg)
 
