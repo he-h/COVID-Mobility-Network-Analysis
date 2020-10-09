@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import geopandas as gpd
 
 '''
 This function is aim to plot number of element of G and SG with changing threshold described in the paper
