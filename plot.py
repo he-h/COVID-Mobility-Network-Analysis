@@ -34,8 +34,11 @@ This function plot the histograph of weights of edges with a logrithmic scale
 '''
 
 
-def plot_hist(dest_cbgs):
-    value = list(dest_cbgs.values())
+def plot_hist(g):
+    value = list()
+
+    for i in g.edges():
+        value.append(g.edges[i]['weight'])
 
     plt.hist(value, label='number of weights', log=True, bins=100)
     plt.xscale('log')

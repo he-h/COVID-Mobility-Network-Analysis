@@ -80,4 +80,5 @@ if __name__ == '__main__':
     # main(path, state_id)
     files = generate_file_name(7)
     block_ids, dest_cbgs = read_files(files, 36)
-    plot_hist(dest_cbgs)
+    g = generate_network(block_ids, dest_cbgs)
+    plot_hist(g)

@@ -21,8 +21,8 @@ This function has almost same function as above but generate a undirected Graph
 '''
 
 
-def generate_network(block_ids, dest_cbgs, thershold=0):
-    G = nx.DiGraph()
+def generate_network(block_ids, dest_cbgs):
+    G = nx.Graph()
     # add nodes
     G.add_nodes_from(block_ids)
     # add edges

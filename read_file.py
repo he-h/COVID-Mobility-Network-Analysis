@@ -47,39 +47,6 @@ def read_file(path, num):
     return block_ids, dest_cbgs
 
 
-# '''
-# this function reads all the ids and return a dict with edges with weight=0
-# '''
-#
-#
-# def read_id(path, num, prev_block_ids):
-#     df = pd.read_csv(path)
-#     block_ids = set()
-#
-#     for ind in df.index:
-#         block = str(df['origin_census_block_group'][ind])
-#         if not block.startswith(str(num)):
-#             continue
-#         block_ids.add(block)
-#
-#     return block_ids.union(prev_block_ids)
-#
-#
-# '''
-# This function is to create a dest_cbgs with all the value entry with 0
-# '''
-#
-#
-# def create_dest_cbgs(ids):
-#     dest_cbgs = dict()
-#
-#     for i in ids:
-#         for j in ids:
-#             dest_cbgs[(i, j)] = 0
-#
-#     return dest_cbgs
-
-
 '''
 This function merges two dictionaries with new value = sum of previous two dicts
 '''
