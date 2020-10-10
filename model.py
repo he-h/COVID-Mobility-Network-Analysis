@@ -5,7 +5,7 @@ This function is to generate a graph with data produced by read_file.py
 '''
 
 
-def generate_network(block_ids, dest_cbgs):
+def generate_d_network(block_ids, dest_cbgs):
     G = nx.DiGraph()
     # add nodes
     G.add_nodes_from(block_ids)
@@ -17,11 +17,11 @@ def generate_network(block_ids, dest_cbgs):
 
 
 '''
-This function has almost same function as above but generate a Directed Graph
+This function has almost same function as above but generate a undirected Graph
 '''
 
 
-def generate_d_network(block_ids, dest_cbgs, thershold=0):
+def generate_network(block_ids, dest_cbgs, thershold=0):
     G = nx.DiGraph()
     # add nodes
     G.add_nodes_from(block_ids)
