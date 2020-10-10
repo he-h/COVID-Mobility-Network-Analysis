@@ -44,8 +44,6 @@ this function is to generate percolation step of undirected network with thresho
 def generate_network_threshold(g, threshold=0):
     new_g = nx.Graph()
 
-    new_g.add_edges_from(g)
-
     edge_list = list(g.edges)
     for i, j in edge_list:
         if g.edges[i, j]['weight'] >= threshold:
@@ -61,8 +59,6 @@ this function is to generate percolation step of directed network with threshold
 
 def generate_d_network_threshold(g, threshold=0):
     new_g = nx.Graph()
-
-    new_g.add_edges_from(g)
 
     edge_list = list(g.edges)
     for i, j in edge_list:

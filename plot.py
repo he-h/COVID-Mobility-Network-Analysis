@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import geopandas as gpd
+# from mpl_toolkits.basemap import Basemap
 
 '''
 This function is aim to plot number of element of G and SG with changing threshold described in the paper
@@ -40,8 +41,9 @@ def plot_hist(g):
     for i in g.edges():
         value.append(g.edges[i]['weight'])
 
-    plt.hist(value, label='number of weights', log=True, bins=100)
+    plt.hist(value, label='number of weights', log=True, bins=7000)
     plt.xscale('log')
+    plt.grid(True)
     plt.legend()
     plt.show()
 
