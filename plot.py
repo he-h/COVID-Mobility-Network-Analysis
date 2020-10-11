@@ -78,7 +78,7 @@ def plot_map(g, id):
     for i, elem in enumerate(gdf['GEOID']):
         pos[elem] = mx[i], my[i]
 
-    nx.draw_networkx(g, pos=pos, node_color='#bebada', with_labels=False, node_size=20)
+    nx.draw_networkx(g, pos=pos, node_color='#bebada', with_labels=False, node_size=10)
 
     plt.show()
 
@@ -89,6 +89,21 @@ def plot_map(g, id):
 This function is used to plot a map with the largest second connected component and bottleneck
 '''
 
+
 def plot_map_bn(g, bottleneck, id):
+    gdf = gpd.read_file('tl_2017_' + str(id) + '_bg/tl_2017_' + str(id) + '_bg.shp')
+    gdf['GEOID'] = gdf['GEOID'].astype(str)
+    centroids = gdf['geometry'].centroid
+    lons, lats = [list(t) for t in zip(*map(get_xy, centroids))]
+    gdf['longitude'] = lons
+    gdf['latitude'] = lats
+    gdf.to_crs({"init": "epsg:4326"}).plot(color="white", edgecolor="grey", linewidth=0.5, alpha=0.75) #ax=ax
+    mx, my = gdf['longitude'].values, gdf['latitude'].values
+
+    pos = dict()
+    for i, elem in enumerate(gdf['GEOID']):
+        pos[elem] = mx[i], my[i]
+
+
 
     return
