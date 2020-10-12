@@ -38,12 +38,17 @@ def calc_bottleneck(g, thresholds, num_sg):
 
     G_sg_largest = generate_network_threshold(g, bn_weight_b)
 
-    G_sg_largest.sort(key=lambda a: len(a))
-    scc_sg_largest = G_sg_largest[-1]
-    scc_sg_s_largest = G_sg_largest[-2]
+    if type(G_sg_largest) == nx.classes.digraph.DiGraph:
+        scc = list(nx.strongly_connected_components(G_sg_largest))
+    else:
+        scc = list(nx.connected_components(G_sg_largest))
+        
+    scc.sort(key=lambda a: len(a))
+    scc_sg_largest = scc[-1]
+    scc_sg_s_largest = scc[-2]
 
     for i, j in g.edges():
-        if bn_weight_b <= g.edges[(i, j)]['weight'] <= bn_weight_b + 1/7:
+        if bn_weight_b - 1/7 < g.edges[(i, j)]['weight'] <= bn_weight_b:
             if (i in scc_sg_largest and j in scc_sg_s_largest) or (j in scc_sg_largest and i in scc_sg_s_largest):
                 return (i, j), bn_weight_b
 

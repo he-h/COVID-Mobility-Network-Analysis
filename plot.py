@@ -107,21 +107,18 @@ def plot_map_bn(g, bottleneck, bn_weight, id):
 
     new_g = generate_network_threshold(g, bn_weight)
 
-    cc = list(new_g.edges())
-    cc = sorted(cc, key=len)
-    cc.reverse()
+    cc = list(nx.connected_components(new_g))
+    cc.sort(key=len)
 
-    largest_cc = nx.Graph()
-    largest_cc.add_edges_from(cc[0])
-    nx.draw_networkx(largest_cc, pos=pos, node_color='#bebada', with_labels=False, node_size=10)
+    largest_cc = new_g.subgraph(cc[-1])
+    nx.draw_networkx(largest_cc, pos=pos, node_color='#bebada', with_labels=False, node_size=3)
 
-    s_largest_cc = nx.Graph()
-    s_largest_cc.add_edges_from(cc[1])
-    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#bebada', with_labels=False, node_size=10)
+    s_largest_cc = new_g.subgraph(cc[-2])
+    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#bebada', with_labels=False, node_size=3)
 
     bn = nx.Graph()
     bn.add_edge(bottleneck[0], bottleneck[1])
-    nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=10)
+    nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=5)
 
     plt.legend()
     plt.show()
