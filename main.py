@@ -13,7 +13,7 @@ This function is to calculate the number of elements in largest and second large
 '''
 
 
-def calc_g_sg(g, block_ids, dest_cbgs):
+def calc_g_sg(g):
     # setting thresholds
     thresholds = np.arange(0, max_w, 0.1)
 
@@ -32,20 +32,20 @@ This function is to find the bottleneck by analyzing the threshold around when t
 '''
 
 
-def calc_bottleneck(g, dest_cbgs, num_sg):
+def calc_bottleneck(g, thresholds, num_sg):
     max_index = [i for i, j in enumerate(num_sg) if j == max(num_sg)][0]
+    bn_weight_b = thresholds[max_index]
 
-    G_sg_largest = generate_network_threshold(g, max_index)
-    G_b_sg_largest = generate_network_threshold(g, max_index-1)
+    G_sg_largest = generate_network_threshold(g, bn_weight_b)
 
     G_sg_largest.sort(key=lambda a: len(a))
     scc_sg_largest = G_sg_largest[-1]
     scc_sg_s_largest = G_sg_largest[-2]
 
-    for i, j in dest_cbgs.keys():
-        if dest_cbgs[(i, j)] == max_index:
+    for i, j in g.edges():
+        if bn_weight_b <= g.edges[(i, j)]['weight'] <= bn_weight_b + 1/7:
             if (i in scc_sg_largest and j in scc_sg_s_largest) or (j in scc_sg_largest and i in scc_sg_s_largest):
-                return i, j
+                return (i, j), bn_weight_b
 
     return None
 
@@ -67,9 +67,10 @@ def generate_file_name(num):
 def main(file, state_id):
     block_ids, dest_cbgs = read_files(path, state_id)
     G = generate_network(block_ids, dest_cbgs)
-    thresholds, num_g, num_sg = calc_g_sg(G, block_ids, dest_cbgs)
+    thresholds, num_g, num_sg = calc_g_sg(G)
     # plot_g_sg(thresholds, num_g, num_sg)
-    plot_map(G, state_id)
+    bn, bn_weight = calc_bottleneck(G, thresholds, num_sg)
+    plot_map_bn(G, bn, bn_weight, state_id)
 
     return
 

@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import networkx as nx
+from model import *
 
 '''
 This function is aim to plot number of element of G and SG with changing threshold described in the paper
@@ -90,7 +91,7 @@ This function is used to plot a map with the largest second connected component 
 '''
 
 
-def plot_map_bn(g, bottleneck, id):
+def plot_map_bn(g, bottleneck, bn_weight, id):
     gdf = gpd.read_file('tl_2017_' + str(id) + '_bg/tl_2017_' + str(id) + '_bg.shp')
     gdf['GEOID'] = gdf['GEOID'].astype(str)
     centroids = gdf['geometry'].centroid
@@ -104,6 +105,25 @@ def plot_map_bn(g, bottleneck, id):
     for i, elem in enumerate(gdf['GEOID']):
         pos[elem] = mx[i], my[i]
 
+    new_g = generate_network_threshold(g, bn_weight)
 
+    cc = list(new_g.edges())
+    cc = sorted(cc, key=len)
+    cc.reverse()
+
+    largest_cc = nx.Graph()
+    largest_cc.add_edges_from(cc[0])
+    nx.draw_networkx(largest_cc, pos=pos, node_color='#bebada', with_labels=False, node_size=10)
+
+    s_largest_cc = nx.Graph()
+    s_largest_cc.add_edges_from(cc[1])
+    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#bebada', with_labels=False, node_size=10)
+
+    bn = nx.Graph()
+    bn.add_edge(bottleneck[0], bottleneck[1])
+    nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=10)
+
+    plt.legend()
+    plt.show()
 
     return
