@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import geopandas as gpd
-import networkx as nx
 from model import *
 
 '''
@@ -111,14 +110,14 @@ def plot_map_bn(g, bottleneck, bn_weight, id):
     cc.sort(key=len)
 
     largest_cc = new_g.subgraph(cc[-1])
-    nx.draw_networkx(largest_cc, pos=pos, node_color='#bebada', with_labels=False, node_size=3)
+    nx.draw_networkx(largest_cc, pos=pos, node_color='#66ccff', with_labels=False, node_size=1, edge_color='#808080')
 
     s_largest_cc = new_g.subgraph(cc[-2])
-    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#bebada', with_labels=False, node_size=3)
+    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#ff6600', with_labels=False, node_size=1, edge_color='#808080')
 
     bn = nx.Graph()
-    bn.add_edge(bottleneck[0], bottleneck[1])
-    nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=5)
+    bn.add_edges_from(bottleneck)
+    nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=3, edge_color='#f54542')
 
     plt.legend()
     plt.show()

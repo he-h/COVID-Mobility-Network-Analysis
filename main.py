@@ -35,6 +35,7 @@ This function is to find the bottleneck by analyzing the threshold around when t
 def calc_bottleneck(g, thresholds, num_sg):
     max_index = [i for i, j in enumerate(num_sg) if j == max(num_sg)][0]
     bn_weight_b = thresholds[max_index]
+    bn = []
 
     G_sg_largest = generate_network_threshold(g, bn_weight_b)
 
@@ -50,9 +51,9 @@ def calc_bottleneck(g, thresholds, num_sg):
     for i, j in g.edges():
         if bn_weight_b - 1/7 < g.edges[(i, j)]['weight'] <= bn_weight_b:
             if (i in scc_sg_largest and j in scc_sg_s_largest) or (j in scc_sg_largest and i in scc_sg_s_largest):
-                return (i, j), bn_weight_b
+                bn.append((i,j))
 
-    return None
+    return bn, bn_weight_b
 
 
 '''
