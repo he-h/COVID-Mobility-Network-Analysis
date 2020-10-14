@@ -35,6 +35,7 @@ This function is to find the bottleneck by analyzing the threshold around when t
 def calc_bottleneck(g, thresholds, num_sg):
     max_index = [i for i, j in enumerate(num_sg) if j == max(num_sg)][0]
     bn_weight_b = thresholds[max_index]
+    interval = thresholds[1] - thresholds[0]
     bn = []
 
     G_sg_largest = generate_network_threshold(g, bn_weight_b)
@@ -49,9 +50,9 @@ def calc_bottleneck(g, thresholds, num_sg):
     scc_sg_s_largest = scc[-2]
 
     for i, j in g.edges():
-        if bn_weight_b - 1/7 < g.edges[(i, j)]['weight'] <= bn_weight_b:
+        if bn_weight_b - interval < g.edges[(i, j)]['weight'] <= bn_weight_b:
             if (i in scc_sg_largest and j in scc_sg_s_largest) or (j in scc_sg_largest and i in scc_sg_s_largest):
-                bn.append((i,j))
+                bn.append((i, j))
 
     return bn, bn_weight_b
 
@@ -64,7 +65,7 @@ This function is to generate file names with multiple dates
 def generate_file_name(num):
     names = []
     for i in range(1, num+1):
-        tmp = 'data/04/0'+str(i)+'/2020-04-0'+str(i)+'-social-distancing.csv.gz'
+        tmp = 'data/09/0'+str(i)+'/2020-09-0'+str(i)+'-social-distancing.csv.gz'
         names.append(tmp)
 
     return names

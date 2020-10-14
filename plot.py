@@ -47,6 +47,7 @@ def plot_hist(g):
     plt.xscale('log')
     plt.grid(True)
     plt.legend()
+    plt.title('NY ')
     plt.show()
 
     return
@@ -112,22 +113,22 @@ def plot_map_bn(g, bottleneck, bn_weight, id):
     cc.sort(key=len)
 
     largest_cc = new_g.subgraph(cc[-1])
-    nx.draw_networkx(largest_cc, pos=pos, node_color='#0080ff', with_labels=False, node_size=1, edge_color='#33ceff')
+    nx.draw_networkx(largest_cc, pos=pos, node_color='#0080ff', with_labels=False, node_size=1, edge_color='#0080ff', width=.5)
 
     s_largest_cc = new_g.subgraph(cc[-2])
-    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#3bdc5e', with_labels=False, node_size=1, edge_color='#4edf6e')
+    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#32ecab', with_labels=False, node_size=1, edge_color='#32ecab', width=.5)
 
     bn = nx.Graph()
     bn.add_edges_from(bottleneck)
     nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=3, edge_color='#f65754')
 
-    # manually add legeng
+    # manually add legend
     labels = ['Largest Component', '2nd Largest Component', 'Bottleneck']
-    colors = ['#0080ff', '#3bdc5e', '#f54242']
+    colors = ['#0080ff', '#32ecab', '#f54242']
     lines = [Line2D([0], [0], color=c, linewidth=5, alpha=0.85) for c in colors]
-    plt.legend(lines, labels, fontsize=18, bbox_to_anchor=(0.29, 0.01))
+    plt.legend(lines, labels, fontsize=8, loc=0, bbox_to_anchor=(0.29, 0.01))
+    plt.title('NY 9/1-9/7 Map')
 
-    plt.legend()
     plt.show()
 
     return
