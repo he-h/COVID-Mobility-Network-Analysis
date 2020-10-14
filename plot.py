@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-import geopandas as gpd
-from model import *
-import matplotlib.patches as mpatches
-from matplotlib.lines import Line2D
+# import geopandas as gpd
+# from model import *
+# import matplotlib.patches as mpatches
+# from matplotlib.lines import Line2D
 
 '''
 This function is aim to plot number of element of G and SG with changing threshold described in the paper
@@ -27,6 +27,8 @@ def plot_g_sg(x, g, sg):
 
     axis_1.legend(lines, labels, loc=0)
 
+    plt.title('NY 4/1-4/7 size of cc')
+
     plt.show()
 
     return
@@ -43,11 +45,11 @@ def plot_hist(g):
     for i in g.edges():
         value.append(g.edges[i]['weight'])
 
-    plt.hist(value, label='number of weights', log=True, bins=7000)
+    plt.hist(value, label='number of weights', log=True, bins=1000)
     plt.xscale('log')
     plt.grid(True)
     plt.legend()
-    plt.title('NY ')
+    plt.title('NY 1/1-1/7 histogram')
     plt.show()
 
     return
