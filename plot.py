@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import geopandas as gpd
 from model import *
+import matplotlib.patches as mpatches
+from matplotlib.lines import Line2D
 
 '''
 This function is aim to plot number of element of G and SG with changing threshold described in the paper
@@ -110,14 +112,20 @@ def plot_map_bn(g, bottleneck, bn_weight, id):
     cc.sort(key=len)
 
     largest_cc = new_g.subgraph(cc[-1])
-    nx.draw_networkx(largest_cc, pos=pos, node_color='#66ccff', with_labels=False, node_size=1, edge_color='#808080')
+    nx.draw_networkx(largest_cc, pos=pos, node_color='#0080ff', with_labels=False, node_size=1, edge_color='#33ceff')
 
     s_largest_cc = new_g.subgraph(cc[-2])
-    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#ff6600', with_labels=False, node_size=1, edge_color='#808080')
+    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#3bdc5e', with_labels=False, node_size=1, edge_color='#4edf6e')
 
     bn = nx.Graph()
     bn.add_edges_from(bottleneck)
-    nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=3, edge_color='#f54542')
+    nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=3, edge_color='#f65754')
+
+    # manually add legeng
+    labels = ['Largest Component', '2nd Largest Component', 'Bottleneck']
+    colors = ['#0080ff', '#3bdc5e', '#f54242']
+    lines = [Line2D([0], [0], color=c, linewidth=5, alpha=0.85) for c in colors]
+    plt.legend(lines, labels, fontsize=18, bbox_to_anchor=(0.29, 0.01))
 
     plt.legend()
     plt.show()
