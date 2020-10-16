@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-# import geopandas as gpd
-# from model import *
-# import matplotlib.patches as mpatches
-# from matplotlib.lines import Line2D
+import geopandas as gpd
+from model import *
+import matplotlib.patches as mpatches
+from matplotlib.lines import Line2D
 
 '''
 This function is aim to plot number of element of G and SG with changing threshold described in the paper
@@ -13,12 +13,12 @@ def plot_g_sg(x, g, sg):
 
     figure, axis_1 = plt.subplots()
 
-    axis_1.plot(x, g, color='blue', label='largest SCC')
+    axis_1.plot(x, g, color='blue', label='1st CC')
     axis_1.set_xlabel('threshold')
     axis_1.set_ylabel('size')
 
     axis_2 = axis_1.twinx()
-    axis_2.plot(x, sg, color='orange', label='second largest SCC')
+    axis_2.plot(x, sg, color='orange', label='2nd CC')
     lines_1, labels_1 = axis_1.get_legend_handles_labels()
     lines_2, labels_2 = axis_2.get_legend_handles_labels()
 
@@ -125,7 +125,7 @@ def plot_map_bn(g, bottleneck, bn_weight, id):
     nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=3, edge_color='#f65754')
 
     # manually add legend
-    labels = ['Largest Component', '2nd Largest Component', 'Bottleneck']
+    labels = ['1st CC', '2nd CC', 'Bottleneck']
     colors = ['#0080ff', '#32ecab', '#f54242']
     lines = [Line2D([0], [0], color=c, linewidth=5, alpha=0.85) for c in colors]
     plt.legend(lines, labels, fontsize=8, loc=0, bbox_to_anchor=(0.29, 0.01))
