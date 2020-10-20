@@ -127,7 +127,7 @@ def plot_map_bn(g, bottleneck, bn_weight, id):
     # manually add legend
     labels = ['1st CC', '2nd CC', 'Bottleneck']
     colors = ['#0080ff', '#32ecab', '#f54242']
-    lines = [Line2D([0], [0], color=c, linewidth=5, alpha=0.85) for c in colors]
+    lines = [Line2D([0], [0], color=c, linewidth=3, alpha=0.85) for c in colors]
     plt.legend(lines, labels, fontsize=8, loc=0, bbox_to_anchor=(0.29, 0.01))
     plt.title('NY 9/1-9/7 Map')
 
