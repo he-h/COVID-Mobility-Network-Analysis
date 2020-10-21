@@ -27,7 +27,7 @@ def plot_g_sg(x, g, sg):
 
     axis_1.legend(lines, labels, loc=0)
 
-    plt.title('NY 4/1-4/7 size of cc')
+    plt.title('TX 1/1-1/7 size of cc')
 
     plt.show()
 
@@ -115,21 +115,54 @@ def plot_map_bn(g, bottleneck, bn_weight, id):
     cc.sort(key=len)
 
     largest_cc = new_g.subgraph(cc[-1])
-    nx.draw_networkx(largest_cc, pos=pos, node_color='#0080ff', with_labels=False, node_size=1, edge_color='#0080ff', width=.5)
+    # pos = nx.circular_layout(largest_cc)
+    # ax = plt.gca()
+    # ax.annotate("",
+    #             xy=pos[0], xycoords='data',
+    #             xytext=pos[1], textcoords='data',
+    #             arrowprops=dict(arrowstyle="-",
+    #                             shrinkA=5, shrinkB=5,
+    #                             patchA=None, patchB=None,
+    #                             connectionstyle="arc3,rad=0.3",
+    #                             ),
+    #             )
+    nx.draw_networkx(largest_cc, pos=pos, node_color='#0080ff', with_labels=False, node_size=.5, edge_color='#0080ff', width=.25)
 
     s_largest_cc = new_g.subgraph(cc[-2])
-    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#32ecab', with_labels=False, node_size=1, edge_color='#32ecab', width=.5)
+    # pos = nx.circular_layout(s_largest_cc)
+    # ax = plt.gca()
+    # ax.annotate("",
+    #             xy=pos[0], xycoords='data',
+    #             xytext=pos[1], textcoords='data',
+    #             arrowprops=dict(arrowstyle="-",
+    #                             shrinkA=5, shrinkB=5,
+    #                             patchA=None, patchB=None,
+    #                             connectionstyle="arc3,rad=0.3",
+    #                             ),
+    #             )
+    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#32ecab', with_labels=False, node_size=.5, edge_color='#32ecab', width=.25)
 
     bn = nx.Graph()
     bn.add_edges_from(bottleneck)
+    # pos = nx.circular_layout(bn)
+    # ax = plt.gca()
+    # ax.annotate("",
+    #             xy=pos[0], xycoords='data',
+    #             xytext=pos[1], textcoords='data',
+    #             arrowprops=dict(arrowstyle="-",
+    #                             shrinkA=5, shrinkB=5,
+    #                             patchA=None, patchB=None,
+    #                             connectionstyle="arc3,rad=0.3",
+    #                             ),
+    #             )
     nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=3, edge_color='#f65754')
 
     # manually add legend
     labels = ['1st CC', '2nd CC', 'Bottleneck']
     colors = ['#0080ff', '#32ecab', '#f54242']
     lines = [Line2D([0], [0], color=c, linewidth=3, alpha=0.85) for c in colors]
-    plt.legend(lines, labels, fontsize=8, loc=0, bbox_to_anchor=(0.29, 0.01))
-    plt.title('NY 9/1-9/7 Map')
+    plt.legend(lines, labels, fontsize=8, loc=0)
+    plt.title('CA 1/1-1/7 Map')
 
     plt.show()
 
