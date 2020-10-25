@@ -72,8 +72,8 @@ def generate_file_name(num):
 
 
 def main(file, state_id):
-    block_ids, dest_cbgs = read_files(file, state_id)
-    G = generate_network(block_ids, dest_cbgs)
+    dest_cbgs = read_files(file, state_id)
+    G = generate_network(dest_cbgs)
     thresholds, num_g, num_sg = calc_g_sg(G)
     plot_g_sg(thresholds, num_g, num_sg)
     # bn, bn_weight = calc_bottleneck(G, thresholds, num_sg)

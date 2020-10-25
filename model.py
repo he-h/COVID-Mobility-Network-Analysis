@@ -5,10 +5,8 @@ This function is to generate a graph with data produced by read_file.py
 '''
 
 
-def generate_d_network(block_ids, dest_cbgs):
+def generate_d_network(dest_cbgs):
     G = nx.DiGraph()
-    # add nodes
-    G.add_nodes_from(block_ids)
     # add edges
     for i in dest_cbgs:
         G.add_edge(*i, weight=dest_cbgs[i])
@@ -21,10 +19,8 @@ This function has almost same function as above but generate a undirected Graph
 '''
 
 
-def generate_network(block_ids, dest_cbgs):
+def generate_network(dest_cbgs):
     G = nx.Graph()
-    # add nodes
-    G.add_nodes_from(block_ids)
     # add edges
     for i, j in dest_cbgs.keys():
         if (i, j) not in G.edges:

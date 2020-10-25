@@ -27,16 +27,14 @@ return with a set of block ids and a dict with key = (start, destination) value 
 '''
 
 
-def read_file(path, num):
+def read_file(path, num=''):
     df = pd.read_csv(path)
-    block_ids = set()
     dest_cbgs = dict()
 
     for ind in df.index:
         block = str(df['origin_census_block_group'][ind])
         if not block.startswith(str(num)):
             continue
-        block_ids.add(block)
 
         dests = parse_str(df['destination_cbgs'][ind])
         for i in dests.keys():
@@ -44,7 +42,7 @@ def read_file(path, num):
                 continue
             dest_cbgs[(block, i)] = dests[i]
 
-    return block_ids, dest_cbgs
+    return dest_cbgs
 
 
 '''
@@ -68,17 +66,15 @@ This function basically uses the function above to read multiple files with retu
 
 
 def read_files(paths, id):
-    block_ids = set()
     dest_cbgs = dict()
     for i in paths:
         tmp_ids, tmp_dests = read_file(i, id)
-        block_ids = block_ids.union(tmp_ids)
         merge(dest_cbgs, tmp_dests)
 
     for i in dest_cbgs.keys():
         dest_cbgs[i] /= len(paths)
 
-    return block_ids, dest_cbgs
+    return dest_cbgs
 
 
 # file = ['data/01/01/2020-01-01-social-distancing.csv.gz', 'data/01/02/2020-01-02-social-distancing.csv.gz']
