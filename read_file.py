@@ -65,10 +65,10 @@ This function basically uses the function above to read multiple files with retu
 '''
 
 
-def read_files(paths, id):
+def read_files(paths, id=''):
     dest_cbgs = dict()
     for i in paths:
-        tmp_ids, tmp_dests = read_file(i, id)
+        tmp_dests = read_file(i, id)
         merge(dest_cbgs, tmp_dests)
 
     for i in dest_cbgs.keys():
