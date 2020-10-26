@@ -40,7 +40,8 @@ def read_file(path, num=''):
         for i in dests.keys():
             if not i.startswith(str(num)):
                 continue
-            dest_cbgs[(block, i)] = dests[i]
+            if dests[i] >= 3:
+                dest_cbgs[(block, i)] = dests[i]
 
     return dest_cbgs
 
