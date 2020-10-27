@@ -5,6 +5,37 @@ import json
 from read_file import *
 from model import *
 
+state_code = {
+    '02': 'AK', '28': 'MS',
+    '01': 'AL', '30': 'MT',
+    '05': 'AR',	'37': 'NC',
+    '60': 'AS',	'38': 'ND',
+    '04': 'AZ',	'31': 'NE',
+    '06': 'CA',	'33': 'NH',
+    '08': 'CO',	'34': 'NJ',
+    '09': 'CT',	'35': 'NM',
+    '11': 'DC',	'32': 'NV',
+    '10': 'DE',	'36': 'NY',
+    '12': 'FL',	'39': 'OH',
+    '13': 'GA',	'40': 'OK',
+    '66': 'GU',	'41': 'OR',
+    '15': 'HI',	'42': 'PA',
+    '19': 'IA',	'72': 'PR',
+    '16': 'ID',	'44': 'RI',
+    '17': 'IL',	'45': 'SC',
+    '18': 'IN',	'46': 'SD',
+    '20': 'KS',	'47': 'TN',
+    '21': 'KY',	'48': 'TX',
+    '22': 'LA',	'49': 'UT',
+    '25': 'MA',	'51': 'VA',
+    '24': 'MD',	'78': 'VI',
+    '23': 'ME',	'50': 'VT',
+    '26': 'MI',	'53': 'WA',
+    '27': 'MN',	'55': 'WI',
+    '29': 'MO',	'54': 'WV',
+    '56': 'WY'
+}
+
 
 def aug_str(id):
     id = str(id)
@@ -19,7 +50,7 @@ def generate_files():
     files = []
     date = dt.date(2020, 1, 12)
 
-    for i in range(3):
+    for i in range(28):
         month = aug_str(date.month)
         day = aug_str(date.day)
 
@@ -44,11 +75,11 @@ def cc_sizes(g):
         thershold += step_size
         num_cc.append(cc)
 
-        if cc >= stop_point:
+        if cc <= 10000:
             regions = dict()
 
             for i, j in enumerate(sorted(list(nx.connected_components(perco_g)), key=len, reverse=True)):
-                regions[i] = j
+                regions[i] = tuple(j)
 
             with open("regions.json", "w") as outfile:
                 json.dump(regions, outfile)
