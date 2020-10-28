@@ -38,6 +38,9 @@ def read_file(path, num=''):
 
         dests = parse_str(df['destination_cbgs'][ind])
         for i in dests.keys():
+            if i == block:
+                continue
+
             if not i.startswith(str(num)):
                 continue
             if dests[i] >= 3:
