@@ -71,6 +71,7 @@ def cc_sizes(g):
         perco_g = generate_network_threshold(g, thershold)
         cc = len(list(nx.connected_components(perco_g)))
         print(cc)
+        break
         thersholds.append(thershold)
         thershold += step_size
         num_cc.append(cc)
@@ -79,6 +80,8 @@ def cc_sizes(g):
             regions = dict()
 
             for i, j in enumerate(sorted(list(nx.connected_components(perco_g)), key=len, reverse=True)):
+                if i >= stop_point:
+                    break
                 regions[i] = tuple(j)
 
             with open("regions.json", "w") as outfile:
@@ -91,7 +94,6 @@ def cc_sizes(g):
 def plot(x, y):
     plt.plot(x, y)
     plt.savefig('size_of_cc.png')
-    plt.show()
 
 
 if __name__ == '__main__':
