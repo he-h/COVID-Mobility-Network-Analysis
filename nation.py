@@ -60,35 +60,33 @@ def generate_files():
     return files
 
 
-def cc_sizes(g):
-    thershold = 3
+def attributes(g):
+    thershold = 2.5
     thersholds = []
     num_cc = []
-    step_size = .25
-    stop_point = 50
+    step_size = 2.5
+    stop_point = 15
 
-    while True:
+    while thershold <= stop_point:
         perco_g = generate_network_threshold(g, thershold)
-        cc = len(list(nx.connected_components(perco_g)))
-        print(cc)
-        break
+        cc = list(nx.connected_components(perco_g))
         thersholds.append(thershold)
         thershold += step_size
         num_cc.append(cc)
 
-        if cc <= 10000:
-            regions = dict()
+        # add data to json file
+        regions = dict()
 
-            for i, j in enumerate(sorted(list(nx.connected_components(perco_g)), key=len, reverse=True)):
-                if i >= stop_point:
-                    break
-                regions[i] = tuple(j)
+        for i, j in enumerate(sorted(list(nx.connected_components(perco_g)), key=len, reverse=True)):
+            if i >= 50:
+                break
+            regions[i] = tuple(j)
 
-            with open("regions.json", "w") as outfile:
-                json.dump(regions, outfile)
-            break
+        with open("region_div/region"+str(thershold)+".json", "x") as outfile:
+            json.dump(regions, outfile)
+        break
 
-    return thersholds, num_cc
+    return
 
 
 def plot(x, y):
