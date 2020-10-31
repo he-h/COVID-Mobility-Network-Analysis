@@ -43,7 +43,7 @@ def read_file(path, num=''):
 
             if not i.startswith(str(num)):
                 continue
-            if dests[i] >= 2.5:
+            if dests[i] >= 2:
                 dest_cbgs[(block, i)] = dests[i]
 
     return dest_cbgs
