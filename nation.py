@@ -1,9 +1,12 @@
 import numpy as np
 import datetime as dt
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 import json
 from read_file import *
 from model import *
+
+nation_bg_num = 211267
 
 state_code = {
     '02': 'AK', '28': 'MS',
@@ -61,42 +64,94 @@ def generate_files():
 
 
 def attributes(g):
-    thershold = 2.5
-    thersholds = []
+    threshold = 2.5
+
+    thresholds = []
     num_cc = []
+
+    # percentage of different cluster based on original network
+    per_cc_1 = []
+    per_cc_2 = []
+    per_cc_10 = []
+    per_cc_50 = []
+
+    # percent of different clusters based on current network
+    c_per_cc_1 = []
+    c_per_cc_2 = []
+    c_per_cc_10 = []
+    c_per_cc_50 = []
+
     step_size = 2.5
     stop_point = 15
 
-    while thershold <= stop_point:
-        perco_g = generate_network_threshold(g, thershold)
-        cc = list(nx.connected_components(perco_g))
-        thersholds.append(thershold)
-        thershold += step_size
-        num_cc.append(cc)
+    while threshold <= stop_point:
+        perco_g = generate_network_threshold(g, threshold)
+        size = len(perco_g.nodes)
+        ccs = sorted(list(nx.connected_components(perco_g)), key=len, reverse=True)
+        thresholds.append(threshold)
+        threshold += step_size
+
+        num_cc.append(len(ccs))
+
+        cc_1 = sum(map(len, ccs[:1]))
+        cc_2 = sum(map(len, ccs[:2]))
+        cc_10 = sum(map(len, ccs[:10]))
+        cc_50 = sum(map(len, ccs[:50]))
+
+        per_cc_1.append(cc_1 / nation_bg_num)
+        per_cc_2.append(cc_2 / nation_bg_num)
+        per_cc_10.append(cc_10 / nation_bg_num)
+        per_cc_50.append(cc_50 / nation_bg_num)
+
+        c_per_cc_1.append(cc_1 / size)
+        c_per_cc_2.append(cc_2 / size)
+        c_per_cc_10.append(cc_10 / size)
+        c_per_cc_50.append(cc_50 / size)
 
         # add data to json file
         regions = dict()
 
-        for i, j in enumerate(sorted(list(nx.connected_components(perco_g)), key=len, reverse=True)):
+        for i, j in enumerate(ccs):
             if i >= 50:
                 break
             regions[i] = tuple(j)
 
-        with open("region_div/region"+str(thershold)+".json", "x") as outfile:
+        with open("region_div/region"+str(threshold)+".json", "x") as outfile:
             json.dump(regions, outfile)
         break
 
-    return
+    return thresholds, num_cc, per_cc_1, per_cc_2, per_cc_10, per_cc_50, c_per_cc_1, c_per_cc_2, c_per_cc_10, c_per_cc_50
 
 
-def plot(x, y):
+def size_plot(x, y):
+    plt.figure()
     plt.plot(x, y)
-    plt.savefig('size_of_cc.png')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('Threshold')
+    plt.savefig('nations/size_of_cc.png')
+    plt.savefig('nations/num_cc.png')
+
+
+def percent_plot(threshold, cc_1, cc_2, cc_10, cc_50, title):
+    plt.figure()
+    plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
+
+    plt.plot(threshold, cc_1, color='blue', label='1st cc')
+    plt.plot(threshold, cc_2, color='orange', label='1st cc')
+    plt.plot(threshold, cc_10, color='gray', label='1st cc')
+    plt.plot(threshold, cc_50, color='sliver', label='1st cc')
+
+    plt.grid(True)
+    plt.legend()
+    plt.title(title)
+    plt.savefig('nations/'+title+'.png')
 
 
 if __name__ == '__main__':
     data = generate_files()
     dest = read_files(data)
     G = generate_network(dest)
-    thersholds, num_cc = cc_sizes(G)
-    plot(thersholds, num_cc)
+    thresholds, num_cc, per_cc_1, per_cc_2, per_cc_10, per_cc_50, c_per_cc_1, c_per_cc_2, c_per_cc_10, c_per_cc_50 = attributes(G)
+    size_plot(thresholds, num_cc)
+    percent_plot(thresholds, per_cc_1, per_cc_2, per_cc_10, per_cc_50, 'Cluter size as a proportion to whole network')
+    percent_plot(thresholds, c_per_cc_1, c_per_cc_2, c_per_cc_10, c_per_cc_50, 'Cluter size as a proportion to percolation network')
