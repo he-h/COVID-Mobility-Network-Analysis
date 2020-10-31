@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 
 max_w = 10
+region_file = ''
 
 
 '''
