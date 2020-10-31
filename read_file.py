@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime as dt
 
 '''
 This function is to transform a string into a dict based on destination_cbgs
@@ -81,5 +82,54 @@ def read_files(paths, id=''):
     return dest_cbgs
 
 
-# file = ['data/01/01/2020-01-01-social-distancing.csv.gz', 'data/01/02/2020-01-02-social-distancing.csv.gz']
-# # print(len(read_files(file, 25)[0]))
+'''
+read file function for class generation
+'''
+
+
+def read_file_c(path, scope):
+    df = pd.read_csv(path)
+    dest_cbgs = dict()
+
+    for ind in df.index:
+        block = str(df['origin_census_block_group'][ind])
+        if block not in scope:
+            continue
+
+        dests = parse_str(df['destination_cbgs'][ind])
+        for i in dests.keys():
+            if i == block:
+                continue
+
+            if i not in scope:
+                continue
+            if dests[i] >= 2:
+                dest_cbgs[(block, i)] = dests[i]
+
+    return dest_cbgs
+
+
+'''
+generate approriate str based on date
+'''
+
+
+def aug_str(id):
+    id = str(id)
+
+    if len(id) == 1:
+        return '0' + id
+
+    return id
+
+
+'''
+This function create path for file retraction
+'''
+
+
+def file_str(date):
+    month = aug_str(date.month)
+    day = aug_str(date.day)
+
+    return 'data/' + month + '/' + day + '/2020-' + month + '-' + day + '-social-distancing.csv.gz'

@@ -1,5 +1,6 @@
 import datetime as dt
 import networkx as nx
+from model import *
 
 
 class DailyAna:

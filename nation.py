@@ -40,15 +40,6 @@ state_code = {
 }
 
 
-def aug_str(id):
-    id = str(id)
-
-    if len(id) == 1:
-        return '0' + id
-
-    return id
-
-
 def generate_files():
     files = []
     date = dt.date(2020, 1, 12)
