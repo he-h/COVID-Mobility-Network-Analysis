@@ -64,7 +64,7 @@ def generate_files():
 
 
 def attributes(g):
-    threshold = 2.5
+    threshold = 2
 
     thresholds = []
     num_cc = []
@@ -81,20 +81,19 @@ def attributes(g):
     c_per_cc_10 = []
     c_per_cc_50 = []
 
-    step_size = 2.5
-    stop_point = 15
+    step_size = 1
+    stop_point = 10
 
     while threshold <= stop_point:
         perco_g = generate_network_threshold(g, threshold)
         size = len(perco_g.nodes)
         ccs = sorted(list(nx.connected_components(perco_g)), key=len, reverse=True)
         thresholds.append(threshold)
-        threshold += step_size
 
         num_cc.append(len(ccs))
 
         cc_1 = sum(map(len, ccs[:1]))
-        cc_2 = sum(map(len, ccs[:2]))
+        cc_2 = sum(map(len, ccs[1:2]))
         cc_10 = sum(map(len, ccs[:10]))
         cc_50 = sum(map(len, ccs[:50]))
 
@@ -118,7 +117,8 @@ def attributes(g):
 
         with open("region_div/region"+str(threshold)+".json", "x") as outfile:
             json.dump(regions, outfile)
-        break
+
+        threshold += step_size
 
     return thresholds, num_cc, per_cc_1, per_cc_2, per_cc_10, per_cc_50, c_per_cc_1, c_per_cc_2, c_per_cc_10, c_per_cc_50
 
@@ -137,9 +137,9 @@ def percent_plot(threshold, cc_1, cc_2, cc_10, cc_50, title):
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 
     plt.plot(threshold, cc_1, color='blue', label='1st cc')
-    plt.plot(threshold, cc_2, color='orange', label='1st cc')
-    plt.plot(threshold, cc_10, color='gray', label='1st cc')
-    plt.plot(threshold, cc_50, color='sliver', label='1st cc')
+    plt.plot(threshold, cc_2, color='orange', label='2nd cc')
+    plt.plot(threshold, cc_10, color='gray', label='top 10 cc')
+    plt.plot(threshold, cc_50, color='silver', label='top 50 cc')
 
     plt.grid(True)
     plt.legend()
@@ -153,5 +153,5 @@ if __name__ == '__main__':
     G = generate_network(dest)
     thresholds, num_cc, per_cc_1, per_cc_2, per_cc_10, per_cc_50, c_per_cc_1, c_per_cc_2, c_per_cc_10, c_per_cc_50 = attributes(G)
     size_plot(thresholds, num_cc)
-    percent_plot(thresholds, per_cc_1, per_cc_2, per_cc_10, per_cc_50, 'Cluter size as a proportion to whole network')
-    percent_plot(thresholds, c_per_cc_1, c_per_cc_2, c_per_cc_10, c_per_cc_50, 'Cluter size as a proportion to percolation network')
+    percent_plot(thresholds, per_cc_1, per_cc_2, per_cc_10, per_cc_50, 'Cluster size as a proportion to whole network')
+    percent_plot(thresholds, c_per_cc_1, c_per_cc_2, c_per_cc_10, c_per_cc_50, 'Cluster size as a proportion to percolation network')
