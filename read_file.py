@@ -44,7 +44,7 @@ def read_file(path, num=''):
 
             if not i.startswith(str(num)):
                 continue
-            if dests[i] >= 2:
+            if dests[i] >= 3:
                 dest_cbgs[(block, i)] = dests[i]
 
     return dest_cbgs
@@ -73,6 +73,7 @@ This function basically uses the function above to read multiple files with retu
 def read_files(paths, id=''):
     dest_cbgs = dict()
     for i in paths:
+        print(i)
         tmp_dests = read_file(i, id)
         merge(dest_cbgs, tmp_dests)
 
@@ -103,7 +104,7 @@ def read_file_c(path, scope):
 
             if i not in scope:
                 continue
-            if dests[i] >= 2:
+            if dests[i] >= 3:
                 dest_cbgs[(block, i)] = dests[i]
 
     return dest_cbgs

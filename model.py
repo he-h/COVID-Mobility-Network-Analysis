@@ -101,6 +101,19 @@ def num_g_sg(g):
     else:
         return len_scc[0], len_scc[1]
 
+
+'''
+This function finds the largest and second largest before the largest value
+'''
+
+
+def l_sl_value(list):
+    l = [i for i, j in enumerate(list) if j == max(list)][0]
+    sublist = list[:l]
+    sl = [i for i, j in enumerate(sublist) if j == max(sublist)][0]
+
+    return l, sl
+
 # file = 'data/01/01/2020-01-01-social-distancing.csv.gz'
 # G = generate_network(*read_file(file, 25), 10)
 # print(num_g_sg(G))

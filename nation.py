@@ -55,7 +55,7 @@ def generate_files():
 
 
 def attributes(g):
-    threshold = 2
+    threshold = 3
 
     thresholds = []
     num_cc = []
@@ -76,6 +76,7 @@ def attributes(g):
     stop_point = 10
 
     while threshold <= stop_point:
+        print(threshold)
         perco_g = generate_network_threshold(g, threshold)
         size = len(perco_g.nodes)
         ccs = sorted(list(nx.connected_components(perco_g)), key=len, reverse=True)
