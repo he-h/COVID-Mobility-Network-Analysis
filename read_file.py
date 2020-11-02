@@ -111,6 +111,26 @@ def read_file_c(path, scope):
 
 
 '''
+read mutiple files for the class
+'''
+
+
+def read_files_c(date, scope):
+    start = date - dt.timedelta(days=3)
+    dest_cbgs = dict()
+
+    for i in range(7):
+        tmp_dests = read_file_c(file_str(start), scope)
+        merge(dest_cbgs, tmp_dests)
+        start += dt.timedelta(days=1)
+
+    for i in dest_cbgs.keys():
+        dest_cbgs[i] /= 7
+
+    return dest_cbgs
+
+
+'''
 generate approriate str based on date
 '''
 

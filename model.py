@@ -42,8 +42,9 @@ def generate_network_threshold(g, threshold=0):
 
     edge_list = list(g.edges)
     for i, j in edge_list:
-        if g.edges[i, j]['weight'] >= threshold:
-            new_g.add_edge(i, j)
+        weight = g.edges[i, j]['weight']
+        if weight >= threshold:
+            new_g.add_edge(i, j, weight=weight)
 
     return new_g
 

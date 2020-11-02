@@ -54,6 +54,15 @@ def generate_files():
     return files
 
 
+def statescope(region):
+    scope = set()
+
+    for i in region:
+        scope.add(i[:2])
+
+    return scope
+
+
 def attributes(g):
     threshold = 3
 
@@ -101,14 +110,19 @@ def attributes(g):
 
         # add data to json file
         regions = dict()
+        scope = dict()
 
         for i, j in enumerate(ccs):
             if i >= 50:
                 break
             regions[i] = tuple(j)
+            scope[i] = tuple(statescope(j))
 
-        with open("region_div/region"+str(threshold)+".json", "x") as outfile:
+        with open("region_div/region"+str(threshold)+".json", "w") as outfile:
             json.dump(regions, outfile)
+
+        with open("region_div/region_s_"+str(threshold)+".json", "x") as outfile:
+            json.dump(scope, outfile)
 
         threshold += step_size
 
@@ -128,8 +142,8 @@ def percent_plot(threshold, cc_1, cc_2, cc_10, cc_50, title):
     plt.figure()
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 
-    plt.plot(threshold, cc_1, color='blue', label='1st cc')
-    plt.plot(threshold, cc_2, color='orange', label='2nd cc')
+    plt.plot(threshold, cc_1, color='royalblue', label='1st cc')
+    plt.plot(threshold, cc_2, color='wheat', label='2nd cc')
     plt.plot(threshold, cc_10, color='gray', label='top 10 cc')
     plt.plot(threshold, cc_50, color='silver', label='top 50 cc')
 

@@ -5,7 +5,7 @@ from plot import *
 import matplotlib.pyplot as plt
 
 
-max_w = 10
+max_w = 20
 region_file = ''
 
 
