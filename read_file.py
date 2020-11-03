@@ -37,6 +37,9 @@ def read_file(path, num=''):
         if not block.startswith(str(num)):
             continue
 
+        if not in_states(block):
+            continue
+
         dests = parse_str(df['destination_cbgs'][ind])
         for i in dests.keys():
             if i == block:
@@ -44,6 +47,10 @@ def read_file(path, num=''):
 
             if not i.startswith(str(num)):
                 continue
+
+            if not in_states(i):
+                continue
+
             if dests[i] >= 3:
                 dest_cbgs[(block, i)] = dests[i]
 
@@ -111,7 +118,7 @@ def read_file_c(path, scope):
 
 
 '''
-read mutiple files for the class
+read multiple files for the class
 '''
 
 
@@ -154,3 +161,15 @@ def file_str(date):
     day = aug_str(date.day)
 
     return 'data/' + month + '/' + day + '/2020-' + month + '-' + day + '-social-distancing.csv.gz'
+
+
+'''
+This function test in location is within the scope we want
+'''
+
+
+def in_states(code):
+    loc = int(code[:2])
+    if loc <= 56:
+        return True
+    return False

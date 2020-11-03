@@ -121,7 +121,7 @@ def attributes(g):
         with open("region_div/region"+str(threshold)+".json", "w") as outfile:
             json.dump(regions, outfile)
 
-        with open("region_div/region_s_"+str(threshold)+".json", "x") as outfile:
+        with open("region_div/region_s_"+str(threshold)+".json", "w") as outfile:
             json.dump(scope, outfile)
 
         threshold += step_size
@@ -132,9 +132,8 @@ def attributes(g):
 def size_plot(x, y):
     plt.figure()
     plt.plot(x, y)
-    plt.xlabel('Number of clusters')
-    plt.ylabel('Threshold')
-    plt.savefig('nations/size_of_cc.png')
+    plt.ylabel('Number of clusters')
+    plt.xlabel('Threshold')
     plt.savefig('nations/num_cc.png')
 
 
@@ -142,8 +141,8 @@ def percent_plot(threshold, cc_1, cc_2, cc_10, cc_50, title):
     plt.figure()
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 
-    plt.plot(threshold, cc_1, color='royalblue', label='1st cc')
-    plt.plot(threshold, cc_2, color='wheat', label='2nd cc')
+    plt.plot(threshold, cc_1, color='dodgerblue', label='1st cc')
+    plt.plot(threshold, cc_2, color='peachpuff', label='2nd cc')
     plt.plot(threshold, cc_10, color='gray', label='top 10 cc')
     plt.plot(threshold, cc_50, color='silver', label='top 50 cc')
 

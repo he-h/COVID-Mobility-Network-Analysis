@@ -28,5 +28,6 @@ class DailyAna:
         self.dest = read_files_c(self.date, self.node_scope)
         self.g = generate_network(self.dest)
 
+
     def __eq__(self, other):
         return self.date == other.date
