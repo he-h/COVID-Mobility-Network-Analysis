@@ -3,59 +3,10 @@ from read_file import *
 from model import *
 from plot import *
 import matplotlib.pyplot as plt
+from daily_ana import *
 
 
-max_w = 20
 region_file = ''
-
-
-'''
-This function is to calculate the number of elements in largest and second largest SCC changing with thresholds
-'''
-
-
-def calc_g_sg(g):
-    # setting thresholds
-    thresholds = np.arange(0, max_w, 0.25)
-
-    num_g = []
-    num_sg = []
-    for i in thresholds:
-        tmp_g, tmp_sg = num_g_sg(generate_network_threshold(g, i))
-        num_g.append(tmp_g)
-        num_sg.append(tmp_sg)
-
-    return thresholds, num_g, num_sg
-
-
-'''
-This function is to find the bottleneck by analyzing the threshold around when the second SCC is the largest
-'''
-
-
-def calc_bottleneck(g, thresholds, num_sg):
-    max_index = [i for i, j in enumerate(num_sg) if j == max(num_sg)][0]
-    bn_weight_b = thresholds[max_index]
-    interval = thresholds[1] - thresholds[0]
-    bn = []
-
-    G_sg_largest = generate_network_threshold(g, bn_weight_b)
-
-    if type(G_sg_largest) == nx.classes.digraph.DiGraph:
-        scc = list(nx.strongly_connected_components(G_sg_largest))
-    else:
-        scc = list(nx.connected_components(G_sg_largest))
-        
-    scc.sort(key=lambda a: len(a))
-    scc_sg_largest = scc[-1]
-    scc_sg_s_largest = scc[-2]
-
-    for i, j in g.edges():
-        if bn_weight_b - interval < g.edges[(i, j)]['weight'] <= bn_weight_b:
-            if (i in scc_sg_largest and j in scc_sg_s_largest) or (j in scc_sg_largest and i in scc_sg_s_largest):
-                bn.append((i, j))
-
-    return bn, bn_weight_b
 
 
 '''

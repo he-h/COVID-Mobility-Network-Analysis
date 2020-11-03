@@ -134,8 +134,21 @@ def read_files_c(date, scope):
     for i in dest_cbgs.keys():
         dest_cbgs[i] /= 7
 
-    return dest_cbgs
+    return daily_device_count(date), dest_cbgs
 
+
+'''
+get device count for the day
+'''
+
+def daily_device_count(date):
+    df = pd.read_csv(file_str(date))
+    devices = []
+
+    for ind in df.index:
+        devices.append(df['device_count'][ind])
+
+    return devices
 
 '''
 generate approriate str based on date
