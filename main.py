@@ -35,9 +35,12 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    state_id = 48
-    path = generate_file_name(7)
-    main(path, state_id)
+    date = dt.datetime(2020, 3, 16)
+    da = DailyAna(date, 2)
+    da.plot_g_sg()
+    # state_id = 48
+    # path = generate_file_name(7)
+    # main(path, state_id)
 
     # block_ids, dest_cbgs = read_files(path, 36)
     # g = generate_network(block_ids, dest_cbgs)

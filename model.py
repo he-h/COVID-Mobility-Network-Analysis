@@ -169,6 +169,47 @@ def calc_bottleneck(g, thresholds, num_sg):
     return bn, bn_weight_b
 
 
+'''
+This function is to find the bottleneck by analyzing the threshold around when the second SCC is the largest
+'''
+
+
+def calc_bottleneck_c(g, thresholds, qc):
+    interval = thresholds[1] - thresholds[0]
+    bn = set()
+
+    G_sg_largest = generate_network_threshold(g, qc)
+
+    if type(G_sg_largest) == nx.classes.digraph.DiGraph:
+        scc = list(nx.strongly_connected_components(G_sg_largest))
+    else:
+        scc = list(nx.connected_components(G_sg_largest))
+
+    scc.sort(key=len)
+    scc_sg_largest = scc[-1]
+    scc_sg_s_largest = scc[-2]
+
+    for i, j in g.edges():
+        if qc - interval < g.edges[(i, j)]['weight'] <= qc:
+            if (i in scc_sg_largest and j in scc_sg_s_largest) or (j in scc_sg_largest and i in scc_sg_s_largest):
+                bn.add((i, j))
+
+    return bn
+
+
+'''
+This function calculates the total flux of a graph
+'''
+
+
+def total_flux(g):
+    flux = 0
+    for i in g.edges():
+        flux += g.edges[i]['weight']
+
+    return flux
+
+
 # file = 'data/01/01/2020-01-01-social-distancing.csv.gz'
 # G = generate_network(*read_file(file, 25), 10)
 # print(num_g_sg(G))
