@@ -5,6 +5,7 @@ from statistics import median
 from model import *
 from read_file import *
 from nation import *
+import seaborn as sns
 
 
 choose = 4
@@ -24,8 +25,8 @@ class DailyAna:
         self.date = date
         self.id = id
 
-        self.node_scope = regions[id]
-        self.map_scope = map_r[id]
+        self.node_scope = regions[str(id)]
+        self.map_scope = map_r[str(id)]
 
         self.device_count, self.dest = read_files_c(self.date, self.node_scope)
         self.g = generate_network(self.dest)
@@ -36,10 +37,10 @@ class DailyAna:
         self.thresholds, self.num_g, self.num_sg = calc_g_sg(self.g)
         index_qc, index_qcb = l_sl_value(self.num_sg)
 
-        self.g_perco = generate_network_threshold(self.g, self.qc)
         self.gc_node_size = self.num_g[index_qc]
         self.qc = self.thresholds[index_qc]
         self.qcb = self.thresholds[index_qcb]
+        self.g_perco = generate_network_threshold(self.g, self.qc)
 
         self.bottleneck = self.bottlenecks()
 
@@ -59,9 +60,9 @@ class DailyAna:
         bc = set()
 
         for i, j in g_perco_b.edges():
-            if self.qc - .25 <= g_perco_b.edges[i]['weight'] < self.qc:
+            if self.qc - .25 <= g_perco_b.edges[i, j]['weight'] < self.qc:
                 if (i in s_cc and j in l_cc) or (i in l_cc and j in s_cc):
-                    bc.add((i,j))
+                    bc.add((i, j))
 
         return bc
 
@@ -84,14 +85,27 @@ class DailyAna:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('Cluster'+str(self.id)+' '+str(self.date)+ ' size of cc')
+        plt.title('Cluster'+str(self.id)+' '+str(self.date)+' size of cc')
 
-        plt.savefig('results/'+str(self.id)+'/'+str(self.date)+'size.png')
+        plt.savefig('results/'+str(self.id)+'/'+str(self.date)+'_size.png')
         return
 
     def plot_map(self):
         return
 
     def plot_hist(self):
+        value = list()
+
+        for i in self.g.edges():
+            value.append(self.g.edges[i]['weight'])
+
+        ax = sns.displot(value)
+        plt.xscale('log')
+        plt.yscale('log')
+        plt.xlabel('Weights')
+
+        plt.title('Cluster'+str(self.id)+' '+str(self.date)+' histogram')
+
+        plt.savefig('results/'+str(self.id)+'/'+str(self.date)+'_hist.png')
         return
 

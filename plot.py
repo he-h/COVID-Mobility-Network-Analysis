@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import geopandas as gpd
+#import geopandas as gpd
 from model import *
 import matplotlib.patches as mpatches
 from matplotlib.lines import Line2D

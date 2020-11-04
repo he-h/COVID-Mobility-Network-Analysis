@@ -1,7 +1,7 @@
 import networkx as nx
 import numpy as np
 
-max_w = 20
+max_w = 40
 
 
 '''

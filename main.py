@@ -35,9 +35,10 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    date = dt.datetime(2020, 3, 16)
-    da = DailyAna(date, 2)
+    date = dt.date(2020, 3, 16)
+    da = DailyAna(date, 1)
     da.plot_g_sg()
+    da.plot_hist()
     # state_id = 48
     # path = generate_file_name(7)
     # main(path, state_id)
