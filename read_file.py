@@ -143,12 +143,13 @@ get device count for the day
 
 def daily_device_count(date):
     df = pd.read_csv(file_str(date))
-    devices = []
+    devices = 0
 
     for ind in df.index:
-        devices.append(df['device_count'][ind])
+        devices += df['device_count'][ind]
 
     return devices
+
 
 '''
 generate approriate str based on date

@@ -47,6 +47,7 @@ class DailyAna:
         self.indegree = []
         for i in self.g.nodes():
             self.indegree.append(self.g.degree(i))
+        self.indegree_median = median(self.indegree)
 
     def __eq__(self, other):
         return self.date == other.date and self.id == other.id
@@ -76,7 +77,7 @@ class DailyAna:
         axis_1.set_ylabel('size')
 
         axis_2 = axis_1.twinx()
-        axis_2.plot(self.thresholds, self.num_sg, color='peachpuff', label='2nd CC')
+        axis_2.plot(self.thresholds, self.num_sg, color='palegreen', label='2nd CC')
         lines_1, labels_1 = axis_1.get_legend_handles_labels()
         lines_2, labels_2 = axis_2.get_legend_handles_labels()
 
@@ -95,11 +96,12 @@ class DailyAna:
 
     def plot_hist(self):
         value = list()
+        plt.figure()
 
         for i in self.g.edges():
             value.append(self.g.edges[i]['weight'])
 
-        ax = sns.displot(value)
+        ax = sns.distplot(value)
         plt.xscale('log')
         plt.yscale('log')
         plt.xlabel('Weights')

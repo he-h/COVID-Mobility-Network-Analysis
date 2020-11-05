@@ -6,6 +6,9 @@ import json
 from read_file import *
 from model import *
 
+# Girvan-Newman algorithm
+# fast greedy algorithm
+
 nation_bg_num = 211267
 
 state_code = {

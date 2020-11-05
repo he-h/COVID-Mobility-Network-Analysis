@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 #import geopandas as gpd
 from model import *
 import matplotlib.patches as mpatches
+import matplotlib.dates as mdates
 from matplotlib.lines import Line2D
 
 '''
@@ -95,75 +96,156 @@ This function is used to plot a map with the largest second connected component 
 '''
 
 
-def plot_map_bn(g, bottleneck, bn_weight, id):
-    gdf = gpd.read_file('tl_2017_' + str(id) + '_bg/tl_2017_' + str(id) + '_bg.shp')
-    gdf['GEOID'] = gdf['GEOID'].astype(str)
-    centroids = gdf['geometry'].centroid
-    lons, lats = [list(t) for t in zip(*map(get_xy, centroids))]
-    gdf['longitude'] = lons
-    gdf['latitude'] = lats
-    gdf.to_crs({"init": "epsg:4326"}).plot(color="white", edgecolor="grey", linewidth=0.5, alpha=0.75) #ax=ax
-    mx, my = gdf['longitude'].values, gdf['latitude'].values
+# def plot_map_bn(g, bottleneck, bn_weight, id):
+#     gdf = gpd.read_file('tl_2017_' + str(id) + '_bg/tl_2017_' + str(id) + '_bg.shp')
+#     gdf['GEOID'] = gdf['GEOID'].astype(str)
+#     centroids = gdf['geometry'].centroid
+#     lons, lats = [list(t) for t in zip(*map(get_xy, centroids))]
+#     gdf['longitude'] = lons
+#     gdf['latitude'] = lats
+#     gdf.to_crs({"init": "epsg:4326"}).plot(color="white", edgecolor="grey", linewidth=0.5, alpha=0.75) #ax=ax
+#     mx, my = gdf['longitude'].values, gdf['latitude'].values
+#
+#     pos = dict()
+#     for i, elem in enumerate(gdf['GEOID']):
+#         pos[elem] = mx[i], my[i]
+#
+#     new_g = generate_network_threshold(g, bn_weight)
+#
+#     cc = list(nx.connected_components(new_g))
+#     cc.sort(key=len)
+#
+#     largest_cc = new_g.subgraph(cc[-1])
+#     # pos = nx.circular_layout(largest_cc)
+#     # ax = plt.gca()
+#     # ax.annotate("",
+#     #             xy=pos[0], xycoords='data',
+#     #             xytext=pos[1], textcoords='data',
+#     #             arrowprops=dict(arrowstyle="-",
+#     #                             shrinkA=5, shrinkB=5,
+#     #                             patchA=None, patchB=None,
+#     #                             connectionstyle="arc3,rad=0.3",
+#     #                             ),
+#     #             )
+#     nx.draw_networkx(largest_cc, pos=pos, node_color='#0080ff', with_labels=False, node_size=.5, edge_color='#0080ff', width=.25)
+#
+#     s_largest_cc = new_g.subgraph(cc[-2])
+#     # pos = nx.circular_layout(s_largest_cc)
+#     # ax = plt.gca()
+#     # ax.annotate("",
+#     #             xy=pos[0], xycoords='data',
+#     #             xytext=pos[1], textcoords='data',
+#     #             arrowprops=dict(arrowstyle="-",
+#     #                             shrinkA=5, shrinkB=5,
+#     #                             patchA=None, patchB=None,
+#     #                             connectionstyle="arc3,rad=0.3",
+#     #                             ),
+#     #             )
+#     nx.draw_networkx(s_largest_cc, pos=pos, node_color='#32ecab', with_labels=False, node_size=.5, edge_color='#32ecab', width=.25)
+#
+#     bn = nx.Graph()
+#     bn.add_edges_from(bottleneck)
+#     # pos = nx.circular_layout(bn)
+#     # ax = plt.gca()
+#     # ax.annotate("",
+#     #             xy=pos[0], xycoords='data',
+#     #             xytext=pos[1], textcoords='data',
+#     #             arrowprops=dict(arrowstyle="-",
+#     #                             shrinkA=5, shrinkB=5,
+#     #                             patchA=None, patchB=None,
+#     #                             connectionstyle="arc3,rad=0.3",
+#     #                             ),
+#     #             )
+#     nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=3, edge_color='#f65754')
+#
+#     # manually add legend
+#     labels = ['1st CC', '2nd CC', 'Bottleneck']
+#     colors = ['#0080ff', '#32ecab', '#f54242']
+#     lines = [Line2D([0], [0], color=c, linewidth=3, alpha=0.85) for c in colors]
+#     plt.legend(lines, labels, fontsize=8, loc=0)
+#     plt.title('CA 1/1-1/7 Map')
+#
+#     plt.show()
+#
+#     return
 
-    pos = dict()
-    for i, elem in enumerate(gdf['GEOID']):
-        pos[elem] = mx[i], my[i]
 
-    new_g = generate_network_threshold(g, bn_weight)
+'''
+device count
+'''
 
-    cc = list(nx.connected_components(new_g))
-    cc.sort(key=len)
 
-    largest_cc = new_g.subgraph(cc[-1])
-    # pos = nx.circular_layout(largest_cc)
-    # ax = plt.gca()
-    # ax.annotate("",
-    #             xy=pos[0], xycoords='data',
-    #             xytext=pos[1], textcoords='data',
-    #             arrowprops=dict(arrowstyle="-",
-    #                             shrinkA=5, shrinkB=5,
-    #                             patchA=None, patchB=None,
-    #                             connectionstyle="arc3,rad=0.3",
-    #                             ),
-    #             )
-    nx.draw_networkx(largest_cc, pos=pos, node_color='#0080ff', with_labels=False, node_size=.5, edge_color='#0080ff', width=.25)
+def plot_device(x, y):
+    plt.figure()
+    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
+    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(x, y)
+    # plt.gcf().autofmt_xdate()
+    plt.title('Device Count')
+    plt.savefig('results/device_count.png')
 
-    s_largest_cc = new_g.subgraph(cc[-2])
-    # pos = nx.circular_layout(s_largest_cc)
-    # ax = plt.gca()
-    # ax.annotate("",
-    #             xy=pos[0], xycoords='data',
-    #             xytext=pos[1], textcoords='data',
-    #             arrowprops=dict(arrowstyle="-",
-    #                             shrinkA=5, shrinkB=5,
-    #                             patchA=None, patchB=None,
-    #                             connectionstyle="arc3,rad=0.3",
-    #                             ),
-    #             )
-    nx.draw_networkx(s_largest_cc, pos=pos, node_color='#32ecab', with_labels=False, node_size=.5, edge_color='#32ecab', width=.25)
+    return
 
-    bn = nx.Graph()
-    bn.add_edges_from(bottleneck)
-    # pos = nx.circular_layout(bn)
-    # ax = plt.gca()
-    # ax.annotate("",
-    #             xy=pos[0], xycoords='data',
-    #             xytext=pos[1], textcoords='data',
-    #             arrowprops=dict(arrowstyle="-",
-    #                             shrinkA=5, shrinkB=5,
-    #                             patchA=None, patchB=None,
-    #                             connectionstyle="arc3,rad=0.3",
-    #                             ),
-    #             )
-    nx.draw_networkx(bn, pos=pos, node_color='#f54242', with_labels=False, node_size=3, edge_color='#f65754')
 
-    # manually add legend
-    labels = ['1st CC', '2nd CC', 'Bottleneck']
-    colors = ['#0080ff', '#32ecab', '#f54242']
-    lines = [Line2D([0], [0], color=c, linewidth=3, alpha=0.85) for c in colors]
-    plt.legend(lines, labels, fontsize=8, loc=0)
-    plt.title('CA 1/1-1/7 Map')
+'''
+node indegree
+'''
 
-    plt.show()
 
+def plot_node_indegree(x, y):
+    plt.figure()
+    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
+    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(x, y)
+    # plt.gcf().autofmt_xdate()
+    plt.title('Node indegree')
+    plt.savefig('results/node_indegree.png')
+    return
+
+
+'''
+total flux
+'''
+
+
+def plot_flux(x, y):
+    plt.figure()
+    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
+    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(x, y)
+    # plt.gcf().autofmt_xdate()
+    plt.title('Total Flux')
+    plt.savefig('results/total_flux.png')
+    return
+
+
+'''
+qc
+'''
+
+
+def plot_qc(x, y):
+    plt.figure()
+    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
+    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(x, y)
+    # plt.gcf().autofmt_xdate()
+    plt.title('qc')
+    plt.savefig('results/qc.png')
+    return
+
+
+'''
+node size
+'''
+
+
+def plot_node_size(x, y):
+    plt.figure()
+    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
+    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(x, y)
+    # plt.gcf().autofmt_xdate()
+    plt.title('Node size')
+    plt.savefig('results/node_size.png')
     return
