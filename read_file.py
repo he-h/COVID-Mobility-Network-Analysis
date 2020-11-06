@@ -141,6 +141,7 @@ def read_files_c(date, scope):
 get device count for the day
 '''
 
+
 def daily_device_count(date):
     df = pd.read_csv(file_str(date))
     devices = 0
