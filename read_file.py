@@ -51,7 +51,7 @@ def read_file(path, num=''):
             if not in_states(i):
                 continue
 
-            if dests[i] >= 3:
+            if dests[i] >= 2:
                 dest_cbgs[(block, i)] = dests[i]
 
     return dest_cbgs
