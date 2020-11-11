@@ -7,7 +7,7 @@ if __name__ == '__main__':
     dest = read_files(data)
     g = generate_network(dest)
 
-    partition = community.best_partition(g, resolution=50)
+    partition = community.best_partition(g) #resolution=50
 
     region_div = dict()
     for i in set(partition.values()):
@@ -22,8 +22,8 @@ if __name__ == '__main__':
         area_id[i] = tuple(statescope(region_div[i]))
         region_div[i] = list(region_div[i])
 
-    with open("region_div/louvain_partition.json", "w") as outfile:
+    with open("region_div/louvain_partition_b.json", "w") as outfile:
         json.dump(region_div, outfile)
 
-    with open("region_div/louvain_partition_scope.json", "w") as outfile:
+    with open("region_div/louvain_partition_b_s.json", "w") as outfile:
         json.dump(area_id, outfile)
