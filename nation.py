@@ -61,7 +61,7 @@ def statescope(region):
     scope = set()
 
     for i in region:
-        scope.add(i[:2])
+        scope.add(state_code[i[:2]])
 
     return scope
 

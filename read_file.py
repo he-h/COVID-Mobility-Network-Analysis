@@ -51,7 +51,7 @@ def read_file(path, num=''):
             if not in_states(i):
                 continue
 
-            if dests[i] >= 2:
+            if dests[i] >= 3:
                 dest_cbgs[(block, i)] = dests[i]
 
     return dest_cbgs
@@ -185,6 +185,6 @@ This function test in location is within the scope we want
 
 def in_states(code):
     loc = int(code[:2])
-    if loc <= 56:
+    if loc <= 56 and loc != 2 and loc != 15:
         return True
     return False
