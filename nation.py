@@ -45,9 +45,9 @@ state_code = {
 
 def generate_files():
     files = []
-    date = dt.date(2020, 1, 12)
+    date = dt.date(2020, 1, 19)
 
-    for i in range(28):
+    for i in range(14):
         month = aug_str(date.month)
         day = aug_str(date.day)
 
