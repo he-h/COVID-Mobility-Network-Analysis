@@ -1,8 +1,4 @@
-import numpy as np
-from read_file import *
-from model import *
 from plot import *
-import matplotlib.pyplot as plt
 from daily_ana import *
 
 
@@ -44,7 +40,7 @@ if __name__ == '__main__':
     indegree = []
 
     date = dt.date(2020, 3, 13)
-    for i in range(7):
+    for i in range(1):
         dates.append(str(date))
         da = DailyAna(date, 1)
 

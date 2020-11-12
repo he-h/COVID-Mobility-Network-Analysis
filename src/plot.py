@@ -1,9 +1,6 @@
 import matplotlib.pyplot as plt
 #import geopandas as gpd
 from model import *
-import matplotlib.patches as mpatches
-import matplotlib.dates as mdates
-from matplotlib.lines import Line2D
 
 '''
 This function is aim to plot number of element of G and SG with changing threshold described in the paper

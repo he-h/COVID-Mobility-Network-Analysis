@@ -1,9 +1,4 @@
-import datetime as dt
-import networkx as nx
-import json
 from statistics import median
-from model import *
-from read_file import *
 from nation import *
 import seaborn as sns
 
@@ -25,6 +20,7 @@ class DailyAna:
         self.date = date
         self.id = id
 
+        # implement later as a result of MSA
         self.node_scope = regions[str(id)]
         self.map_scope = map_r[str(id)]
 

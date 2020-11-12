@@ -1,5 +1,3 @@
-import datetime as dt
-import pandas as pd
 import csv
 from read_file import *
 

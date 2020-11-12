@@ -7,7 +7,7 @@ if __name__ == '__main__':
     dest = read_files(data)
     g = generate_network(dest)
 
-    partition = community.best_partition(g) #resolution=50
+    partition = community.best_partition(g, resolution=200) #resolution=50
 
     region_div = dict()
     for i in set(partition.values()):
