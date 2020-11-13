@@ -1,5 +1,11 @@
 import pandas as pd
 import datetime as dt
+import json
+
+
+with open('data/MSAfips.json') as file:
+    MSAfips = json.load(file)
+
 
 '''
 This function is to transform a string into a dict based on destination_cbgs
@@ -175,7 +181,7 @@ def file_str(date):
     month = aug_str(date.month)
     day = aug_str(date.day)
 
-    return '../data/' + month + '/' + day + '/2020-' + month + '-' + day + '-social-distancing.csv.gz'
+    return 'data/' + month + '/' + day + '/2020-' + month + '-' + day + '-social-distancing.csv.gz'
 
 
 '''
@@ -188,3 +194,17 @@ def in_states(code):
     if loc <= 56 and loc != 2 and loc != 15:
         return True
     return False
+
+
+'''
+This function decide which MSA this block group belongs to
+'''
+
+
+def MSA_id(bg):
+    id = bg[:5]
+    for i in MSAfips.keys():
+        if id in MSAfips[i]:
+            return i
+
+    return -1
