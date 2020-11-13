@@ -1,16 +1,7 @@
-from model import *
-from read_file import *
-import matplotlib.pyplot as plt
+from inner_MSA import *
+from inter_MSA import *
 
-
-# NY NJ PA 5602
-# LA 4472
-# Chicago 1602
-# Dallas 1922
-# Houston 3362
-
-
-def file_inter_MSA(path):
+def file_whole(path):
     dest = dict()
     device_count = dict()
     df = pd.read_csv(path)
@@ -43,7 +34,7 @@ def file_inter_MSA(path):
     return device_count, dest
 
 
-def read_files_inter_MSA(date):
+def read_files_whole(date):
     device_count = dict()
     dest = dict()
 
@@ -63,14 +54,3 @@ def read_files_inter_MSA(date):
         dest[i] /= 7
 
     return device_count, dest
-
-a,b = read_files_inter_MSA(dt.date(2020,3,1))
-plt.hist(list(b.values))
-plt.show()
-
-
-class InterMsaG:
-    def __init__(self, date):
-        self.date = date
-        self.device_count, dest = read_files_inter_MSA(date)
-        self.g = generate_network(dest)

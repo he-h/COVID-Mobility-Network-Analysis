@@ -208,3 +208,14 @@ def MSA_id(bg):
             return i
 
     return -1
+
+'''
+This creates inner MSA dictionary by default
+'''
+
+def default_MSAs_dict():
+    tmp = dict()
+    for i in MSAfips.keys():
+        tmp[i] = None
+
+    return tmp

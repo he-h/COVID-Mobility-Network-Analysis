@@ -1,5 +1,4 @@
 from plot import *
-from daily_ana import *
 
 
 region_file = ''
