@@ -61,6 +61,6 @@ while date < dt.date(2020, 10, 1):
             m = MSA_id(j)
             if m == -1:
                 continue
-            csvwriter.writerow([j, device_count[j]], m)
+            csvwriter.writerow([j, device_count[j], m])
 
     date += dt.timedelta(days=1)
