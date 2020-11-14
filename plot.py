@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 #import geopandas as gpd
 from model import *
+
+# plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+# plt.gcf().autofmt_xdate()
 
 '''
 This function is aim to plot number of element of G and SG with changing threshold described in the paper

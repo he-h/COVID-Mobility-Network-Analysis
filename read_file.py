@@ -209,13 +209,25 @@ def MSA_id(bg):
 
     return -1
 
+
 '''
 This creates inner MSA dictionary by default
 '''
 
+
 def default_MSAs_dict():
     tmp = dict()
     for i in MSAfips.keys():
-        tmp[i] = None
+        tmp[i] = dict()
 
     return tmp
+
+
+'''
+This function helps merge inner MSA dicts
+'''
+
+
+def inner_merge(d1, d2):
+    for i in d1.keys():
+        merge(d1[i], d2[i])

@@ -1,7 +1,11 @@
 from plot import *
+from whole_network import *
 
-
-region_file = ''
+# NY NJ PA 5602
+# LA 4472
+# Chicago 1602
+# Dallas 1922
+# Houston 3362
 
 
 '''
@@ -30,33 +34,10 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    np.warnings.filterwarnings('ignore', category=np.VisibleDeprecationWarning)
-    dates = []
-    device = []
-    qc = []
-    node_size = []
-    flux = []
-    indegree = []
+    start = dt.date(2020, 1, 8)
+    end = dt.date(2020, 9, 24)
 
-    date = dt.date(2020, 3, 13)
-    for i in range(1):
-        dates.append(str(date))
-        da = DailyAna(date, 1)
-
-        device.append(da.device_count)
-        qc.append(da.qc)
-        node_size.append(da.gc_node_size)
-        flux.append(da.flux)
-        indegree.append(da.indegree_median)
-
-        date += dt.timedelta(days=1)
-
-    plot_device(dates, device)
-    plot_qc(dates, qc)
-    plot_node_size(dates, node_size)
-    plot_node_indegree(date, indegree)
-    plot_flux(dates, flux)
-
+    msa = ['1602', '1922', '3362', '4472', '5602']
     # state_id = 48
     # path = generate_file_name(7)
     # main(path, state_id)

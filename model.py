@@ -89,11 +89,7 @@ This function is to return the number of elements in the largest and second larg
 '''
 
 
-def num_g_sg(g):
-    if type(g) == nx.classes.digraph.DiGraph:
-        scc = list(nx.strongly_connected_components(g))
-    else:
-        scc = list(nx.connected_components(g))
+def num_g_sg(scc):
 
     len_scc = list(map(len, scc))
     len_scc.sort()
@@ -112,9 +108,9 @@ This function finds the largest and second largest before the largest value
 '''
 
 
-def l_sl_value(list):
-    l = [i for i, j in enumerate(list) if j == max(list)][0]
-    sublist = list[:l]
+def l_sl_value(li):
+    l = [i for i, j in enumerate(li) if j == max(li)][0]
+    sublist = li[:l]
     sl = [i for i, j in enumerate(sublist) if j == max(sublist)][0]
 
     return l, sl
@@ -125,18 +121,43 @@ This function is to calculate the number of elements in largest and second large
 '''
 
 
-def calc_g_sg(g):
-    # setting thresholds
-    thresholds = np.arange(4, max_w, 0.25)
+def calc_g_sg(g, thresholds, d1):
 
     num_g = []
     num_sg = []
+    dev_g = []
+    dev_sg = []
+
     for i in thresholds:
-        tmp_g, tmp_sg = num_g_sg(generate_network_threshold(g, i))
+        tmp_n = generate_network_threshold(g, i)
+        scc = sorted(list(nx.connected_components(tmp_n)), key=len, reverse=True)
+        tmp_g, tmp_sg = num_g_sg(scc)
         num_g.append(tmp_g)
         num_sg.append(tmp_sg)
+        if len(scc) != 0:
+            dev_g.append(sum_device(scc[0], d1))
+            if len(scc) == 1:
+                dev_sg.append(0)
+            else:
+                dev_sg.append(sum_device(scc[1], d1))
+        else:
+            dev_sg.append(0)
+            dev_g.append(0)
 
-    return thresholds, num_g, num_sg
+    return num_g, num_sg, dev_g, dev_sg
+
+
+'''
+This function calculate the sum of device in GC and SGC
+'''
+
+
+def sum_device(nodes, d1):
+    s = 0
+    for i in nodes:
+        s += d1[i]
+
+    return s
 
 
 '''
@@ -157,7 +178,7 @@ def calc_bottleneck(g, thresholds, num_sg):
     else:
         scc = list(nx.connected_components(G_sg_largest))
 
-    scc.sort(key=lambda a: len(a))
+    scc.sort(key=len)
     scc_sg_largest = scc[-1]
     scc_sg_s_largest = scc[-2]
 
@@ -213,3 +234,18 @@ def total_flux(g):
 # file = 'data/01/01/2020-01-01-social-distancing.csv.gz'
 # G = generate_network(*read_file(file, 25), 10)
 # print(num_g_sg(G))
+
+# def bottlenecks(self):
+#     g_perco_b = generate_network_threshold(self.g, self.qc - .25)
+#     s_cc = sorted(list(nx.connected_components(self.g_perco)), key=len, reverse=True)[1]
+#     l_cc = sorted(list(nx.connected_components(g_perco_b)), key=len, reverse=True)[0]
+#     l_cc = l_cc.difference(s_cc)
+#
+#     bc = set()
+#
+#     for i, j in g_perco_b.edges():
+#         if self.qc - .25 <= g_perco_b.edges[i, j]['weight'] < self.qc:
+#             if (i in s_cc and j in l_cc) or (i in l_cc and j in s_cc):
+#                 bc.add((i, j))
+#
+#     return bc
