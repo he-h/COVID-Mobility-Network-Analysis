@@ -37,6 +37,8 @@ if __name__ == '__main__':
     start = dt.date(2020, 1, 8)
     end = dt.date(2020, 9, 24)
 
+    tmp = dt.datetime(2020, 1, 15)
+
     msa = ['1602', '1922', '3362', '4472', '5602']
     # state_id = 48
     # path = generate_file_name(7)
