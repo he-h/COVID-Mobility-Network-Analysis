@@ -26,7 +26,7 @@ class MSA:
         # calculate qc and following features
         self.thresholds = np.arange(1, 25, .25)
 
-        self.num_g, self.num_sg, self.dev_g, self.dev_sg = calc_g_sg(self.g, self.thresholds, self.device_count)
+        self.num_g, self.num_sg, self.dev_g, self.dev_sg = calc_g_sg(self.g, self.thresholds, device)
         index_qc, index_qcb = l_sl_value(self.num_sg)
 
         self.gc_node_size = self.num_g[index_qc]

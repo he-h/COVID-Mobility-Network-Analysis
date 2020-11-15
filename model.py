@@ -111,7 +111,10 @@ This function finds the largest and second largest before the largest value
 def l_sl_value(li):
     l = [i for i, j in enumerate(li) if j == max(li)][0]
     sublist = li[:l]
-    sl = [i for i, j in enumerate(sublist) if j == max(sublist)][0]
+    if l == 0:
+        sl = 0
+    else:
+        sl = [i for i, j in enumerate(sublist) if j == max(sublist)][0]
 
     return l, sl
 
@@ -155,7 +158,8 @@ This function calculate the sum of device in GC and SGC
 def sum_device(nodes, d1):
     s = 0
     for i in nodes:
-        s += d1[i]
+        if i in d1.keys():
+          s += d1[i]
 
     return s
 
