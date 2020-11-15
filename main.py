@@ -40,6 +40,17 @@ if __name__ == '__main__':
     tmp = dt.datetime(2020, 1, 15)
 
     msa = ['1602', '1922', '3362', '4472', '5602']
+    nation = Nation(tmp)
+
+    nation.interMSA.plot_hist()
+    nation.interMSA.plot_g_sg()
+    nation.interMSA.plot_g_sg_device()
+    nation.interMSA.plot_msa_qc()
+
+    for i in msa:
+        nation.MSAs[i].plot_hist()
+        nation.MSAs[i].plot_g_sg()
+        nation.MSAs[i].plot_g_sg_device()
     # state_id = 48
     # path = generate_file_name(7)
     # main(path, state_id)

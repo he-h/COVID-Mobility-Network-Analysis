@@ -11,8 +11,6 @@ def file_whole(path):
     df = pd.read_csv(path)
 
     for ind in df.index:
-        if ind == 100:
-            break
         block = str(df['origin_census_block_group'][ind])
 
         block_m = MSA_id(block)
@@ -28,6 +26,9 @@ def file_whole(path):
 
         dests = parse_str(df['destination_cbgs'][ind])
         for i in dests.keys():
+            if dests[i] <= 2:
+                continue
+
             if i == block:
                 continue
 
@@ -78,7 +79,7 @@ def read_files_whole(date):
 
 
 class Nation:
-    def __int__(self, date):
+    def __init__(self, date):
         self.date = date
         device_count, dest, MSA_device, MSA_dest = read_files_whole(date)
 

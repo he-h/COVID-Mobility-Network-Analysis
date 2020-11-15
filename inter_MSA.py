@@ -121,3 +121,25 @@ class InterMsaG:
 
         plt.savefig('results/interMSA/' + str(self.date) + '_g_sg_device.png')
         return
+
+    def plot_msa_qc(self):
+        plt.figure()
+
+        th = np.arange(1, 25, .25)
+        remain_msa = []
+
+        for i in th:
+            tmp = 0
+            for j in self.msa_qc.keys():
+                if i < self.msa_qc[i]:
+                    tmp += self.device_count[j]
+            remain_msa.append(tmp)
+
+        plt.plot(th, remain_msa)
+        plt.grid(True)
+        plt.xlabel('Thresholds')
+        plt.ylabel('device count')
+
+        plt.title('Sum of remaining MSAs device count ' + str(self.date))
+        plt.savefig('results/interMSA/' + str(self.date) + '_MSAs_device.png')
+        return
