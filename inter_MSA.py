@@ -25,9 +25,9 @@ class InterMsaG:
         self.flux = total_flux(self.g)
 
         # calculate qc and following features
-        self.thresholds = np.arange(1, 150, 1)
+        self.thresholds = np.arange(1, 300, 1)
 
-        self.num_g, self.num_sg, self.dev_g, self.dev_sg = calc_g_sg(self.g, self.thresholds)
+        self.num_g, self.num_sg, self.dev_g, self.dev_sg = calc_g_sg(self.g, self.thresholds, self.device_count)
         index_qc, index_qcb = l_sl_value(self.num_sg)
 
         self.gc_node_size = self.num_g[index_qc]
@@ -76,9 +76,9 @@ class InterMsaG:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('Inter MSA ' + str(self.date) + ' percolation component size')
+        plt.title('Inter MSA ' + self.date.strftime('%m_%d') + ' percolation component size')
 
-        plt.savefig('results/interMSA/' + str(self.date) + '_g_sg_size.png')
+        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_g_sg_size.png')
         return
 
     def plot_map(self):
@@ -92,8 +92,8 @@ class InterMsaG:
         fit.plot_ccdf(color='royalblue', linewidth=2)
 
         fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='-')
-        plt.title('Inter MSA ' + str(self.date) + ' CCDF')
-        plt.savefig('results/interMSA/' + str(self.date) + '_hist.png')
+        plt.title('Inter MSA ' + self.date.strftime('%m_%d') + ' CCDF')
+        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_hist.png')
         return
 
     def plot_g_sg_device(self):
@@ -117,9 +117,9 @@ class InterMsaG:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('Inter MSA ' + str(self.date) + ' percolation device count')
+        plt.title('Inter MSA ' + self.date.strftime('%m_%d') + ' percolation device count')
 
-        plt.savefig('results/interMSA/' + str(self.date) + '_g_sg_device.png')
+        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_g_sg_device.png')
         return
 
     def plot_msa_qc(self):
@@ -131,7 +131,7 @@ class InterMsaG:
         for i in th:
             tmp = 0
             for j in self.msa_qc.keys():
-                if i < self.msa_qc[i]:
+                if i < self.msa_qc[j]:
                     tmp += self.device_count[j]
             remain_msa.append(tmp)
 
@@ -140,6 +140,6 @@ class InterMsaG:
         plt.xlabel('Thresholds')
         plt.ylabel('device count')
 
-        plt.title('Sum of remaining MSAs device count ' + str(self.date))
-        plt.savefig('results/interMSA/' + str(self.date) + '_MSAs_device.png')
+        plt.title('Sum of remaining MSAs device count ' + self.date.strftime('%m_%d'))
+        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_MSAs_device.png')
         return

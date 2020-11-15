@@ -202,7 +202,10 @@ This function decide which MSA this block group belongs to
 
 
 def MSA_id(bg):
-    id = bg[:5]
+    if len(bg) == 12:
+        id = bg[:5]
+    else:
+        id = '0' + bg[:4]
     for i in MSAfips.keys():
         if id in MSAfips[i]:
             return i

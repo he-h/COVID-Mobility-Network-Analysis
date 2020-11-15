@@ -24,7 +24,7 @@ class MSA:
         self.flux = total_flux(self.g)
 
         # calculate qc and following features
-        self.thresholds = np.arange(1, 25, .25)
+        self.thresholds = np.arange(1, 50, .25)
 
         self.num_g, self.num_sg, self.dev_g, self.dev_sg = calc_g_sg(self.g, self.thresholds, device)
         index_qc, index_qcb = l_sl_value(self.num_sg)
@@ -75,9 +75,9 @@ class MSA:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('MSA '+str(self.id)+' '+str(self.date)+' percolation component size')
+        plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m_%d')+' percolation component size')
 
-        plt.savefig('results/'+str(self.id)+'/'+str(self.date)+'_g_sg_size.png')
+        plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_g_sg_size.png')
         return
 
     def plot_map(self):
@@ -91,8 +91,8 @@ class MSA:
         fit.plot_ccdf(color='royalblue', linewidth=2)
 
         fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='-')
-        plt.title('MSA '+str(self.id)+' '+str(self.date)+' CCDF')
-        plt.savefig('results/'+str(self.id)+'/'+str(self.date)+'_hist.png')
+        plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m_%d')+' CCDF')
+        plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_hist.png')
         return
 
     def plot_g_sg_device(self):
@@ -116,7 +116,7 @@ class MSA:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('MSA ' + str(self.id) + ' ' + str(self.date) + ' percolation device count')
+        plt.title('MSA ' + str(self.id) + ' ' + self.date.strftime('%m_%d') + ' percolation device count')
 
-        plt.savefig('results/' + str(self.id) + '/' + str(self.date) + '_g_sg_device.png')
+        plt.savefig('results/' + str(self.id) + '/' + self.date.strftime('%m_%d') + '_g_sg_device.png')
         return

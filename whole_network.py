@@ -26,8 +26,8 @@ def file_whole(path):
 
         dests = parse_str(df['destination_cbgs'][ind])
         for i in dests.keys():
-            if dests[i] <= 2:
-                continue
+            # if dests[i] <= 2:
+            #     continue
 
             if i == block:
                 continue
@@ -55,7 +55,7 @@ def read_files_whole(date):
 
     tmp = date - dt.timedelta(days=3)
 
-    for i in range(1):
+    for i in range(7):
         print(i)
         tmp_device, tmp_dests, tmp_m_dev, tmp_m_dest = file_whole(file_str(tmp))
         print(i)
@@ -84,11 +84,18 @@ class Nation:
         device_count, dest, MSA_device, MSA_dest = read_files_whole(date)
 
         self.MSAs = default_MSAs_dict()
+        null_msa = set()
         for i in self.MSAs.keys():
+            if len(MSA_device[i]) == 0:
+                null_msa.add(i)
+                continue
             self.MSAs[i] = MSA(i, date, MSA_device[i], MSA_dest[i])
 
         Msa_qc = default_MSAs_dict()
         for i in Msa_qc.keys():
-            Msa_qc[i] = self.MSAs[i].qc
+            if i in null_msa:
+                Msa_qc[i] = 0
+            else:
+                Msa_qc[i] = self.MSAs[i].qc
 
         self.interMSA = InterMsaG(date, device_count, dest, Msa_qc)

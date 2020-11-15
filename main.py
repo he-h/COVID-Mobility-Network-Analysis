@@ -1,5 +1,6 @@
 from plot import *
 from whole_network import *
+import datedelta
 
 # NY NJ PA 5602
 # LA 4472
@@ -40,21 +41,17 @@ if __name__ == '__main__':
     tmp = dt.date(2020, 1, 15)
 
     msa = ['1602', '1922', '3362', '4472', '5602']
-    nation = Nation(tmp)
+    while tmp < dt.date(2020, 9, 16):
+        nation = Nation(tmp)
 
-    nation.interMSA.plot_hist()
-    nation.interMSA.plot_g_sg()
-    nation.interMSA.plot_g_sg_device()
-    nation.interMSA.plot_msa_qc()
+        nation.interMSA.plot_hist()
+        nation.interMSA.plot_g_sg()
+        nation.interMSA.plot_g_sg_device()
+        nation.interMSA.plot_msa_qc()
 
-    for i in msa:
-        nation.MSAs[i].plot_hist()
-        nation.MSAs[i].plot_g_sg()
-        nation.MSAs[i].plot_g_sg_device()
-    # state_id = 48
-    # path = generate_file_name(7)
-    # main(path, state_id)
+        for i in msa:
+            nation.MSAs[i].plot_hist()
+            nation.MSAs[i].plot_g_sg()
+            nation.MSAs[i].plot_g_sg_device()
 
-    # block_ids, dest_cbgs = read_files(path, 36)
-    # g = generate_network(block_ids, dest_cbgs)
-    # plot_hist(g)
+        tmp += datedelta.MONTH

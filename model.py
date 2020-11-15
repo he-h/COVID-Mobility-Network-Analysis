@@ -212,6 +212,8 @@ def calc_bottleneck_c(g, thresholds, qc):
 
     scc.sort(key=len)
     scc_sg_largest = scc[-1]
+    if len(scc) == 1:
+        return set()
     scc_sg_s_largest = scc[-2]
 
     for i, j in g.edges():
