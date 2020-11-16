@@ -58,7 +58,6 @@ def read_files_whole(date):
     for i in range(7):
         print(i)
         tmp_device, tmp_dests, tmp_m_dev, tmp_m_dest = file_whole(file_str(tmp))
-        print(i)
         merge(dest, tmp_dests)
         merge(device_count, tmp_device)
         inner_merge(MSA_device, tmp_m_dev)

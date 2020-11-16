@@ -71,25 +71,25 @@ This function is used to plot a map of network
 '''
 
 
-def plot_map(g, id):
-    gdf = gpd.read_file('tl_2017_' + str(id) + '_bg/tl_2017_' + str(id) + '_bg.shp')
-    gdf['GEOID'] = gdf['GEOID'].astype(str)
-    centroids = gdf['geometry'].centroid
-    lons, lats = [list(t) for t in zip(*map(get_xy, centroids))]
-    gdf['longitude'] = lons
-    gdf['latitude'] = lats
-    gdf.to_crs({"init": "epsg:4326"}).plot(color="white", edgecolor="grey", linewidth=0.5, alpha=0.75) #ax=ax
-    mx, my = gdf['longitude'].values, gdf['latitude'].values
-
-    pos = dict()
-    for i, elem in enumerate(gdf['GEOID']):
-        pos[elem] = mx[i], my[i]
-
-    nx.draw_networkx(g, pos=pos, node_color='#bebada', with_labels=False, node_size=10)
-
-    plt.show()
-
-    return
+# def plot_map(g, id):
+#     gdf = gpd.read_file('tl_2017_' + str(id) + '_bg/tl_2017_' + str(id) + '_bg.shp')
+#     gdf['GEOID'] = gdf['GEOID'].astype(str)
+#     centroids = gdf['geometry'].centroid
+#     lons, lats = [list(t) for t in zip(*map(get_xy, centroids))]
+#     gdf['longitude'] = lons
+#     gdf['latitude'] = lats
+#     gdf.to_crs({"init": "epsg:4326"}).plot(color="white", edgecolor="grey", linewidth=0.5, alpha=0.75) #ax=ax
+#     mx, my = gdf['longitude'].values, gdf['latitude'].values
+#
+#     pos = dict()
+#     for i, elem in enumerate(gdf['GEOID']):
+#         pos[elem] = mx[i], my[i]
+#
+#     nx.draw_networkx(g, pos=pos, node_color='#bebada', with_labels=False, node_size=10)
+#
+#     plt.show()
+#
+#     return
 
 
 '''
@@ -176,14 +176,19 @@ device count
 '''
 
 
-def plot_device(x, y):
+def plot_device(date, y, y_25, y_75, id):
     plt.figure()
-    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
-    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-    plt.plot(x, y)
-    # plt.gcf().autofmt_xdate()
-    plt.title('Device Count')
-    plt.savefig('results/device_count.png')
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(date, y, color='k', marker='.')
+    plt.fill_between(date, y_25, y_75, color='silver')
+    plt.gcf().autofmt_xdate()
+
+    plt.title(id + ' device count')
+    if id == 'InterMSA':
+        plt.savefig('results/interMSA/device_count.png')
+    else:
+        plt.savefig('results/' + id + '/device_count.png')
 
     return
 
@@ -193,14 +198,20 @@ node indegree
 '''
 
 
-def plot_node_indegree(x, y):
+def plot_node_indegree(date, y, y_25, y_75, id):
     plt.figure()
-    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
-    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-    plt.plot(x, y)
-    # plt.gcf().autofmt_xdate()
-    plt.title('Node indegree')
-    plt.savefig('results/node_indegree.png')
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(date, y, color='k', marker='.')
+    plt.fill_between(date, y_25, y_75, color='silver')
+    plt.gcf().autofmt_xdate()
+
+    plt.title(id + ' node indegree')
+    if id == 'InterMSA':
+        plt.savefig('results/interMSA/node_indegree.png')
+    else:
+        plt.savefig('results/' + id + '/node_indegree.png')
+
     return
 
 
@@ -209,14 +220,19 @@ total flux
 '''
 
 
-def plot_flux(x, y):
+def plot_flux(x, y, id):
     plt.figure()
-    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
-    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-    plt.plot(x, y)
-    # plt.gcf().autofmt_xdate()
-    plt.title('Total Flux')
-    plt.savefig('results/total_flux.png')
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(x, y, color='k', marker='.')
+    plt.gcf().autofmt_xdate()
+
+    plt.title(id + ' total flux')
+    if id == 'InterMSA':
+        plt.savefig('results/interMSA/total_flux.png')
+    else:
+        plt.savefig('results/' + id + '/total_flux.png')
+
     return
 
 
@@ -225,14 +241,19 @@ qc
 '''
 
 
-def plot_qc(x, y):
+def plot_qc(x, y, id):
     plt.figure()
-    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
-    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-    plt.plot(x, y)
-    # plt.gcf().autofmt_xdate()
-    plt.title('qc')
-    plt.savefig('results/qc.png')
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(x, y, color='k', marker='.')
+    plt.gcf().autofmt_xdate()
+
+    plt.title(id + ' qc')
+    if id == 'InterMSA':
+        plt.savefig('results/interMSA/qc.png')
+    else:
+        plt.savefig('results/' + id + '/qc.png')
+
     return
 
 
@@ -241,12 +262,60 @@ node size
 '''
 
 
-def plot_node_size(x, y):
+def plot_node_size(x, y, id):
     plt.figure()
-    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d/%Y'))
-    # plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-    plt.plot(x, y)
-    # plt.gcf().autofmt_xdate()
-    plt.title('Node size')
-    plt.savefig('results/node_size.png')
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(x, y, color='k', marker='.')
+    plt.gcf().autofmt_xdate()
+
+    plt.title(id + ' GC node size')
+    if id == 'InterMSA':
+        plt.savefig('results/interMSA/gc_node_size.png')
+    else:
+        plt.savefig('results/' + id + '/gc_node_size.png')
+
+    return
+
+
+'''
+Average node weight
+'''
+
+
+def plot_ave_node_w(dates, ave, id):
+    plt.figure()
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(dates, ave, color='k', marker='.')
+    plt.gcf().autofmt_xdate()
+
+    plt.title(id + ' Average edge weight')
+    if id == 'InterMSA':
+        plt.savefig('results/interMSA/ave_node_w.png')
+    else:
+        plt.savefig('results/' + id + '/ave_node_w.png')
+
+    return
+
+
+'''
+node indegree
+'''
+
+
+def plot_edge_w(date, y, y_25, y_75, id):
+    plt.figure()
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.plot(date, y, color='k', marker='.')
+    plt.fill_between(date, y_25, y_75, color='silver')
+    plt.gcf().autofmt_xdate()
+
+    plt.title(id + ' edge weight')
+    if id == 'InterMSA':
+        plt.savefig('results/interMSA/edge_w.png')
+    else:
+        plt.savefig('results/' + id + '/edge_w.png')
+
     return

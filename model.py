@@ -237,6 +237,15 @@ def total_flux(g):
     return flux
 
 
+'''
+This function returns latitude and longitude of a point
+'''
+
+
+def get_xy(pt):
+    return [pt.x, pt.y]
+
+
 # file = 'data/01/01/2020-01-01-social-distancing.csv.gz'
 # G = generate_network(*read_file(file, 25), 10)
 # print(num_g_sg(G))
