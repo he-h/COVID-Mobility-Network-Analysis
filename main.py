@@ -1,5 +1,6 @@
 from plot import *
 from whole_network import *
+import json
 # import datedelta
 
 # NY NJ PA 5602
@@ -35,7 +36,7 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    start = dt.date(2020, 1, 8)
+    start = dt.date(2020, 6, 8)
     end = dt.date(2020, 9, 25)
 
     tmp = start
@@ -96,7 +97,10 @@ if __name__ == '__main__':
             datas[i]['d_25'].append(nation.interMSA.device_25)
             datas[i]['d_75'].append(nation.interMSA.device_75)
 
-        tmp += dt.timedelta(days=7)
+        with open("nations/" + tmp.strftime('%m_%d') + '.json', "x") as out:
+            json.dump(nation.interMSA.cc, out)
+
+        tmp += dt.timedelta(days=60)
 
     for i in msa_p:
         plot_edge_w(datas, datas[i]['edge_w'], datas[i]['edge_w_25'], datas[i]['edge_w_75'], i)
@@ -106,3 +110,10 @@ if __name__ == '__main__':
         plot_flux(dates, datas[i]['flux'], i)
         plot_node_indegree(datas, datas[i]['n_in'], datas[i]['n_in_25'], datas[i]['n_in_75'], i)
         plot_device(datas, datas[i]['d'], datas[i]['d_25'], datas[i]['d_75'], i)
+
+    # ds = [dt.date(2020,1,15), dt.date(2020,3,23), dt.date(2020,5,15), dt.date(2020,7,15), dt.date(2020,9,15)]
+    #
+    # for i in ds:
+    #     nation = Nation(i)
+    #     with open("nations/"+i.strftime('%m_%d')+'.json', "x") as out:
+    #         json.dump(nation.interMSA.cc, out)

@@ -183,7 +183,7 @@ class MSA:
 
         fit.plot_ccdf(color='royalblue', linewidth=2, ax=fig2)
 
-        fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='-', ax=fig2)
+        fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='--', ax=fig2)
         plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' CCDF')
         plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_hist.png')
         return

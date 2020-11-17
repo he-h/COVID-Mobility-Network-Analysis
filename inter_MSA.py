@@ -59,6 +59,9 @@ class InterMsaG:
         self.device_25 = np.percentile(dc, 25)
         self.device_75 = np.percentile(dc, 75)
 
+        l = sorted(list(nx.connected_components(self.g_perco)), key=len, reverse=True)
+        self.cc = {'0': list(l[0]), '1':list(l[1])}
+
     def __eq__(self, other):
         return self.date == other.date
 
@@ -183,7 +186,7 @@ class InterMsaG:
 
         fit.plot_ccdf(color='royalblue', linewidth=2, ax=fig2)
 
-        fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='-', ax=fig2)
+        fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='--', ax=fig2)
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' CCDF')
         plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_hist.png')
         return
