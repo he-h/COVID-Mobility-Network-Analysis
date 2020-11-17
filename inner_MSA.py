@@ -53,7 +53,7 @@ class MSA:
         self.edge_w_75 = np.percentile(self.edge_w, 75)
         self.edge_w_ave = self.flux/self.g.number_of_nodes()
 
-        dc = list(self.device_count.values)
+        dc = list(self.device_count.values())
         self.device_median = median(dc)
         self.device_25 = np.percentile(dc, 25)
         self.device_75 = np.percentile(dc, 75)
@@ -82,7 +82,7 @@ class MSA:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m_%d')+' percolation component size')
+        plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' percolation component size')
 
         plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_g_sg_size.png')
         return
@@ -169,7 +169,7 @@ class MSA:
     #     colors = ['dodgerblue', 'mediumspringgreen', 'r', 'silver']
     #     lines = [Line2D([0], [0], color=c, linewidth=3, alpha=0.85) for c in colors]
     #     plt.legend(lines, labels, fontsize=8, loc=0)
-    #     plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m_%d')+' map')
+    #     plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' map')
     #
     #     plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_map.png')
     #
@@ -184,7 +184,7 @@ class MSA:
         fit.plot_ccdf(color='royalblue', linewidth=2, ax=fig2)
 
         fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='-', ax=fig2)
-        plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m_%d')+' CCDF')
+        plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' CCDF')
         plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_hist.png')
         return
 
@@ -209,7 +209,7 @@ class MSA:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('MSA ' + str(self.id) + ' ' + self.date.strftime('%m_%d') + ' percolation device count')
+        plt.title('MSA ' + str(self.id) + ' ' + self.date.strftime('%m/%d') + ' percolation device count')
 
         plt.savefig('results/' + str(self.id) + '/' + self.date.strftime('%m_%d') + '_g_sg_device.png')
         return

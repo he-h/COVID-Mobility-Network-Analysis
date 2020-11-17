@@ -27,7 +27,7 @@ class InterMsaG:
         self.flux = total_flux(self.g)
 
         # calculate qc and following features
-        self.thresholds = np.arange(1, 350, 1)
+        self.thresholds = np.arange(0, 1000, 5)
 
         self.num_g, self.num_sg, self.dev_g, self.dev_sg = calc_g_sg(self.g, self.thresholds, self.device_count)
         index_qc, index_qcb = l_sl_value(self.num_sg)
@@ -54,7 +54,7 @@ class InterMsaG:
         self.edge_w_75 = np.percentile(self.edge_w, 75)
         self.edge_w_ave = self.flux / self.g.number_of_nodes()
 
-        dc = list(self.device_count.values)
+        dc = list(self.device_count.values())
         self.device_median = median(dc)
         self.device_25 = np.percentile(dc, 25)
         self.device_75 = np.percentile(dc, 75)
@@ -83,7 +83,7 @@ class InterMsaG:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('Inter MSA ' + self.date.strftime('%m_%d') + ' percolation component size')
+        plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' percolation component size')
 
         plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_g_sg_size.png')
         return
@@ -170,7 +170,7 @@ class InterMsaG:
     #     colors = ['dodgerblue', 'mediumspringgreen', 'r', 'silver']
     #     lines = [Line2D([0], [0], color=c, linewidth=3, alpha=0.85) for c in colors]
     #     plt.legend(lines, labels, fontsize=8, loc=0)
-    #     plt.title('Inter MSA ' + self.date.strftime('%m_%d') + ' map')
+    #     plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map')
     #     plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_map.png')
     #
     #     return
@@ -184,7 +184,7 @@ class InterMsaG:
         fit.plot_ccdf(color='royalblue', linewidth=2, ax=fig2)
 
         fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='-', ax=fig2)
-        plt.title('Inter MSA ' + self.date.strftime('%m_%d') + ' CCDF')
+        plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' CCDF')
         plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_hist.png')
         return
 
@@ -209,7 +209,7 @@ class InterMsaG:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('Inter MSA ' + self.date.strftime('%m_%d') + ' percolation device count')
+        plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' percolation device count')
 
         plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_g_sg_device.png')
         return
@@ -217,7 +217,7 @@ class InterMsaG:
     def plot_msa_qc(self):
         plt.figure()
 
-        th = np.arange(1, 50, .25)
+        th = np.arange(1, 75, .5)
         remain_msa = []
 
         for i in th:
@@ -232,6 +232,6 @@ class InterMsaG:
         plt.xlabel('Thresholds')
         plt.ylabel('device count')
 
-        plt.title('Sum of remaining MSAs device count ' + self.date.strftime('%m_%d'))
+        plt.title('Sum of remaining MSAs device count ' + self.date.strftime('%m/%d'))
         plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_MSAs_device.png')
         return

@@ -179,7 +179,6 @@ device count
 def plot_device(date, y, y_25, y_75, id):
     plt.figure()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
-    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
     plt.plot(date, y, color='k', marker='.')
     plt.fill_between(date, y_25, y_75, color='silver')
     plt.gcf().autofmt_xdate()
@@ -201,7 +200,6 @@ node indegree
 def plot_node_indegree(date, y, y_25, y_75, id):
     plt.figure()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
-    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
     plt.plot(date, y, color='k', marker='.')
     plt.fill_between(date, y_25, y_75, color='silver')
     plt.gcf().autofmt_xdate()
@@ -223,7 +221,6 @@ total flux
 def plot_flux(x, y, id):
     plt.figure()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
-    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
     plt.plot(x, y, color='k', marker='.')
     plt.gcf().autofmt_xdate()
 
@@ -244,7 +241,6 @@ qc
 def plot_qc(x, y, id):
     plt.figure()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
-    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
     plt.plot(x, y, color='k', marker='.')
     plt.gcf().autofmt_xdate()
 
@@ -265,7 +261,6 @@ node size
 def plot_node_size(x, y, id):
     plt.figure()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
-    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
     plt.plot(x, y, color='k', marker='.')
     plt.gcf().autofmt_xdate()
 
@@ -286,7 +281,6 @@ Average node weight
 def plot_ave_node_w(dates, ave, id):
     plt.figure()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
-    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
     plt.plot(dates, ave, color='k', marker='.')
     plt.gcf().autofmt_xdate()
 
@@ -307,7 +301,6 @@ node indegree
 def plot_edge_w(date, y, y_25, y_75, id):
     plt.figure()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
-    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
     plt.plot(date, y, color='k', marker='.')
     plt.fill_between(date, y_25, y_75, color='silver')
     plt.gcf().autofmt_xdate()

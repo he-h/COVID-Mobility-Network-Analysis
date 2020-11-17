@@ -26,8 +26,8 @@ def file_whole(path):
 
         dests = parse_str(df['destination_cbgs'][ind])
         for i in dests.keys():
-            # if dests[i] <= 2:
-            #     continue
+            if dests[i] <= 1:
+                continue
 
             if i == block:
                 continue
