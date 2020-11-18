@@ -99,15 +99,15 @@ if __name__ == '__main__':
 
         tmp += dt.timedelta(days=7)
 
-    for i in msa_p:
-        plot_edge_w(dates, datas[i]['edge_w'], datas[i]['edge_w_25'], datas[i]['edge_w_75'], i)
-        plot_qc(dates, datas[i]['qc'], i)
-        plot_ave_node_w(dates, datas[i]['ave'], i)
-        plot_node_size(dates, datas[i]['n_size'], i)
-        plot_flux(dates, datas[i]['flux'], i)
-        plot_node_indegree(dates, datas[i]['n_in'], datas[i]['n_in_25'], datas[i]['n_in_75'], i)
-        plot_device(dates, datas[i]['d'], datas[i]['d_25'], datas[i]['d_75'], i)
-        break
+    # for i in msa_p:
+    #     plot_edge_w(dates, datas[i]['edge_w'], datas[i]['edge_w_25'], datas[i]['edge_w_75'], i)
+    #     plot_qc(dates, datas[i]['qc'], i)
+    #     plot_ave_node_w(dates, datas[i]['ave'], i)
+    #     plot_node_size(dates, datas[i]['n_size'], i)
+    #     plot_flux(dates, datas[i]['flux'], i)
+    #     plot_node_indegree(dates, datas[i]['n_in'], datas[i]['n_in_25'], datas[i]['n_in_75'], i)
+    #     plot_device(dates, datas[i]['d'], datas[i]['d_25'], datas[i]['d_75'], i)
+    #     break
 
     # ds = [dt.date(2020,1,15), dt.date(2020,3,23), dt.date(2020,5,15), dt.date(2020,7,15), dt.date(2020,9,15)]
     #
