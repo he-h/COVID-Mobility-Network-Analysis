@@ -82,19 +82,19 @@ class Nation:
         self.date = date
         device_count, dest, MSA_device, MSA_dest = read_files_whole(date)
 
-        self.MSAs = default_MSAs_dict()
-        null_msa = set()
-        for i in self.MSAs.keys():
-            if len(MSA_device[i]) == 0:
-                null_msa.add(i)
-                continue
-            self.MSAs[i] = MSA(i, date, MSA_device[i], MSA_dest[i])
+        # self.MSAs = default_MSAs_dict()
+        # null_msa = set()
+        # for i in self.MSAs.keys():
+        #     if len(MSA_device[i]) == 0:
+        #         null_msa.add(i)
+        #         continue
+        #     self.MSAs[i] = MSA(i, date, MSA_device[i], MSA_dest[i])
+        #
+        # Msa_qc = default_MSAs_dict()
+        # for i in Msa_qc.keys():
+        #     if i in null_msa:
+        #         Msa_qc[i] = 0
+        #     else:
+        #         Msa_qc[i] = self.MSAs[i].qc
 
-        Msa_qc = default_MSAs_dict()
-        for i in Msa_qc.keys():
-            if i in null_msa:
-                Msa_qc[i] = 0
-            else:
-                Msa_qc[i] = self.MSAs[i].qc
-
-        self.interMSA = InterMsaG(date, device_count, dest, Msa_qc)
+        self.interMSA = InterMsaG(date, device_count, dest)#, Msa_qc)

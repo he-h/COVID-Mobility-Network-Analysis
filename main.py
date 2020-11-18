@@ -36,8 +36,8 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    start = dt.date(2020, 6, 8)
-    end = dt.date(2020, 9, 25)
+    start = dt.date(2020, 1, 8)
+    end = dt.date(2020, 10, 29)
 
     tmp = start
 
@@ -52,16 +52,15 @@ if __name__ == '__main__':
                     'n_size': [],
                     'flux': [],
                     'n_in': [], 'n_in_25': [], 'n_in_75': [],
-                    'd': [], 'd_25':[], 'd_75':[]}
+                    'd': [], 'd_25': [], 'd_75': []}
     while tmp < end:
         dates.append(tmp)
         nation = Nation(tmp)
 
-        nation.interMSA.plot_hist()
-        nation.interMSA.plot_g_sg()
-        nation.interMSA.plot_g_sg_device()
-        nation.interMSA.plot_msa_qc()
-        # nation.interMSA.plot_map()
+        # nation.interMSA.plot_hist()
+        # nation.interMSA.plot_g_sg()
+        # nation.interMSA.plot_g_sg_device()
+        # nation.interMSA.plot_msa_qc()
 
         datas['interMSA']['edge_w'].append(nation.interMSA.edge_w_median)
         datas['interMSA']['edge_w_25'].append(nation.interMSA.edge_w_25)
@@ -77,39 +76,38 @@ if __name__ == '__main__':
         datas['interMSA']['d_25'].append(nation.interMSA.device_25)
         datas['interMSA']['d_75'].append(nation.interMSA.device_75)
 
-        for i in msa:
-            nation.MSAs[i].plot_hist()
-            nation.MSAs[i].plot_g_sg()
-            nation.MSAs[i].plot_g_sg_device()
-            # nation.MSAs[i].plot_map()
+        # for i in msa:
+        #     nation.MSAs[i].plot_hist()
+        #     nation.MSAs[i].plot_g_sg()
+        #     nation.MSAs[i].plot_g_sg_device()
+        #     # nation.MSAs[i].plot_map()
+        #
+        #     datas[i]['edge_w'].append(nation.interMSA.edge_w_median)
+        #     datas[i]['edge_w_25'].append(nation.interMSA.edge_w_25)
+        #     datas[i]['edge_w_75'].append(nation.interMSA.edge_w_75)
+        #     datas[i]['qc'].append(nation.interMSA.qc)
+        #     datas[i]['ave'].append(nation.interMSA.edge_w_ave)
+        #     datas[i]['n_size'].append(nation.interMSA.gc_node_size)
+        #     datas[i]['flux'].append(nation.interMSA.flux)
+        #     datas[i]['n_in'].append(nation.interMSA.indegree_median)
+        #     datas[i]['n_in_25'].append(nation.interMSA.indegree_25)
+        #     datas[i]['n_in_75'].append(nation.interMSA.indegree_75)
+        #     datas[i]['d'].append(nation.interMSA.device_median)
+        #     datas[i]['d_25'].append(nation.interMSA.device_25)
+        #     datas[i]['d_75'].append(nation.interMSA.device_75)
 
-            datas[i]['edge_w'].append(nation.interMSA.edge_w_median)
-            datas[i]['edge_w_25'].append(nation.interMSA.edge_w_25)
-            datas[i]['edge_w_75'].append(nation.interMSA.edge_w_75)
-            datas[i]['qc'].append(nation.interMSA.qc)
-            datas[i]['ave'].append(nation.interMSA.edge_w_ave)
-            datas[i]['n_size'].append(nation.interMSA.gc_node_size)
-            datas[i]['flux'].append(nation.interMSA.flux)
-            datas[i]['n_in'].append(nation.interMSA.indegree_median)
-            datas[i]['n_in_25'].append(nation.interMSA.indegree_25)
-            datas[i]['n_in_75'].append(nation.interMSA.indegree_75)
-            datas[i]['d'].append(nation.interMSA.device_median)
-            datas[i]['d_25'].append(nation.interMSA.device_25)
-            datas[i]['d_75'].append(nation.interMSA.device_75)
 
-        with open("nations/" + tmp.strftime('%m_%d') + '.json', "x") as out:
-            json.dump(nation.interMSA.cc, out)
-
-        tmp += dt.timedelta(days=60)
+        tmp += dt.timedelta(days=7)
 
     for i in msa_p:
-        plot_edge_w(datas, datas[i]['edge_w'], datas[i]['edge_w_25'], datas[i]['edge_w_75'], i)
+        plot_edge_w(dates, datas[i]['edge_w'], datas[i]['edge_w_25'], datas[i]['edge_w_75'], i)
         plot_qc(dates, datas[i]['qc'], i)
         plot_ave_node_w(dates, datas[i]['ave'], i)
         plot_node_size(dates, datas[i]['n_size'], i)
         plot_flux(dates, datas[i]['flux'], i)
-        plot_node_indegree(datas, datas[i]['n_in'], datas[i]['n_in_25'], datas[i]['n_in_75'], i)
-        plot_device(datas, datas[i]['d'], datas[i]['d_25'], datas[i]['d_75'], i)
+        plot_node_indegree(dates, datas[i]['n_in'], datas[i]['n_in_25'], datas[i]['n_in_75'], i)
+        plot_device(dates, datas[i]['d'], datas[i]['d_25'], datas[i]['d_75'], i)
+        break
 
     # ds = [dt.date(2020,1,15), dt.date(2020,3,23), dt.date(2020,5,15), dt.date(2020,7,15), dt.date(2020,9,15)]
     #

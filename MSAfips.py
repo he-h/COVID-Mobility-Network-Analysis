@@ -13,17 +13,22 @@ def aug_str1(id):
     return id
 
 
-df = pd.read_csv('data/MSAfips.csv')
+df = pd.read_csv('data/MSA_2.csv')
 
 MSA_fips = dict()
+MSA_name = dict()
 
 for ind in df.index:
-    msa = str(df['msa.cmsa.fips'][ind])
+    msa = str(df['msa'][ind])
 
     if msa not in MSA_fips.keys():
         MSA_fips[msa] = []
 
-    MSA_fips[msa].append(aug_str(df['fips.state'][ind]) + aug_str1(df['fips.county'][ind]))
+    MSA_fips[msa].append(str(df['county'][ind]))
+    MSA_name[msa] = str(df['msa-name'][ind])[:str(df['msa-name'][ind]).find('(')-1]
 
-    with open("data/MSAfips.json", "w") as outfile:
+with open("data/MSAfips.json", "w") as outfile:
         json.dump(MSA_fips, outfile)
+
+with open("data/MSAname.json", "w") as outfile:
+    json.dump(MSA_name, outfile)

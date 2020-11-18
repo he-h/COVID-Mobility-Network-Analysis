@@ -179,11 +179,15 @@ class MSA:
         plt.figure()
 
         fit = powerlaw.Fit(self.edge_w)
-        fig2 = fit.plot_pdf()
+        fig2 = fit.plot_pdf(color='peachpuff')
 
         fit.plot_ccdf(color='royalblue', linewidth=2, ax=fig2)
 
         fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='--', ax=fig2)
+        labels = ['CCDF', 'PDF']
+        colors = ['royalblue', 'peachpuff']
+        lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
+        plt.legend(lines, labels)
         plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' CCDF')
         plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_hist.png')
         return

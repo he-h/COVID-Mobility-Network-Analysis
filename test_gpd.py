@@ -6,7 +6,8 @@ import json
 def get_xy(pt):
     return [pt.x, pt.y]
 
-gdf = gpd.read_file('shape_file/tl_2017_us_county/tl_2017_us_county.shp')
+
+gdf = gpd.read_file('shape_file/tl_2019_us_cbsa/tl_2019_us_cbsa.shp')
 # gdf = gpd.read_file('shape_file/cb_2018_us_cbsa_500k/cb_2018_us_cbsa_500k.shp')
 gdf['CSAFP'] = gdf['CSAFP'].astype(str).str.zfill(4)
 gdf['GEOID'] = gdf['GEOID'].astype(str)
@@ -25,6 +26,3 @@ with open("data/pos.json", "w") as outfile:
     json.dump(pos, outfile)
 
 
-
-
-# with open("data/loc.json", "x") as out:

@@ -234,3 +234,24 @@ This function helps merge inner MSA dicts
 def inner_merge(d1, d2):
     for i in d1.keys():
         merge(d1[i], d2[i])
+
+
+'''
+date str
+'''
+
+
+def dt_str(date):
+    return date.strftime('%m_%d')
+
+
+'''
+block str
+'''
+
+
+def block_str(tmp):
+    if len(tmp) == 11:
+        return '0' + str(tmp)
+
+    return str(tmp)
