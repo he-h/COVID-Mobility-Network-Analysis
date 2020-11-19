@@ -1,4 +1,3 @@
-import json
 from read_file import *
 
 
@@ -24,7 +23,13 @@ for ind in df.index:
     if msa not in MSA_fips.keys():
         MSA_fips[msa] = []
 
-    MSA_fips[msa].append(str(df['county'][ind]))
+    block = str(df['county'][ind])
+    if len(block) == 4:
+        block = '0' + block
+
+    if not in_states(block):
+        continue
+    MSA_fips[msa].append(block)
     MSA_name[msa] = str(df['msa-name'][ind])[:str(df['msa-name'][ind]).find('(')-1]
 
 with open("data/MSAfips.json", "w") as outfile:

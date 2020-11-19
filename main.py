@@ -36,8 +36,8 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    start = dt.date(2020, 1, 8)
-    end = dt.date(2020, 10, 29)
+    start = dt.date(2020, 9, 8)
+    end = dt.date(2020, 9, 9)
 
     tmp = start
 
@@ -57,9 +57,9 @@ if __name__ == '__main__':
         dates.append(tmp)
         nation = Nation(tmp)
 
-        # nation.interMSA.plot_hist()
-        # nation.interMSA.plot_g_sg()
-        # nation.interMSA.plot_g_sg_device()
+        nation.interMSA.plot_hist()
+        nation.interMSA.plot_g_sg()
+        nation.interMSA.plot_g_sg_device()
         # nation.interMSA.plot_msa_qc()
 
         datas['interMSA']['edge_w'].append(nation.interMSA.edge_w_median)

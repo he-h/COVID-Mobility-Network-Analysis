@@ -1,66 +1,58 @@
 import csv
 import os
 from read_file import *
+from whole_network import read_files_whole
 
-date = dt.date(2020, 1, 1)
+date = dt.date(2020, 1, 8)
 
 
 def aug_file(date):
     return 'processed_data/'+aug_str(date.month)+'/'+aug_str(date.day)+'/'
 
 
-while date < dt.date(2020, 10, 1):
+while date < dt.date(2020, 11, 1):
     os.mkdir('processed_data/'+aug_str(date.month)+'/'+aug_str(date.day))
+    path = 'processed_data/'+aug_str(date.month)+'/'+aug_str(date.day) + '/'
 
-    df = pd.read_csv(file_str(date))
+    device_count, dest, m_dev, m_dest = read_files_whole(date)
 
-    dest_cbgs = dict()
-    device_count = dict()
-
-    for ind in df.index:
-        block = str(df['origin_census_block_group'][ind])
-        if not in_states(block):
-            continue
-
-        device_count[block] = df['device_count'][ind]
-
-        dests = parse_str(df['destination_cbgs'][ind])
-        for i in dests.keys():
-            if i == block:
-                continue
-
-            if not in_states(i):
-                continue
-
-            dest_cbgs[block, i] = dests[i]
-
-    with open(aug_file(date) + 'edge.csv', mode='x') as edges:
+    with open(path + 'inter_msa_edge.csv', mode='x') as edges:
 
         csvwriter = csv.writer(edges)
 
-        csvwriter.writerow(['from', 'to', 'weight', 'type', 'fm', 'tm'])
+        csvwriter.writerow(['edge', 'weight'])
 
-        for a, b in dest_cbgs.keys():
-            am = MSA_id(a)
-            bm = MSA_id(b)
-            if am == -1 or bm == -1:
-                continue
-            if am == bm:
-                t = 'i'
-            else:
-                t = 'c'
-            csvwriter.writerow([a, b, dest_cbgs[(a, b)], t, am, bm])
+        for i in dest.keys():
+            csvwriter.writerow([i, dest[i]])
 
-    with open(aug_file(date) + 'device.csv', mode='x') as devices:
+    with open(path + 'msa_edge.csv', mode='x') as edges:
+
+        csvwriter = csv.writer(edges)
+
+        csvwriter.writerow(['edge', 'weight', 'msa'])
+
+        for i in m_dest.keys():
+            for j in m_dest[i].keys():
+                if m_dest[i][j] > 2:
+                    csvwriter.writerow([j, m_dest[i][j], i])
+
+    with open(path + 'inter_msa_device.csv', mode='x') as devices:
+
+        csvwriter = csv.writer(devices)
+
+        csvwriter.writerow(['msa', 'device'])
+
+        for i in device_count.keys():
+            csvwriter.writerow([i, device_count[i]])
+
+    with open(path + 'msa_device.csv', mode='x') as devices:
 
         csvwriter = csv.writer(devices)
 
         csvwriter.writerow(['bg', 'device', 'msa'])
 
-        for j in device_count.keys():
-            m = MSA_id(j)
-            if m == -1:
-                continue
-            csvwriter.writerow([j, device_count[j], m])
+        for i in m_dev.keys():
+            for j in m_dev[i].keys():
+                csvwriter.writerow([j, m_dev[i][j], i])
 
-    date += dt.timedelta(days=1)
+    date += dt.timedelta(days=7)

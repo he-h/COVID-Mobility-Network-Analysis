@@ -4,7 +4,7 @@ from statistics import median
 from matplotlib.lines import Line2D
 from read_file import *
 import matplotlib.pyplot as plt
-import geopandas as gpd
+# import geopandas as gpd
 import json
 
 
@@ -28,7 +28,7 @@ class InterMsaG:
         self.flux = total_flux(self.g)
 
         # calculate qc and following features
-        self.thresholds = np.arange(0, 1000, 5)
+        self.thresholds = np.arange(10, 1000, 5)
 
         self.num_g, self.num_sg, self.dev_g, self.dev_sg = calc_g_sg(self.g, self.thresholds, self.device_count)
         index_qc, index_qcb = l_sl_value(self.num_sg)
@@ -61,7 +61,7 @@ class InterMsaG:
         self.device_25 = np.percentile(dc, 25)
         self.device_75 = np.percentile(dc, 75)
 
-        # self.plot_map(self.g_perco, 1)
+        self.plot_map(self.g_perco, 1)
         # self.plot_map(self.g_perco_1, 0)
 
     def __eq__(self, other):
@@ -95,7 +95,7 @@ class InterMsaG:
 
     def plot_map(self, g, num):
         plt.figure()
-        gdf = gpd.read_file('shape_file/tl_2017_us_county/tl_2017_us_county.shp')
+        gdf = gpd.read_file('shape_file/tl_2019_us_cbsa/tl_2019_us_cbsa.shp')
         gdf['GEOID'] = gdf['GEOID'].astype(str)
         centroids = gdf['geometry'].centroid
         lons, lats = [list(t) for t in zip(*map(get_xy, centroids))]
@@ -130,7 +130,7 @@ class InterMsaG:
                                         ),
                         )
 
-        s_largest_cc = self.g_perco.subgraph(cc[1])
+        s_largest_cc = g.subgraph(cc[1])
         nx.draw_networkx_nodes(s_largest_cc, pos=pos, node_color='mediumspringgreen', node_size=1, alpha=1)
         for i, j in s_largest_cc.edges():
             ax.annotate("",
@@ -156,8 +156,10 @@ class InterMsaG:
                                         connectionstyle="arc3,rad=0.3",
                                         ),
                         )
-
-        rest = self.g_perco.subgraph(cc[2:])
+        tmp = set()
+        for i in cc[2:]:
+            tmp |= i
+        rest = g.subgraph(tmp)
         nx.draw_networkx_nodes(rest, pos=pos, node_color='silver', node_size=1, alpha=1)
         for i, j in rest.edges():
             ax.annotate("",
@@ -173,7 +175,7 @@ class InterMsaG:
         # manually add legend
         labels = ['GC', 'SGC', 'Bottleneck', 'Rest']
         colors = ['dodgerblue', 'mediumspringgreen', 'r', 'silver']
-        lines = [Line2D([0], [0], color=c, linewidth=3, alpha=0.85) for c in colors]
+        lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
         plt.legend(lines, labels, fontsize=8, loc=0)
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map '+str(num))
         plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_map'+str(num)+'.png')

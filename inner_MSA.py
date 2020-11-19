@@ -4,7 +4,7 @@ from statistics import median
 from matplotlib.lines import Line2D
 import powerlaw
 import networkx as nx
-import geopandas as gpd
+# import geopandas as gpd
 
 # NY NJ PA 5602
 # LA 4472
@@ -26,7 +26,7 @@ class MSA:
         self.flux = total_flux(self.g)
 
         # calculate qc and following features
-        self.thresholds = np.arange(1, 75, .25)
+        self.thresholds = np.arange(2, 75, .25)
 
         self.num_g, self.num_sg, self.dev_g, self.dev_sg = calc_g_sg(self.g, self.thresholds, device)
         index_qc, index_qcb = l_sl_value(self.num_sg)
@@ -151,7 +151,10 @@ class MSA:
     #                                     ),
     #                     )
     #
-    #     rest = self.g_perco.subgraph(cc[2:])
+        # tmp = set()
+        # for i in cc[2:]:
+        #     tmp.add(i)
+        # rest = self.g_perco.subgraph(tmp)
     #     nx.draw_networkx_nodes(rest, pos=pos, node_color='silver', node_size=node_size, alpha=1)
     #     for i, j in rest.edges():
     #         ax.annotate("",
@@ -167,7 +170,7 @@ class MSA:
     #     # manually add legend
     #     labels = ['GC', 'SGC', 'Bottleneck', 'Rest']
     #     colors = ['dodgerblue', 'mediumspringgreen', 'r', 'silver']
-    #     lines = [Line2D([0], [0], color=c, linewidth=3, alpha=0.85) for c in colors]
+    #     lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
     #     plt.legend(lines, labels, fontsize=8, loc=0)
     #     plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' map')
     #

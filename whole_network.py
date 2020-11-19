@@ -11,7 +11,7 @@ def file_whole(path):
     df = pd.read_csv(path)
 
     for ind in df.index:
-        block = str(df['origin_census_block_group'][ind])
+        block = block_str(str(df['origin_census_block_group'][ind]))
 
         block_m = MSA_id(block)
         if block_m == -1:
@@ -26,23 +26,28 @@ def file_whole(path):
 
         dests = parse_str(df['destination_cbgs'][ind])
         for i in dests.keys():
-            if dests[i] <= 2:
+
+            str_i = block_str(str(i))
+
+            if str_i == block:
                 continue
 
-            if i == block:
-                continue
-
-            i_m = MSA_id(i)
+            i_m = MSA_id(str_i)
             if i_m == -1:
                 continue
 
             if i_m != block_m:
-                if (block_m, i_m) in dest.keys():
-                    dest[(block_m, i_m)] += dests[i]
+                tmp = tuple(sorted([block_m, i_m]))
+                if tmp in dest.keys():
+                    dest[tmp] += dests[i]
                 else:
-                    dest[(block_m, i_m)] = dests[i]
+                    dest[tmp] = dests[i]
             else:
-                m_dest[block_m][(block, i)] = dests[i]
+                tmp = tuple(sorted([block, str_i]))
+                if tmp in m_dest[block_m].keys():
+                    m_dest[block_m][tmp] += dests[i]
+                else:
+                    m_dest[block_m][tmp] = dests[i]
 
     return device_count, dest, m_dev, m_dest
 
