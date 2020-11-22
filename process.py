@@ -1,18 +1,23 @@
 import csv
-import os
 from read_file import *
+import os
 from whole_network import read_files_whole
 
-date = dt.date(2020, 1, 8)
+date = dt.date(2020, 3, 18)
 
 
 def aug_file(date):
     return 'processed_data/'+aug_str(date.month)+'/'+aug_str(date.day)+'/'
 
 
+for i in range(3, 11):
+    os.mkdir("processed_data/"+aug_str(i))
+
+
 while date < dt.date(2020, 11, 1):
-    os.mkdir('processed_data/'+aug_str(date.month)+'/'+aug_str(date.day))
+
     path = 'processed_data/'+aug_str(date.month)+'/'+aug_str(date.day) + '/'
+    os.mkdir("processed_data/" + aug_str(date.month) + '/' + aug_str(date.day))
 
     device_count, dest, m_dev, m_dest = read_files_whole(date)
 

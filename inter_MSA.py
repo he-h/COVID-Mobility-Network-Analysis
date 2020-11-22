@@ -61,7 +61,7 @@ class InterMsaG:
         self.device_25 = np.percentile(dc, 25)
         self.device_75 = np.percentile(dc, 75)
 
-        self.plot_map(self.g_perco, 1)
+        # self.plot_map(self.g_perco, 1)
         # self.plot_map(self.g_perco_1, 0)
 
     def __eq__(self, other):
@@ -228,7 +228,7 @@ class InterMsaG:
     # def plot_msa_qc(self):
     #     plt.figure()
     #
-    #     th = np.arange(1, 75, .5)
+    #     th = np.arange(1, 50, .5)
     #     remain_msa = []
     #
     #     for i in th:
