@@ -9,7 +9,7 @@ date = dt.date(2020, 3, 18)
 def aug_file(date):
     return 'processed_data/'+aug_str(date.month)+'/'+aug_str(date.day)+'/'
 
-
+os.mkdir("processed_data")
 for i in range(3, 11):
     os.mkdir("processed_data/"+aug_str(i))
 
