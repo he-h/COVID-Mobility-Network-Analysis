@@ -255,3 +255,6 @@ def block_str(tmp):
         return '0' + str(tmp)
 
     return str(tmp)
+
+def process_data_str(tmp):
+    return 'processed_data/'+aug_str(tmp.month)+'/'+aug_str(tmp.day) + '/'

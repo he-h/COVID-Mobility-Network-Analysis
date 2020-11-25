@@ -15,5 +15,4 @@ for i in fips.keys():
     new_loc[i] = [sum(k)/len(loc) for k in zip(*loc)]
     print(new_loc[i])
 
-with open('data/loc.json', 'w') as s:
-    json.dump(new_loc, s)
+

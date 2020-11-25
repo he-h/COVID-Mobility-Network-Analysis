@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from statistics import median
 from matplotlib.lines import Line2D
 import powerlaw
+import json
 import networkx as nx
 # import geopandas as gpd
 
@@ -12,6 +13,8 @@ import networkx as nx
 # Dallas 1922
 # Houston 3362
 
+with open('data/MSAname.json', 'r') as o:
+    name = json.load(o)
 
 class MSA:
     def __init__(self, id, date, device, dest):
@@ -19,8 +22,6 @@ class MSA:
         self.date = date
         self.id = id
 
-        self.device_count = device
-        self.sum_device = sum(device.values())
         self.g = generate_network(dest)
 
         self.flux = total_flux(self.g)
@@ -38,25 +39,25 @@ class MSA:
 
         self.bottleneck = calc_bottleneck_c(self.g, self.thresholds, self.qc)
 
-        self.indegree = []
-        for i in self.g.nodes():
-            self.indegree.append(self.g.degree(i))
-        self.indegree_median = median(self.indegree)
-        self.indegree_25 = np.percentile(self.indegree, 25)
-        self.indegree_75 = np.percentile(self.indegree, 75)
-
-        self.edge_w = []
-        for i in self.g.edges():
-            self.edge_w.append(self.g.edges[i]['weight'])
-        self.edge_w_median = median(self.edge_w)
-        self.edge_w_25 = np.percentile(self.edge_w, 25)
-        self.edge_w_75 = np.percentile(self.edge_w, 75)
-        self.edge_w_ave = self.flux/self.g.number_of_nodes()
-
-        dc = list(self.device_count.values())
-        self.device_median = median(dc)
-        self.device_25 = np.percentile(dc, 25)
-        self.device_75 = np.percentile(dc, 75)
+        # self.indegree = []
+        # for i in self.g.nodes():
+        #     self.indegree.append(self.g.degree(i))
+        # self.indegree_median = median(self.indegree)
+        # self.indegree_25 = np.percentile(self.indegree, 25)
+        # self.indegree_75 = np.percentile(self.indegree, 75)
+        #
+        # self.edge_w = []
+        # for i in self.g.edges():
+        #     self.edge_w.append(self.g.edges[i]['weight'])
+        # self.edge_w_median = median(self.edge_w)
+        # self.edge_w_25 = np.percentile(self.edge_w, 25)
+        # self.edge_w_75 = np.percentile(self.edge_w, 75)
+        # self.edge_w_ave = self.flux/self.g.number_of_nodes()
+        #
+        # dc = list(self.device_count.values())
+        # self.device_median = median(dc)
+        # self.device_25 = np.percentile(dc, 25)
+        # self.device_75 = np.percentile(dc, 75)
 
     def __eq__(self, other):
         return self.date == other.date and self.id == other.id
@@ -65,15 +66,16 @@ class MSA:
         plt.figure()
         figure, axis_1 = plt.subplots()
 
-        axis_1.plot(self.thresholds, self.num_sg, color='grey', label = 'SGC')
         axis_1.axvline(self.qc, linestyle='-.', color='red', label=r'$q_c$')
         axis_1.axvline(self.qcb, linestyle='-.', color='orange', label=r'$q_{c2}$')
+        axis_1.set_ylabel('GC Component size', color='dodgerblue')
+        axis_1.plot(self.thresholds, self.num_g, color='dodgerblue', label='GC')
         axis_1.set_xlabel('thresholds')
-        axis_1.set_ylabel('SGC Component size', color='grey')
 
         axis_2 = axis_1.twinx()
-        axis_2.set_ylabel('GC Component size', color='dodgerblue')
-        axis_2.plot(self.thresholds, self.num_g, color='dodgerblue', label='GC')
+        axis_2.plot(self.thresholds, self.num_sg, color='grey', label='SGC')
+        axis_2.set_ylabel('SGC Component size', color='grey')
+
         lines_1, labels_1 = axis_1.get_legend_handles_labels()
         lines_2, labels_2 = axis_2.get_legend_handles_labels()
 
@@ -178,22 +180,22 @@ class MSA:
     #
     #     return
 
-    def plot_hist(self):
-        plt.figure()
-
-        fit = powerlaw.Fit(self.edge_w)
-        fig2 = fit.plot_pdf(color='peachpuff')
-
-        fit.plot_ccdf(color='royalblue', linewidth=2, ax=fig2)
-
-        fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='--', ax=fig2)
-        labels = ['CCDF', 'PDF']
-        colors = ['royalblue', 'peachpuff']
-        lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
-        plt.legend(lines, labels)
-        plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' CCDF')
-        plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_hist.png')
-        return
+    # def plot_hist(self):
+    #     plt.figure()
+    #
+    #     fit = powerlaw.Fit(self.edge_w)
+    #     fig2 = fit.plot_pdf(color='peachpuff')
+    #
+    #     fit.plot_ccdf(color='royalblue', linewidth=2, ax=fig2)
+    #
+    #     fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='--', ax=fig2)
+    #     labels = ['CCDF', 'PDF']
+    #     colors = ['royalblue', 'peachpuff']
+    #     lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
+    #     plt.legend(lines, labels)
+    #     plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' CCDF')
+    #     plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_hist.png')
+    #     return
 
     def plot_g_sg_device(self):
         plt.figure()

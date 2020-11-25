@@ -4,7 +4,7 @@ from statistics import median
 from matplotlib.lines import Line2D
 from read_file import *
 import matplotlib.pyplot as plt
-# import geopandas as gpd
+from mpl_toolkits.basemap import Basemap as Basemap
 import json
 
 
@@ -14,16 +14,24 @@ import json
 # Dallas 1922
 # Houston 3362
 
+with open('data/pos.json', 'r') as o:
+    pos = json.load(o)
+
 
 class InterMsaG:
-    def __init__(self, date, device, dest):#, msa_qc):
+    def __init__(self, date):#, msa_qc):
         print(date)
         self.date = date
         # self.msa_qc = msa_qc
 
-        self.device_count = device
-        self.sum_device = sum(device.values())
-        self.g = generate_network(dest)
+        dest = pd.read_csv(process_data_str(self.date)+'inter_msa_edge.csv')
+
+        device = pd.read_csv(process_data_str(self.date)+'inter_msa_device.csv')
+        self.device_count = {}
+        for i in device.index:
+            self.device_count[device['msa'][i]] = device['device'][i]
+        self.sum_device = sum(self.device_count.values())
+        self.g = nx.from_pandas_edgelist(dest, 'from', 'to', 'weight', nx.Graph())
 
         self.flux = total_flux(self.g)
 
@@ -71,15 +79,16 @@ class InterMsaG:
         plt.figure()
         figure, axis_1 = plt.subplots()
 
-        axis_1.plot(self.thresholds, self.num_sg, color='grey', label='SGC')
         axis_1.axvline(self.qc, linestyle='-.', color='red', label=r'$q_c$')
         axis_1.axvline(self.qcb, linestyle='-.', color='orange', label=r'$q_{c2}$')
+        axis_1.set_ylabel('GC Component size', color='dodgerblue')
+        axis_1.plot(self.thresholds, self.num_g, color='dodgerblue', label='GC')
         axis_1.set_xlabel('thresholds')
-        axis_1.set_ylabel('SGC Component size', color='grey')
 
         axis_2 = axis_1.twinx()
-        axis_2.set_ylabel('GC Component size', color='dodgerblue')
-        axis_2.plot(self.thresholds, self.num_g, color='dodgerblue', label='GC')
+        axis_2.plot(self.thresholds, self.num_sg, color='grey', label='SGC')
+        axis_2.set_ylabel('SGC Component size', color='grey')
+
         lines_1, labels_1 = axis_1.get_legend_handles_labels()
         lines_2, labels_2 = axis_2.get_legend_handles_labels()
 
@@ -93,94 +102,94 @@ class InterMsaG:
         plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_g_sg_size.png')
         return
 
-    def plot_map(self, g, num):
-        plt.figure()
-        gdf = gpd.read_file('shape_file/tl_2019_us_cbsa/tl_2019_us_cbsa.shp')
-        gdf['GEOID'] = gdf['GEOID'].astype(str)
-        centroids = gdf['geometry'].centroid
-        lons, lats = [list(t) for t in zip(*map(get_xy, centroids))]
-        gdf['longitude'] = lons
-        gdf['latitude'] = lats
-        gdf.to_crs({"init": "epsg:4326"}).plot(color="white", edgecolor="grey", linewidth=0.5, alpha=0.75) #ax=ax
-        mx, my = gdf['longitude'].values, gdf['latitude'].values
-
-        node_size = dict()
-        for i in self.device_count.keys():
-            node_size[i] = self.device_count[i]/100
-
-        pos = dict()
-        for i, elem in enumerate(gdf['GEOID']):
-            pos[elem] = mx[i], my[i]
-
-        cc = list(nx.connected_components(g))
-        cc.sort(key=len, reverse=True)
-
-        largest_cc = g.subgraph(cc[0])
-        ax = plt.gca()
-
-        nx.draw_networkx_nodes(largest_cc, pos=pos, node_color='dodgerblue', node_size=1, alpha=1)
-        for i, j in largest_cc.edges():
-            ax.annotate("",
-                        xy=pos[i], xycoords='data',
-                        xytext=pos[j], textcoords='data',
-                        arrowprops=dict(arrowstyle="-", color='dodgerblue',
-                                        shrinkA=5, shrinkB=5,
-                                        patchA=None, patchB=None,
-                                        connectionstyle="arc3,rad=0.3",
-                                        ),
-                        )
-
-        s_largest_cc = g.subgraph(cc[1])
-        nx.draw_networkx_nodes(s_largest_cc, pos=pos, node_color='mediumspringgreen', node_size=1, alpha=1)
-        for i, j in s_largest_cc.edges():
-            ax.annotate("",
-                        xy=pos[i], xycoords='data',
-                        xytext=pos[j], textcoords='data',
-                        arrowprops=dict(arrowstyle="-", color='mediumspringgreen',
-                                        shrinkA=5, shrinkB=5,
-                                        patchA=None, patchB=None,
-                                        connectionstyle="arc3,rad=0.3",
-                                        ),
-                        )
-
-        bn = nx.Graph()
-        bn.add_edges_from(self.bottleneck)
-        nx.draw_networkx_nodes(bn, pos=pos, node_color='r', node_size=1, alpha=1)
-        for i, j in bn.edges():
-            ax.annotate("",
-                        xy=pos[i], xycoords='data',
-                        xytext=pos[j], textcoords='data',
-                        arrowprops=dict(arrowstyle="-", color='r',
-                                        shrinkA=5, shrinkB=5,
-                                        patchA=None, patchB=None,
-                                        connectionstyle="arc3,rad=0.3",
-                                        ),
-                        )
-        tmp = set()
-        for i in cc[2:]:
-            tmp |= i
-        rest = g.subgraph(tmp)
-        nx.draw_networkx_nodes(rest, pos=pos, node_color='silver', node_size=1, alpha=1)
-        for i, j in rest.edges():
-            ax.annotate("",
-                        xy=pos[i], xycoords='data',
-                        xytext=pos[j], textcoords='data',
-                        arrowprops=dict(arrowstyle="-", color='silver',
-                                        shrinkA=5, shrinkB=5,
-                                        patchA=None, patchB=None,
-                                        connectionstyle="arc3,rad=0.3",
-                                        ),
-                        )
-
-        # manually add legend
-        labels = ['GC', 'SGC', 'Bottleneck', 'Rest']
-        colors = ['dodgerblue', 'mediumspringgreen', 'r', 'silver']
-        lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
-        plt.legend(lines, labels, fontsize=8, loc=0)
-        plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map '+str(num))
-        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_map'+str(num)+'.png')
-
-        return
+    # def plot_map(self, g, num):
+    #     plt.figure()
+    #     gdf = gpd.read_file('shape_file/tl_2019_us_cbsa/tl_2019_us_cbsa.shp')
+    #     gdf['GEOID'] = gdf['GEOID'].astype(str)
+    #     centroids = gdf['geometry'].centroid
+    #     lons, lats = [list(t) for t in zip(*map(get_xy, centroids))]
+    #     gdf['longitude'] = lons
+    #     gdf['latitude'] = lats
+    #     gdf.to_crs({"init": "epsg:4326"}).plot(color="white", edgecolor="grey", linewidth=0.5, alpha=0.75) #ax=ax
+    #     mx, my = gdf['longitude'].values, gdf['latitude'].values
+    #
+    #     node_size = dict()
+    #     for i in self.device_count.keys():
+    #         node_size[i] = self.device_count[i]/100
+    #
+    #     pos = dict()
+    #     for i, elem in enumerate(gdf['GEOID']):
+    #         pos[elem] = mx[i], my[i]
+    #
+    #     cc = list(nx.connected_components(g))
+    #     cc.sort(key=len, reverse=True)
+    #
+    #     largest_cc = g.subgraph(cc[0])
+    #     ax = plt.gca()
+    #
+    #     nx.draw_networkx_nodes(largest_cc, pos=pos, node_color='dodgerblue', node_size=1, alpha=1)
+    #     for i, j in largest_cc.edges():
+    #         ax.annotate("",
+    #                     xy=pos[i], xycoords='data',
+    #                     xytext=pos[j], textcoords='data',
+    #                     arrowprops=dict(arrowstyle="-", color='dodgerblue',
+    #                                     shrinkA=5, shrinkB=5,
+    #                                     patchA=None, patchB=None,
+    #                                     connectionstyle="arc3,rad=0.3",
+    #                                     ),
+    #                     )
+    #
+    #     s_largest_cc = g.subgraph(cc[1])
+    #     nx.draw_networkx_nodes(s_largest_cc, pos=pos, node_color='mediumspringgreen', node_size=1, alpha=1)
+    #     for i, j in s_largest_cc.edges():
+    #         ax.annotate("",
+    #                     xy=pos[i], xycoords='data',
+    #                     xytext=pos[j], textcoords='data',
+    #                     arrowprops=dict(arrowstyle="-", color='mediumspringgreen',
+    #                                     shrinkA=5, shrinkB=5,
+    #                                     patchA=None, patchB=None,
+    #                                     connectionstyle="arc3,rad=0.3",
+    #                                     ),
+    #                     )
+    #
+    #     bn = nx.Graph()
+    #     bn.add_edges_from(self.bottleneck)
+    #     nx.draw_networkx_nodes(bn, pos=pos, node_color='r', node_size=1, alpha=1)
+    #     for i, j in bn.edges():
+    #         ax.annotate("",
+    #                     xy=pos[i], xycoords='data',
+    #                     xytext=pos[j], textcoords='data',
+    #                     arrowprops=dict(arrowstyle="-", color='r',
+    #                                     shrinkA=5, shrinkB=5,
+    #                                     patchA=None, patchB=None,
+    #                                     connectionstyle="arc3,rad=0.3",
+    #                                     ),
+    #                     )
+    #     tmp = set()
+    #     for i in cc[2:]:
+    #         tmp |= i
+    #     rest = g.subgraph(tmp)
+    #     nx.draw_networkx_nodes(rest, pos=pos, node_color='silver', node_size=1, alpha=1)
+    #     for i, j in rest.edges():
+    #         ax.annotate("",
+    #                     xy=pos[i], xycoords='data',
+    #                     xytext=pos[j], textcoords='data',
+    #                     arrowprops=dict(arrowstyle="-", color='silver',
+    #                                     shrinkA=5, shrinkB=5,
+    #                                     patchA=None, patchB=None,
+    #                                     connectionstyle="arc3,rad=0.3",
+    #                                     ),
+    #                     )
+    #
+    #     # manually add legend
+    #     labels = ['GC', 'SGC', 'Bottleneck', 'Rest']
+    #     colors = ['dodgerblue', 'mediumspringgreen', 'r', 'silver']
+    #     lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
+    #     plt.legend(lines, labels, fontsize=8, loc=0)
+    #     plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map '+str(num))
+    #     plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_map'+str(num)+'.png')
+    #
+    #     return
 
     def plot_hist(self):
         plt.figure()
@@ -203,15 +212,17 @@ class InterMsaG:
         plt.figure()
         figure, axis_1 = plt.subplots()
 
-        axis_1.plot(self.thresholds, self.dev_sg, color='grey', label='SGC')
         axis_1.axvline(self.qc, linestyle='-.', color='red', label=r'$q_c$')
+        axis_1.set_ylabel('GC device count', color='dodgerblue')
+        axis_1.plot(self.thresholds, self.dev_g, color='dodgerblue', label='GC')
         axis_1.axvline(self.qcb, linestyle='-.', color='orange', label=r'$q_{c2}$')
         axis_1.set_xlabel('thresholds')
         axis_1.set_ylabel('SGC device count', color='grey')
 
         axis_2 = axis_1.twinx()
-        axis_2.set_ylabel('GC device count', color='dodgerblue')
-        axis_2.plot(self.thresholds, self.dev_g, color='dodgerblue', label='GC')
+        axis_2.plot(self.thresholds, self.dev_sg, color='grey', label='SGC')
+        axis_2.set_ylabel('SGC device count', color='grey')
+
         lines_1, labels_1 = axis_1.get_legend_handles_labels()
         lines_2, labels_2 = axis_2.get_legend_handles_labels()
 
@@ -246,3 +257,105 @@ class InterMsaG:
     #     plt.title('Sum of remaining MSAs device count ' + self.date.strftime('%m/%d'))
     #     plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_MSAs_device.png')
     #     return
+
+    def plot_map(self, g):
+        plt.figure()
+        m = Basemap(
+            projection='merc',
+            llcrnrlon=-130,
+            llcrnrlat=25,
+            urcrnrlon=-60,
+            urcrnrlat=50,
+            lat_ts=0,
+            resolution='l',
+            suppress_ticks=True)
+
+        m.drawcountries(linewidth=3)
+        m.drawstates(linewidth=0.2)
+        m.drawcoastlines(linewidth=1)
+        m.fillcontinents(alpha=0.3)
+        # m.drawcounties(linewidth=0.1)
+
+        x, y = [], []
+        for i in pos.keys():
+            x.append(pos[i][0])
+            y.append(pos[i][1])
+        mx, my = m(x, y)
+        pos1 = dict()
+        for i, j in enumerate(pos.keys()):
+            pos1[int(j)] = (mx[i], my[i])
+
+        cc = list(nx.connected_components(g))
+        cc.sort(key=len, reverse=True)
+        ax = plt.gca()
+
+        g0 = g.subgraph(cc[0])
+        nx.draw_networkx_nodes(G=g0, node_color='cornflowerblue', nodelist=g0.nodes(), pos=pos1, alpha=1,
+                               node_size=[(self.device_count[i]/100)**(1/2) for i in g0.nodes()])
+        for i, j in g0.edges():
+            ax.annotate("",
+                        xy=pos1[i], xycoords='data',
+                        xytext=pos1[j], textcoords='data',
+                        arrowprops=dict(arrowstyle="-", color='cornflowerblue',
+                                        shrinkA=5, shrinkB=5,
+                                        patchA=None, patchB=None,
+                                        connectionstyle="arc3,rad=0.3",
+                                        ),
+                        )
+
+        g1 = g.subgraph(cc[1])
+        nx.draw_networkx_nodes(G=g1, node_color='peachpuff', nodelist=g1.nodes(), pos=pos1, alpha=1,
+                               node_size=[(self.device_count[i]/100)**(1/2) for i in g1.nodes()])
+        for i, j in g1.edges():
+            ax.annotate("",
+                        xy=pos1[i], xycoords='data',
+                        xytext=pos1[j], textcoords='data',
+                        arrowprops=dict(arrowstyle="-", color='peachpuff',
+                                        shrinkA=5, shrinkB=5,
+                                        patchA=None, patchB=None,
+                                        connectionstyle="arc3,rad=0.3",
+                                        ),
+                        )
+
+        bn = nx.Graph()
+        bn.add_edges_from(self.bottleneck)
+        nx.draw_networkx_nodes(G=bn, node_color='r', nodelist=bn.nodes(), pos=pos1, alpha=1,
+                               node_size=[(self.device_count[i]/100) ** (1 / 2) for i in bn.nodes()])
+        for i, j in bn.edges():
+            ax.annotate("",
+                        xy=pos1[i], xycoords='data',
+                        xytext=pos1[j], textcoords='data',
+                        arrowprops=dict(arrowstyle="-", color='r',
+                                        shrinkA=5, shrinkB=5,
+                                        patchA=None, patchB=None,
+                                        connectionstyle="arc3,rad=0.3",
+                                        ),
+                        )
+
+        tmp = set()
+        for i in cc[2:]:
+            if len(i) > 1:
+                tmp |= i
+        g2 = g.subgraph(tmp)
+        nx.draw_networkx_nodes(G=g2, node_color='silver', nodelist=g2.nodes(), pos=pos1, alpha=1,
+                               node_size=[(self.device_count[i]/100) ** (1 / 2) for i in g2.nodes()])
+        for i, j in g2.edges():
+            ax.annotate("",
+                        xy=pos1[i], xycoords='data',
+                        xytext=pos1[j], textcoords='data',
+                        arrowprops=dict(arrowstyle="-", color='silver',
+                                        shrinkA=5, shrinkB=5,
+                                        patchA=None, patchB=None,
+                                        connectionstyle="arc3,rad=0.3",
+                                        ),
+                        )
+
+        labels = ['GC', 'SGC', 'Bottleneck', 'Rest']
+        colors = ['cornflowerblue', 'peachpuff', 'r', 'silver']
+        lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
+        plt.tight_layout()
+        plt.legend(lines, labels, fontsize=8, loc=0)
+        plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map')
+        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_map.png')
+
+        return

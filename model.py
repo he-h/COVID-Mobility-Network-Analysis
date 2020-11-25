@@ -1,5 +1,6 @@
 import networkx as nx
 import numpy as np
+import matplotlib.pyplot as plt
 
 max_w = 40
 
@@ -264,3 +265,16 @@ def get_xy(pt):
 #                 bc.add((i, j))
 #
 #     return bc
+
+def plt_edge(g, color):
+    ax = plt.gca()
+    for i, j in g.edges():
+        ax.annotate("",
+                    xy=pos[i], xycoords='data',
+                    xytext=pos[j], textcoords='data',
+                    arrowprops=dict(arrowstyle="-", color='silver',
+                                    shrinkA=5, shrinkB=5,
+                                    patchA=None, patchB=None,
+                                    connectionstyle="arc3,rad=0.3",
+                                    ),
+                    )
