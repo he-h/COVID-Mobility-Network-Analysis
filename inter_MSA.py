@@ -19,21 +19,30 @@ with open('data/pos.json', 'r') as o:
 
 
 class InterMsaG:
-    def __init__(self, date):#, msa_qc):
-        print(date)
+    # def __init__(self, date):#, msa_qc):
+    #     print(date)
+    #     self.date = date
+    #     # self.msa_qc = msa_qc
+    #
+    #     dest = pd.read_csv(process_data_str(self.date)+'inter_msa_edge.csv')
+    #
+    #     device = pd.read_csv(process_data_str(self.date)+'inter_msa_device.csv')
+    #     self.device_count = {}
+    #     for i in device.index:
+    #         self.device_count[device['msa'][i]] = device['device'][i]
+    #     self.g = nx.from_pandas_edgelist(dest, 'from', 'to', 'weight', nx.Graph())
+    #
+    #     self.setup()
+
+    def __init__(self, date, dest, device):
         self.date = date
-        # self.msa_qc = msa_qc
+        self.device_count = device
+        self.g = generate_network(dest)
+        self.setup()
 
-        dest = pd.read_csv(process_data_str(self.date)+'inter_msa_edge.csv')
-
-        device = pd.read_csv(process_data_str(self.date)+'inter_msa_device.csv')
-        self.device_count = {}
-        for i in device.index:
-            self.device_count[device['msa'][i]] = device['device'][i]
-        self.sum_device = sum(self.device_count.values())
-        self.g = nx.from_pandas_edgelist(dest, 'from', 'to', 'weight', nx.Graph())
-
+    def setup(self):
         self.flux = total_flux(self.g)
+        self.sum_device = sum(self.device_count.values())
 
         # calculate qc and following features
         self.thresholds = np.arange(10, 1000, 5)
@@ -74,6 +83,9 @@ class InterMsaG:
 
     def __eq__(self, other):
         return self.date == other.date
+
+    def result_dir(self):
+        return 'results/'+aug_str(self.date.month)+'/'+aug_str(self.date.day) + '/'
 
     def plot_g_sg(self):
         plt.figure()
@@ -267,7 +279,7 @@ class InterMsaG:
             urcrnrlon=-60,
             urcrnrlat=50,
             lat_ts=0,
-            resolution='l',
+            resolution='i',
             suppress_ticks=True)
 
         m.drawcountries(linewidth=3)
@@ -283,7 +295,7 @@ class InterMsaG:
         mx, my = m(x, y)
         pos1 = dict()
         for i, j in enumerate(pos.keys()):
-            pos1[int(j)] = (mx[i], my[i])
+            pos1[j] = (mx[i], my[i])
 
         cc = list(nx.connected_components(g))
         cc.sort(key=len, reverse=True)
@@ -291,7 +303,7 @@ class InterMsaG:
 
         g0 = g.subgraph(cc[0])
         nx.draw_networkx_nodes(G=g0, node_color='cornflowerblue', nodelist=g0.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/100)**(1/2) for i in g0.nodes()])
+                               node_size=[(self.device_count[i]/200)**(1/2) for i in g0.nodes()])
         for i, j in g0.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
@@ -304,9 +316,23 @@ class InterMsaG:
                         )
 
         g1 = g.subgraph(cc[1])
-        nx.draw_networkx_nodes(G=g1, node_color='peachpuff', nodelist=g1.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/100)**(1/2) for i in g1.nodes()])
+        nx.draw_networkx_nodes(G=g1, node_color='lightgreen', nodelist=g1.nodes(), pos=pos1, alpha=1,
+                               node_size=[(self.device_count[i]/200)**(1/2) for i in g1.nodes()])
         for i, j in g1.edges():
+            ax.annotate("",
+                        xy=pos1[i], xycoords='data',
+                        xytext=pos1[j], textcoords='data',
+                        arrowprops=dict(arrowstyle="-", color='lightgreen',
+                                        shrinkA=5, shrinkB=5,
+                                        patchA=None, patchB=None,
+                                        connectionstyle="arc3,rad=0.3",
+                                        ),
+                        )
+
+        g2 = g.subgraph(cc[2])
+        nx.draw_networkx_nodes(G=g2, node_color='peachpuff', nodelist=g2.nodes(), pos=pos1, alpha=1,
+                               node_size=[(self.device_count[i] / 200) ** (1 / 2) for i in g2.nodes()])
+        for i, j in g2.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
                         xytext=pos1[j], textcoords='data',
@@ -319,8 +345,9 @@ class InterMsaG:
 
         bn = nx.Graph()
         bn.add_edges_from(self.bottleneck)
+        print(self.bottleneck)
         nx.draw_networkx_nodes(G=bn, node_color='r', nodelist=bn.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/100) ** (1 / 2) for i in bn.nodes()])
+                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in bn.nodes()])
         for i, j in bn.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
@@ -333,12 +360,12 @@ class InterMsaG:
                         )
 
         tmp = set()
-        for i in cc[2:]:
+        for i in cc[3:]:
             if len(i) > 1:
                 tmp |= i
         g2 = g.subgraph(tmp)
         nx.draw_networkx_nodes(G=g2, node_color='silver', nodelist=g2.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/100) ** (1 / 2) for i in g2.nodes()])
+                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in g2.nodes()])
         for i, j in g2.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
@@ -354,7 +381,7 @@ class InterMsaG:
         colors = ['cornflowerblue', 'peachpuff', 'r', 'silver']
         lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
         plt.tight_layout()
-        plt.legend(lines, labels, fontsize=8, loc=0)
+        plt.legend(lines, labels, fontsize=8, loc=4)
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map')
         plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_map.png')
 

@@ -1,13 +1,6 @@
 from plot import *
 from whole_network import *
 import json
-# import datedelta
-
-# NY NJ PA 5602
-# LA 4472
-# Chicago 1602
-# Dallas 1922
-# Houston 3362
 
 
 '''
@@ -36,9 +29,13 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    date = dt.date(2020,4,1)
-    tmp = InterMsaG(date)
-    tmp.plot_map(tmp.g_perco)
+    date = dt.date(2020,3,4)
+    while (date < dt.date(2020,3,5)):
+        device_count, dest, MSA_dest = read_files_whole(date)
+        tmp = InterMsaG(date, dest, device_count)
+        tmp.plot_map(tmp.g_perco)
+        tmp.plot_g_sg()
+        date += dt.timedelta(days=28)
     # start = dt.date(2020, 9, 8)
     # end = dt.date(2020, 9, 9)
     #

@@ -3,7 +3,7 @@ from read_file import *
 import os
 from whole_network import read_files_whole
 
-date = dt.date(2020, 7, 22)
+date = dt.date(2020, 3, 8)
 
 
 def aug_file(date):
