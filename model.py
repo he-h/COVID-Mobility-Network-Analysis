@@ -125,19 +125,35 @@ This function is to calculate the number of elements in largest and second large
 '''
 
 
-def calc_g_sg(g, thresholds, d1):
+def calc_g_sg(g, start, interval, d1=None):
+    node_size = len(g.nodes())
+    tmp_g = node_size
 
+    tmp_t = start
+    thresholds = []
     num_g = []
     num_sg = []
     dev_g = []
     dev_sg = []
+    num_rest = []
 
-    for i in thresholds:
-        tmp_n = generate_network_threshold(g, i)
+    while tmp_g > node_size/100 and tmp_g != 1:
+
+        tmp_n = generate_network_threshold(g, tmp_t)
         scc = sorted(list(nx.connected_components(tmp_n)), key=len, reverse=True)
         tmp_g, tmp_sg = num_g_sg(scc)
         num_g.append(tmp_g)
         num_sg.append(tmp_sg)
+        if len(scc) < 2:
+            num_rest.append(0)
+        else:
+            num_rest.append(sum(map(len, scc[1:]))/(len(scc)-1))
+
+        thresholds.append(tmp_t)
+        tmp_t += interval
+
+        if d1 is None:
+            continue
         if len(scc) != 0:
             dev_g.append(sum_device(scc[0], d1))
             if len(scc) == 1:
@@ -148,7 +164,7 @@ def calc_g_sg(g, thresholds, d1):
             dev_sg.append(0)
             dev_g.append(0)
 
-    return num_g, num_sg, dev_g, dev_sg
+    return thresholds, num_g, num_sg, num_rest, dev_g, dev_sg
 
 
 '''

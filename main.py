@@ -1,6 +1,5 @@
 from plot import *
 from whole_network import *
-import json
 
 
 '''
@@ -29,20 +28,32 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    date = dt.date(2020,3,4)
-    while (date < dt.date(2020,3,5)):
-        device_count, dest, MSA_dest = read_files_whole(date)
-        tmp = InterMsaG(date, dest, device_count)
-        tmp.plot_map(tmp.g_perco)
-        tmp.plot_g_sg()
+    date = dt.date(2020,1,8)
+    while (date < dt.date(2020,11,1)):
+        # device_count, dest, MSA_dest = read_files_whole(date)
+        # tmp = InterMsaG(date, dest, device_count)
+        # tmp.plot_map(tmp.g_perco)
+        # tmp.plot_g_sg()
+        # tmp.plot_g_sg_c()
+        msa = ['35620', '31080', '16980', '19100', '26420', '47900', '33100', '37980', '12060', '38060']
+        tmp = Nation(date)
+        tmp.interMSA.plot_msa_qc()
+        tmp.interMSA.plot_map(tmp.interMSA.g_perco)
+        tmp.interMSA.plot_g_sg()
+        tmp.interMSA.plot_g_sg_device()
+        tmp.interMSA.plot_hist()
+        for i in msa:
+            tmp.MSAs[i].plot_g_sg()
+            tmp.MSAs[i].plot_g_sg_device()
+            tmp.MSAs[i].plot_g_sg_c()
         date += dt.timedelta(days=28)
     # start = dt.date(2020, 9, 8)
     # end = dt.date(2020, 9, 9)
     #
     # tmp = start
     #
-    # msa = ['1602', '1922', '3362', '4472', '5602']
-    # msa_p = ['interMSA', '1602', '1922', '3362', '4472', '5602']
+    # msa = ['35620', '31080', '16980', '19100', '26420', '47900', '33100', '37980', '12060', '38060']
+    # msa_p = ['interMSA', '35620', '31080', '16980', '19100', '26420', '47900', '33100', '37980', '12060', '38060']
     # dates = []
     # datas = dict()
     # for i in msa_p:

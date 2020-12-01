@@ -1,5 +1,6 @@
 from inner_MSA import *
 from inter_MSA import *
+import csv
 
 
 def file_whole(path):
@@ -41,12 +42,12 @@ def file_whole(path):
                     dest[tmp] += dests[i]
                 else:
                     dest[tmp] = dests[i]
-            # else:
-            #     tmp = tuple(sorted([block, str_i]))
-            #     if tmp in m_dest[block_m].keys():
-            #         m_dest[block_m][tmp] += dests[i]
-            #     else:
-            #         m_dest[block_m][tmp] = dests[i]
+            else:
+                tmp = tuple(sorted([block, str_i]))
+                if tmp in m_dest[block_m].keys():
+                    m_dest[block_m][tmp] += dests[i]
+                else:
+                    m_dest[block_m][tmp] = dests[i]
 
     return device_count, dest, m_dest
 
@@ -82,19 +83,28 @@ class Nation:
         self.date = date
         device_count, dest, MSA_dest = read_files_whole(date)
 
-        # self.MSAs = default_MSAs_dict()
-        # null_msa = set()
-        # for i in self.MSAs.keys():
-        #     if len(MSA_device[i]) == 0:
-        #         null_msa.add(i)
-        #         continue
-        #     self.MSAs[i] = MSA(i, date, MSA_device[i], MSA_dest[i])
-        #
-        # Msa_qc = default_MSAs_dict()
-        # for i in Msa_qc.keys():
-        #     if i in null_msa:
-        #         Msa_qc[i] = 0
-        #     else:
-        #         Msa_qc[i] = self.MSAs[i].qc
+        self.MSAs = default_MSAs_dict()
+        null_msa = set()
 
-        self.interMSA = InterMsaG(date, device_count, dest)#, Msa_qc)
+        qcs = []
+
+        for i in self.MSAs.keys():
+            self.MSAs[i] = MSA(i, date, MSA_dest[i])
+            qcs.append([i, self.MSAs[i].qc, self.MSAs[i].qcb, self.MSAs[i].qcc, self.MSAs[i].thresholds[-1]])
+
+        with open('qc/'+self.date.strftime('%m_%d')+'.csv', mode='x') as edges:
+
+            csvwriter = csv.writer(edges)
+
+            csvwriter.writerow(['msa', 'qc', 'qc', 'qcc', 'qcf'])
+            for i in qcs:
+                csvwriter.writerow(i)
+
+        Msa_qc = default_MSAs_dict()
+        for i in Msa_qc.keys():
+            if i in null_msa:
+                Msa_qc[i] = 0
+            else:
+                Msa_qc[i] = self.MSAs[i].qc
+
+        self.interMSA = InterMsaG(date, dest, device_count, Msa_qc)

@@ -7,17 +7,23 @@ import json
 import networkx as nx
 # import geopandas as gpd
 
-# NY NJ PA 5602
-# LA 4472
-# Chicago 1602
-# Dallas 1922
-# Houston 3362
+# 35620,"New York-Newark-Jersey City, NY-NJ-PA"
+# 31080,"Los Angeles-Long Beach-Anaheim, CA"
+# 16980,"Chicago-Naperville-Elgin, IL-IN-WI"
+# 19100,"Dallas-Fort Worth-Arlington, TX"
+# 26420,"Houston-The Woodlands-Sugar Land, TX"
+# 47900,"Washington-Arlington-Alexandria, DC-VA-MD-WV"
+# 33100,"Miami-Fort Lauderdale-Pompano Beach, FL"
+# 37980,"Philadelphia-Camden-Wilmington, PA-NJ-DE-MD"
+# 12060,"Atlanta-Sandy Springs-Alpharetta, GA"
+# 38060,"Phoenix-Mesa-Chandler, AZ"
 
 with open('data/MSAname.json', 'r') as o:
     name = json.load(o)
 
+
 class MSA:
-    def __init__(self, id, date, device, dest):
+    def __init__(self, id, date, dest):
         print(date, id)
         self.date = date
         self.id = id
@@ -26,15 +32,21 @@ class MSA:
 
         self.flux = total_flux(self.g)
 
-        # calculate qc and following features
-        self.thresholds = np.arange(2, 75, .25)
+        if self.flux == 0:
+            self.qc = 0
+            self.qcb = 0
+            return
 
-        self.num_g, self.num_sg, self.dev_g, self.dev_sg = calc_g_sg(self.g, self.thresholds, device)
+        # calculate qc and following features
+
+        self.thresholds, self.num_g, self.num_sg, self.num_r, self.dev_g, self.dev_sg = calc_g_sg(self.g, 2, .25)
         index_qc, index_qcb = l_sl_value(self.num_sg)
 
         self.gc_node_size = self.num_g[index_qc]
         self.qc = self.thresholds[index_qc]
         self.qcb = self.thresholds[index_qcb]
+        self.qcc = self.thresholds[[i for i, j in enumerate(self.num_r) if j == max(self.num_r)][0]]
+
         self.g_perco = generate_network_threshold(self.g, self.qc)
 
         self.bottleneck = calc_bottleneck_c(self.g, self.thresholds, self.qc)
@@ -84,118 +96,10 @@ class MSA:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' percolation component size')
+        plt.title(name[str(self.id)]+' '+self.date.strftime('%m/%d')+' percolation component size')
 
         plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_g_sg_size.png')
         return
-
-    # def plot_map(self):
-    #     plt.figure()
-    #     gdf = gpd.read_file('shape_file/tl_2019_us_cbsa/tl_2019_us_cbsa.shp')
-    #     gdf['GEOID'] = gdf['GEOID'].astype(str)
-    #     centroids = gdf['geometry'].centroid
-    #     lons, lats = [list(t) for t in zip(*map(get_xy, centroids))]
-    #     gdf['longitude'] = lons
-    #     gdf['latitude'] = lats
-    #     gdf.to_crs({"init": "epsg:4326"}).plot(color="white", edgecolor="grey", linewidth=0.5, alpha=0.75) #ax=ax
-    #     mx, my = gdf['longitude'].values, gdf['latitude'].values
-    #
-    #     node_size = dict()
-    #     for i in self.device_count.keys():
-    #         node_size[i] = self.device_count[i]/100
-    #
-    #     pos = dict()
-    #     for i, elem in enumerate(gdf['GEOID']):
-    #         pos[elem] = mx[i], my[i]
-    #
-    #     cc = list(nx.connected_components(self.g_perco))
-    #     cc.sort(key=len, reverse=True)
-    #
-    #     largest_cc = self.g_perco.subgraph(cc[0])
-    #     ax = plt.gca()
-    #
-    #     nx.draw_networkx_nodes(largest_cc, pos=pos, node_color='dodgerblue', node_size=node_size, alpha=1)
-    #     for i, j in largest_cc.edges():
-    #         ax.annotate("",
-    #                     xy=pos[i], xycoords='data',
-    #                     xytext=pos[j], textcoords='data',
-    #                     arrowprops=dict(arrowstyle="-", color='dodgerblue',
-    #                                     shrinkA=5, shrinkB=5,
-    #                                     patchA=None, patchB=None,
-    #                                     connectionstyle="arc3,rad=0.3",
-    #                                     ),
-    #                     )
-    #
-    #     s_largest_cc = self.g_perco.subgraph(cc[1])
-    #     nx.draw_networkx_nodes(s_largest_cc, pos=pos, node_color='mediumspringgreen', node_size=node_size, alpha=1)
-    #     for i, j in s_largest_cc.edges():
-    #         ax.annotate("",
-    #                     xy=pos[i], xycoords='data',
-    #                     xytext=pos[j], textcoords='data',
-    #                     arrowprops=dict(arrowstyle="-", color='mediumspringgreen',
-    #                                     shrinkA=5, shrinkB=5,
-    #                                     patchA=None, patchB=None,
-    #                                     connectionstyle="arc3,rad=0.3",
-    #                                     ),
-    #                     )
-    #
-    #     bn = nx.Graph()
-    #     bn.add_edges_from(self.bottleneck)
-    #     nx.draw_networkx_nodes(bn, pos=pos, node_color='r', node_size=node_size, alpha=1)
-    #     for i, j in bn.edges():
-    #         ax.annotate("",
-    #                     xy=pos[i], xycoords='data',
-    #                     xytext=pos[j], textcoords='data',
-    #                     arrowprops=dict(arrowstyle="-", color='r',
-    #                                     shrinkA=5, shrinkB=5,
-    #                                     patchA=None, patchB=None,
-    #                                     connectionstyle="arc3,rad=0.3",
-    #                                     ),
-    #                     )
-    #
-        # tmp = set()
-        # for i in cc[2:]:
-        #     tmp.add(i)
-        # rest = self.g_perco.subgraph(tmp)
-    #     nx.draw_networkx_nodes(rest, pos=pos, node_color='silver', node_size=node_size, alpha=1)
-    #     for i, j in rest.edges():
-    #         ax.annotate("",
-    #                     xy=pos[i], xycoords='data',
-    #                     xytext=pos[j], textcoords='data',
-    #                     arrowprops=dict(arrowstyle="-", color='silver',
-    #                                     shrinkA=5, shrinkB=5,
-    #                                     patchA=None, patchB=None,
-    #                                     connectionstyle="arc3,rad=0.3",
-    #                                     ),
-    #                     )
-    #
-    #     # manually add legend
-    #     labels = ['GC', 'SGC', 'Bottleneck', 'Rest']
-    #     colors = ['dodgerblue', 'mediumspringgreen', 'r', 'silver']
-    #     lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
-    #     plt.legend(lines, labels, fontsize=8, loc=0)
-    #     plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' map')
-    #
-    #     plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_map.png')
-    #
-    #     return
-
-    # def plot_hist(self):
-    #     plt.figure()
-    #
-    #     fit = powerlaw.Fit(self.edge_w)
-    #     fig2 = fit.plot_pdf(color='peachpuff')
-    #
-    #     fit.plot_ccdf(color='royalblue', linewidth=2, ax=fig2)
-    #
-    #     fit.power_law.plot_ccdf(color='cornflowerblue', linestyle='--', ax=fig2)
-    #     labels = ['CCDF', 'PDF']
-    #     colors = ['royalblue', 'peachpuff']
-    #     lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
-    #     plt.legend(lines, labels)
-    #     plt.title('MSA '+str(self.id)+' '+self.date.strftime('%m/%d')+' CCDF')
-    #     plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_hist.png')
-    #     return
 
     def plot_g_sg_device(self):
         plt.figure()
@@ -218,7 +122,34 @@ class MSA:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title('MSA ' + str(self.id) + ' ' + self.date.strftime('%m/%d') + ' percolation device count')
+        plt.title(name[str(self.id)] + ' ' + self.date.strftime('%m/%d') + ' percolation device count')
 
         plt.savefig('results/' + str(self.id) + '/' + self.date.strftime('%m_%d') + '_g_sg_device.png')
+        return
+
+    def plot_g_sg_c(self):
+        plt.figure()
+        figure, axis_1 = plt.subplots()
+
+        axis_1.axvline(self.qcc, linestyle='-.', color='red', label=r'$q_c$')
+        axis_1.axvline(self.thresholds[-1], linestyle='-.', color='orange', label=r'$q_{c2}$')
+        axis_1.set_ylabel('GC Component size', color='dodgerblue')
+        axis_1.plot(self.thresholds, self.num_g, color='dodgerblue', label='GC')
+        axis_1.set_xlabel('thresholds')
+
+        axis_2 = axis_1.twinx()
+        axis_2.plot(self.thresholds, self.num_r, color='grey', label='RGC')
+        axis_2.set_ylabel('Average rest Component size', color='grey')
+
+        lines_1, labels_1 = axis_1.get_legend_handles_labels()
+        lines_2, labels_2 = axis_2.get_legend_handles_labels()
+
+        lines = lines_1 + lines_2
+        labels = labels_1 + labels_2
+
+        axis_1.legend(lines, labels, loc=0)
+
+        plt.title(name[str(self.id)] + ' ' + self.date.strftime('%m/%d') + ' continuous component size')
+
+        plt.savefig('results/' + str(self.id) + '/' + self.date.strftime('%m_%d') + '_g_rg_size.png')
         return
