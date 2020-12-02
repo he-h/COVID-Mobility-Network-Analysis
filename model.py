@@ -282,15 +282,20 @@ def get_xy(pt):
 #
 #     return bc
 
-def plt_edge(g, color):
-    ax = plt.gca()
-    for i, j in g.edges():
-        ax.annotate("",
-                    xy=pos[i], xycoords='data',
-                    xytext=pos[j], textcoords='data',
-                    arrowprops=dict(arrowstyle="-", color='silver',
-                                    shrinkA=5, shrinkB=5,
-                                    patchA=None, patchB=None,
-                                    connectionstyle="arc3,rad=0.3",
-                                    ),
-                    )
+def calc_bn_set_diff(g_b, g):
+    bn = set()
+    g_b_1 = g_b.subgraph(sorted(list(nx.connected_components(g_b)), key=len, reverse=True)[0])
+    g_b_link = set(g_b_1.edges())
+    tmp = sorted(list(nx.connected_components(g)), key=len, reverse=True)
+    g_1, g_2 = tmp[0], tmp[1]
+
+    for i, j in g_b_link.difference(set(g.edges())):
+        if (i in g_1 and j in g_1) or (i in g_2 and j in g_2):
+            continue
+
+        if g_b_1.degree(i) == 1 or g_b_1.degree(j) == 1:
+            continue
+
+        bn.add((i,j))
+
+    return bn

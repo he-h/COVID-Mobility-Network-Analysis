@@ -34,11 +34,12 @@ class InterMsaG:
     #
     #     self.setup()
 
-    def __init__(self, date, dest, device, qc):
+    def __init__(self, date, dest, device):#, qc):
+        print(date)
         self.date = date
         self.device_count = device
         self.g = generate_network(dest)
-        self.msa_qc = qc
+        # self.msa_qc = qc
         self.setup()
 
     def setup(self):
@@ -49,6 +50,7 @@ class InterMsaG:
 
         self.thresholds, self.num_g, self.num_sg, self.num_r, self.dev_g, self.dev_sg = calc_g_sg(self.g, 10, 5, self.device_count)
         index_qc, index_qcb = l_sl_value(self.num_sg)
+        interval = self.thresholds[1] - self.thresholds[0]
 
         self.gc_node_size = self.num_g[index_qc]
         self.qc = self.thresholds[index_qc]
@@ -58,8 +60,10 @@ class InterMsaG:
         self.g_perco = generate_network_threshold(self.g, self.qc)
         self.g_perco_1 = generate_network_threshold(self.g, self.qcb)
 
-        self.bottleneck = calc_bottleneck_c(self.g, self.thresholds, self.qc)
-        self.bottleneck1 = calc_bottleneck_c(self.g, self.thresholds, self.qcb)
+        # self.bottleneck = calc_bottleneck_c(self.g, self.thresholds, self.qc)
+        # self.bottleneck1 = calc_bottleneck_c(self.g, self.thresholds, self.qcb)
+        self.bottleneck = calc_bn_set_diff(generate_network_threshold(self.g, self.qc-interval), generate_network_threshold(self.g, self.qc))
+        self.bottleneck1 = calc_bn_set_diff(generate_network_threshold(self.g, self.qcb-interval), generate_network_threshold(self.g, self.qcb))
 
         self.indegree = []
         for i in self.g.nodes():
@@ -114,7 +118,7 @@ class InterMsaG:
 
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' percolation component size')
 
-        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_g_sg_size.png')
+        plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_g_sg_size.png')
         return
 
     def plot_g_sg_c(self):
@@ -141,7 +145,7 @@ class InterMsaG:
 
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' continuous component size')
 
-        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_g_rg_size.png')
+        plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_g_rg_size.png')
         return
 
     def plot_hist(self):
@@ -158,7 +162,7 @@ class InterMsaG:
         lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
         plt.legend(lines, labels)
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' CCDF')
-        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_hist.png')
+        plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_hist.png')
         return
 
     def plot_g_sg_device(self):
@@ -186,7 +190,7 @@ class InterMsaG:
 
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' percolation device count')
 
-        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_g_sg_device.png')
+        plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_g_sg_device.png')
         return
 
     def plot_msa_qc(self):
@@ -208,7 +212,7 @@ class InterMsaG:
         plt.ylabel('device count')
 
         plt.title('Sum of remaining MSAs device count ' + self.date.strftime('%m/%d'))
-        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_MSAs_device.png')
+        plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_MSAs_device.png')
         return
 
     def plot_qc_map(self):
@@ -264,7 +268,7 @@ class InterMsaG:
 
         plt.legend()
         plt.title('MSA qc map ' + self.date.strftime('%m/%d'))
-        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_MSAs_qc_map.png')
+        plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_MSAs_qc_map.png')
         return
 
     def plot_map(self, g):
@@ -340,15 +344,18 @@ class InterMsaG:
                                         ),
                         )
 
-        bn = nx.Graph()
-        bn.add_edges_from(self.bottleneck)
-        nx.draw_networkx_nodes(G=bn, node_color='r', nodelist=bn.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in bn.nodes()])
-        for i, j in bn.edges():
+        tmp = set()
+        for i in cc[3:]:
+            if len(i) > 1:
+                tmp |= i
+        g2 = g.subgraph(tmp)
+        nx.draw_networkx_nodes(G=g2, node_color='silver', nodelist=g2.nodes(), pos=pos1, alpha=1,
+                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in g2.nodes()])
+        for i, j in g2.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
                         xytext=pos1[j], textcoords='data',
-                        arrowprops=dict(arrowstyle="-", color='r',
+                        arrowprops=dict(arrowstyle="-", color='silver',
                                         shrinkA=5, shrinkB=5,
                                         patchA=None, patchB=None,
                                         connectionstyle="arc3,rad=0.3",
@@ -370,18 +377,15 @@ class InterMsaG:
                                         ),
                         )
 
-        tmp = set()
-        for i in cc[3:]:
-            if len(i) > 1:
-                tmp |= i
-        g2 = g.subgraph(tmp)
-        nx.draw_networkx_nodes(G=g2, node_color='silver', nodelist=g2.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in g2.nodes()])
-        for i, j in g2.edges():
+        bn = nx.Graph()
+        bn.add_edges_from(self.bottleneck)
+        nx.draw_networkx_nodes(G=bn, node_color='r', nodelist=bn.nodes(), pos=pos1, alpha=1,
+                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in bn.nodes()])
+        for i, j in bn.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
                         xytext=pos1[j], textcoords='data',
-                        arrowprops=dict(arrowstyle="-", color='silver',
+                        arrowprops=dict(arrowstyle="-", color='r',
                                         shrinkA=5, shrinkB=5,
                                         patchA=None, patchB=None,
                                         connectionstyle="arc3,rad=0.3",
@@ -389,11 +393,11 @@ class InterMsaG:
                         )
 
         labels = ['GC', 'SGC', 'TGC', 'Bottleneck(GC)', 'Bottleneck(non GC)', 'Rest']
-        colors = ['cornflowerblue', 'lightgreen' 'peachpuff', 'r', 'gold', 'silver']
+        colors = ['cornflowerblue', 'lightgreen', 'peachpuff', 'r', 'gold', 'silver']
         lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
         plt.tight_layout()
         plt.legend(lines, labels, fontsize=7, loc=4)
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map')
-        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_map.png')
+        plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_map1.png')
 
         return

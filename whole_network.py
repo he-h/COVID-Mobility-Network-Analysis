@@ -42,12 +42,12 @@ def file_whole(path):
                     dest[tmp] += dests[i]
                 else:
                     dest[tmp] = dests[i]
-            else:
-                tmp = tuple(sorted([block, str_i]))
-                if tmp in m_dest[block_m].keys():
-                    m_dest[block_m][tmp] += dests[i]
-                else:
-                    m_dest[block_m][tmp] = dests[i]
+            # else:
+            #     tmp = tuple(sorted([block, str_i]))
+            #     if tmp in m_dest[block_m].keys():
+            #         m_dest[block_m][tmp] += dests[i]
+            #     else:
+            #         m_dest[block_m][tmp] = dests[i]
 
     return device_count, dest, m_dest
 
