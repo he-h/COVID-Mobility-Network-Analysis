@@ -264,7 +264,7 @@ class InterMsaG:
 
         plt.legend()
         plt.title('MSA qc map ' + self.date.strftime('%m/%d'))
-        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_MSAs_device.png')
+        plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_MSAs_qc_map.png')
         return
 
     def plot_map(self, g):
@@ -357,13 +357,13 @@ class InterMsaG:
 
         bn1 = nx.Graph()
         bn1.add_edges_from(self.bottleneck1)
-        nx.draw_networkx_nodes(G=bn1, node_color='orangered', nodelist=bn1.nodes(), pos=pos1, alpha=1,
+        nx.draw_networkx_nodes(G=bn1, node_color='gold', nodelist=bn1.nodes(), pos=pos1, alpha=1,
                                node_size=[(self.device_count[i] / 200) ** (1 / 2) for i in bn1.nodes()])
         for i, j in bn1.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
                         xytext=pos1[j], textcoords='data',
-                        arrowprops=dict(arrowstyle="-", color='orangered',
+                        arrowprops=dict(arrowstyle="-", color='gold',
                                         shrinkA=5, shrinkB=5,
                                         patchA=None, patchB=None,
                                         connectionstyle="arc3,rad=0.3",
@@ -388,11 +388,11 @@ class InterMsaG:
                                         ),
                         )
 
-        labels = ['GC', 'SGC', 'Bottleneck(GC)', 'Bottleneck(non GC)' 'Rest']
-        colors = ['cornflowerblue', 'peachpuff', 'r', 'orangered', 'silver']
+        labels = ['GC', 'SGC', 'TGC', 'Bottleneck(GC)', 'Bottleneck(non GC)', 'Rest']
+        colors = ['cornflowerblue', 'lightgreen' 'peachpuff', 'r', 'gold', 'silver']
         lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
         plt.tight_layout()
-        plt.legend(lines, labels, fontsize=8, loc=4)
+        plt.legend(lines, labels, fontsize=7, loc=4)
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map')
         plt.savefig('results/interMSA/' + self.date.strftime('%m_%d') + '_map.png')
 

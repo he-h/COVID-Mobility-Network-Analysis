@@ -33,8 +33,11 @@ class MSA:
         self.flux = total_flux(self.g)
 
         if self.flux == 0:
+            print(id)
             self.qc = 0
             self.qcb = 0
+            self.qcc = 0
+            self.thresholds = [0]
             return
 
         # calculate qc and following features
@@ -96,7 +99,7 @@ class MSA:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title(name[str(self.id)]+' '+self.date.strftime('%m/%d')+' percolation component size')
+        plt.title(name[str(self.id)]+' '+self.date.strftime('%m/%d'))
 
         plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_g_sg_size.png')
         return
@@ -122,7 +125,7 @@ class MSA:
 
         axis_1.legend(lines, labels, loc=0)
 
-        plt.title(name[str(self.id)] + ' ' + self.date.strftime('%m/%d') + ' percolation device count')
+        plt.title(name[str(self.id)] + ' ' + self.date.strftime('%m/%d'))
 
         plt.savefig('results/' + str(self.id) + '/' + self.date.strftime('%m_%d') + '_g_sg_device.png')
         return
@@ -147,9 +150,9 @@ class MSA:
         lines = lines_1 + lines_2
         labels = labels_1 + labels_2
 
-        axis_1.legend(lines, labels, loc=0)
+        axis_1.legend(lines, labels, loc=1)
 
-        plt.title(name[str(self.id)] + ' ' + self.date.strftime('%m/%d') + ' continuous component size')
+        plt.title(name[str(self.id)] + ' ' + self.date.strftime('%m/%d'))
 
         plt.savefig('results/' + str(self.id) + '/' + self.date.strftime('%m_%d') + '_g_rg_size.png')
         return

@@ -42,9 +42,9 @@ if __name__ == '__main__':
         tmp.interMSA.plot_g_sg()
         tmp.interMSA.plot_g_sg_device()
         tmp.interMSA.plot_hist()
+        tmp.interMSA.plot_qc_map()
         for i in msa:
             tmp.MSAs[i].plot_g_sg()
-            tmp.MSAs[i].plot_g_sg_device()
             tmp.MSAs[i].plot_g_sg_c()
         date += dt.timedelta(days=28)
     # start = dt.date(2020, 9, 8)
