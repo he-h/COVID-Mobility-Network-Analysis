@@ -96,7 +96,7 @@ class Nation:
 
             csvwriter = csv.writer(edges)
 
-            csvwriter.writerow(['msa', 'qc', 'qc', 'qcc', 'qcf'])
+            csvwriter.writerow(['msa', 'qc', 'qcb', 'qca', 'qcf'])
             for i in qcs:
                 csvwriter.writerow(i)
 

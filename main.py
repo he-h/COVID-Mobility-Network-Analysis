@@ -28,8 +28,8 @@ def main(file, state_id):
 
 
 if __name__ == '__main__':
-    date = dt.date(2020,3,26)
-    while date < dt.date(2020,3,27):
+    date = dt.date(2020,9,24)
+    while date < dt.date(2020,9,25):
         device_count, dest, MSA_dest = read_files_whole(date)
         tmp = InterMsaG(date, dest, device_count)
         tmp.plot_map(tmp.g_perco)
@@ -42,6 +42,7 @@ if __name__ == '__main__':
         # tmp.interMSA.plot_msa_qc()
         # tmp.interMSA.plot_map(tmp.interMSA.g_perco)
         # tmp.interMSA.plot_g_sg()
+        # tmp.interMSA.plot_g_sg_c()
         # tmp.interMSA.plot_g_sg_device()
         # tmp.interMSA.plot_hist()
         # tmp.interMSA.plot_qc_map()

@@ -288,6 +288,8 @@ def calc_bn_set_diff(g_b, g):
     g_b_link = set(g_b_1.edges())
     tmp = sorted(list(nx.connected_components(g)), key=len, reverse=True)
     g_1, g_2 = tmp[0], tmp[1]
+    tmp_0 = set()
+    tmp_1 = set()
 
     for i, j in g_b_link.difference(set(g.edges())):
         if (i in g_1 and j in g_1) or (i in g_2 and j in g_2):
@@ -296,6 +298,20 @@ def calc_bn_set_diff(g_b, g):
         if g_b_1.degree(i) == 1 or g_b_1.degree(j) == 1:
             continue
 
-        bn.add((i,j))
+        if (i in g_2 and j in g_1) or (i in g_2 and j in g_1):
+            bn.add((i,j))
+            continue
+
+        if (i in g_1) or (j in g_1):
+            tmp_0.add((i,j))
+
+        if (i in g_2) or (j in g_2):
+            tmp_1.add((i,j))
+
+    for i,j in tmp_0:
+        for k in tmp_1:
+            if i in k or j in k:
+                bn.add((i,j))
+                bn.add(k)
 
     return bn

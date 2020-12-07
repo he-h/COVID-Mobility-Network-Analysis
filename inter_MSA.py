@@ -48,7 +48,7 @@ class InterMsaG:
 
         # calculate qc and following features
 
-        self.thresholds, self.num_g, self.num_sg, self.num_r, self.dev_g, self.dev_sg = calc_g_sg(self.g, 10, 5, self.device_count)
+        self.thresholds, self.num_g, self.num_sg, self.num_r, self.dev_g, self.dev_sg = calc_g_sg(self.g, 10, 2.5, self.device_count)
         index_qc, index_qcb = l_sl_value(self.num_sg)
         interval = self.thresholds[1] - self.thresholds[0]
 
@@ -348,10 +348,10 @@ class InterMsaG:
         for i in cc[3:]:
             if len(i) > 1:
                 tmp |= i
-        g2 = g.subgraph(tmp)
-        nx.draw_networkx_nodes(G=g2, node_color='silver', nodelist=g2.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in g2.nodes()])
-        for i, j in g2.edges():
+        g3 = g.subgraph(tmp)
+        nx.draw_networkx_nodes(G=g3, node_color='silver', nodelist=g3.nodes(), pos=pos1, alpha=1,
+                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in g3.nodes()])
+        for i, j in g3.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
                         xytext=pos1[j], textcoords='data',
@@ -398,6 +398,6 @@ class InterMsaG:
         plt.tight_layout()
         plt.legend(lines, labels, fontsize=7, loc=4)
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map')
-        plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_map1.png')
+        plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_map.png')
 
         return
