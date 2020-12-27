@@ -1,6 +1,6 @@
 from plot import *
 from whole_network import *
-
+import time
 
 '''
 This function is to generate file names with multiple dates
@@ -16,28 +16,20 @@ def generate_file_name(num):
     return names
 
 
-def main(file, state_id):
-    dest_cbgs = read_files(file, state_id)
-    G = generate_network(dest_cbgs)
-    thresholds, num_g, num_sg = calc_g_sg(G)
-    plot_g_sg(thresholds, num_g, num_sg)
-    # bn, bn_weight = calc_bottleneck(G, thresholds, num_sg)
-    # plot_map_bn(G, bn, bn_weight, state_id)
-
-    return
-
-
 if __name__ == '__main__':
-    date = dt.date(2020,9,24)
-    while date < dt.date(2020,9,25):
-        device_count, dest, MSA_dest = read_files_whole(date)
-        tmp = InterMsaG(date, dest, device_count)
-        tmp.plot_map(tmp.g_perco)
-        tmp.plot_g_sg()
-        tmp.plot_g_sg_c()
-        tmp.plot_g_sg_device()
-        tmp.plot_hist()
-        # msa = ['35620', '31080', '16980', '19100', '26420', '47900', '33100', '37980', '12060', '38060']
+    date = dt.date(2020,3,21)
+    while date < dt.date(2020,8,1):
+        tmp = Nation(date)
+        # device_count, dest, MSA_dest = read_files_whole(date)
+        # tmp1 = InterMsaG(date, dest, device_count)
+        tmp1 = InterMsaG(tmp.date, tmp.dest, tmp.device_count)
+        # tmp.plot_map(tmp.g_perco)
+        # tmp.plot_g_sg()
+        # tmp.plot_g_sg_c()
+        # tmp.plot_g_sg_device()
+        # tmp.plot_hist()
+        tmp1.plot_w_qc_perco()
+        msa = ['35620', '31080', '16980', '19100', '26420', '47900', '33100', '37980', '12060', '38060']
         # tmp = Nation(date)
         # tmp.interMSA.plot_msa_qc()
         # tmp.interMSA.plot_map(tmp.interMSA.g_perco)
@@ -47,9 +39,10 @@ if __name__ == '__main__':
         # tmp.interMSA.plot_hist()
         # tmp.interMSA.plot_qc_map()
         # for i in msa:
+        #     print(i, len(tmp.MSAs[i].g.nodes()), tmp.MSAs[i].flux/len(tmp.MSAs[i].g.nodes()))
         #     tmp.MSAs[i].plot_g_sg()
         #     tmp.MSAs[i].plot_g_sg_c()
-        date += dt.timedelta(days=1)
+        date += dt.timedelta(days=5)
     # start = dt.date(2020, 9, 8)
     # end = dt.date(2020, 9, 9)
     #
@@ -129,3 +122,40 @@ if __name__ == '__main__':
     #     nation = Nation(i)
     #     with open("nations/"+i.strftime('%m_%d')+'.json', "x") as out:
     #         json.dump(nation.interMSA.cc, out)
+
+    # tmp = dt.date(2020,3,1)
+    # dates=[]
+    # qc=[]
+    # qc0 = []
+    # qc1=[]
+    # qca=[]
+    # qca0=[]
+    # qca1=[]
+    # qcf=[]
+    # qcf0=[]
+    # qcf1=[]
+    #
+    # while tmp < dt.date(2020,6,18):
+    #     dates.append(tmp)
+    #     df = pd.read_csv(qc_str(tmp))
+    #     qc.append(np.percentile(df['qc'], 50))
+    #     qc0.append(np.percentile(df['qc'], 25))
+    #     qc1.append(np.percentile(df['qc'], 75))
+    #     qca.append(np.percentile(df['qca'], 50))
+    #     qca0.append(np.percentile(df['qca'], 25))
+    #     qca1.append(np.percentile(df['qca'], 75))
+    #     qcf.append(np.percentile(df['qcf'], 50))
+    #     qcf1.append(np.percentile(df['qcf'], 75))
+    #     qcf0.append(np.percentile(df['qcf'], 25))
+    #     tmp+=dt.timedelta(days=1)
+    #
+    # plt.figure()
+    # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+    # plt.plot(dates, qcf, color='k', label=r'$q_{cf}$')
+    # plt.axvline(dt.date(2020,3,13), linestyle='-.', color='red', label='National Emergency')
+    # plt.fill_between(dates, qcf0, qcf1, color='silver')
+    # plt.gcf().autofmt_xdate()
+    # plt.legend()
+    #
+    # plt.title('March MSA\'s qcf median')
+    # plt.savefig('results/interMSA/03/qcf.png')

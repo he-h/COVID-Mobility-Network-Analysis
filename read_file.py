@@ -256,5 +256,17 @@ def block_str(tmp):
 
     return str(tmp)
 
+
 def process_data_str(tmp):
     return 'processed_data/'+aug_str(tmp.month)+'/'+aug_str(tmp.day) + '/'
+
+
+def qc_str(tmp):
+    return 'qc/'+dt_str(tmp)+'.csv'
+
+
+def comli(a, num):
+    if len(a)<num:
+        a.append(0)
+        return comli(a,num)
+    return a

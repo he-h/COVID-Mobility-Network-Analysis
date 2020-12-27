@@ -18,13 +18,16 @@ import networkx as nx
 # 12060,"Atlanta-Sandy Springs-Alpharetta, GA"
 # 38060,"Phoenix-Mesa-Chandler, AZ"
 
+# https://www.nature.com/articles/nature09182?page=19
+# https://arxiv.org/pdf/0903.3178.pdf
+
 with open('data/MSAname.json', 'r') as o:
     name = json.load(o)
 
 
 class MSA:
     def __init__(self, id, date, dest):
-        print(date, id)
+        # print(date, id)
         self.date = date
         self.id = id
 
@@ -42,7 +45,7 @@ class MSA:
 
         # calculate qc and following features
 
-        self.thresholds, self.num_g, self.num_sg, self.num_r, self.dev_g, self.dev_sg = calc_g_sg(self.g, 2, .25)
+        self.thresholds, self.num_g, self.num_sg, self.num_r, self.dev_g, self.dev_sg, self.edge_size = calc_g_sg(self.g, 2, .25)
         index_qc, index_qcb = l_sl_value(self.num_sg)
 
         self.gc_node_size = self.num_g[index_qc]
@@ -50,9 +53,9 @@ class MSA:
         self.qcb = self.thresholds[index_qcb]
         self.qcc = self.thresholds[[i for i, j in enumerate(self.num_r) if j == max(self.num_r)][0]]
 
-        self.g_perco = generate_network_threshold(self.g, self.qc)
-
-        self.bottleneck = calc_bottleneck_c(self.g, self.thresholds, self.qc)
+        # self.g_perco = generate_network_threshold(self.g, self.qc)
+        #
+        # self.bottleneck = calc_bottleneck_c(self.g, self.thresholds, self.qc)
 
         # self.indegree = []
         # for i in self.g.nodes():
@@ -127,7 +130,7 @@ class MSA:
 
         plt.title(name[str(self.id)] + ' ' + self.date.strftime('%m/%d'))
 
-        plt.savefig('results/' + str(self.id) + '/' + self.date.strftime('%m_%d') + '_g_sg_device.png')
+        plt.savefig('results/' + str(self.id) + '/' + self.m + '_g_sg_device.png')
         return
 
     def plot_g_sg_c(self):

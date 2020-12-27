@@ -110,6 +110,8 @@ This function finds the largest and second largest before the largest value
 
 
 def l_sl_value(li):
+    if len(li) == 0:
+        return 0,0
     l = [i for i, j in enumerate(li) if j == max(li)][0]
     sublist = li[:l]
     if l == 0:
@@ -136,10 +138,12 @@ def calc_g_sg(g, start, interval, d1=None):
     dev_g = []
     dev_sg = []
     num_rest = []
+    lens=[]
 
     while tmp_g > node_size/100 and tmp_g != 1:
 
         tmp_n = generate_network_threshold(g, tmp_t)
+        lens.append(len(tmp_n.edges))
         scc = sorted(list(nx.connected_components(tmp_n)), key=len, reverse=True)
         tmp_g, tmp_sg = num_g_sg(scc)
         num_g.append(tmp_g)
@@ -164,7 +168,7 @@ def calc_g_sg(g, start, interval, d1=None):
             dev_sg.append(0)
             dev_g.append(0)
 
-    return thresholds, num_g, num_sg, num_rest, dev_g, dev_sg
+    return thresholds, num_g, num_sg, num_rest, dev_g, dev_sg, lens
 
 
 '''
@@ -315,3 +319,12 @@ def calc_bn_set_diff(g_b, g):
                 bn.add(k)
 
     return bn
+
+
+def select(dic, num):
+    tmp = set()
+    for i in dic.keys():
+        if dic[i] > num:
+            tmp.add(str(i))
+
+    return tmp

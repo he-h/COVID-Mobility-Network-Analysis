@@ -1,4 +1,5 @@
 from model import *
+from plot import *
 import powerlaw
 from statistics import median
 from matplotlib.lines import Line2D
@@ -48,7 +49,7 @@ class InterMsaG:
 
         # calculate qc and following features
 
-        self.thresholds, self.num_g, self.num_sg, self.num_r, self.dev_g, self.dev_sg = calc_g_sg(self.g, 10, 2.5, self.device_count)
+        self.thresholds, self.num_g, self.num_sg, self.num_r, self.dev_g, self.dev_sg, self.edge_size = calc_g_sg(self.g, 10, 2.5, self.device_count)
         index_qc, index_qcb = l_sl_value(self.num_sg)
         interval = self.thresholds[1] - self.thresholds[0]
 
@@ -85,8 +86,21 @@ class InterMsaG:
         self.device_25 = np.percentile(dc, 25)
         self.device_75 = np.percentile(dc, 75)
 
+        self.qc_setup()
+
         # self.plot_map(self.g_perco, 1)
         # self.plot_map(self.g_perco_1, 0)
+
+    def qc_setup(self):
+        self.qc_m = dict()
+        self.qca_m = dict()
+        self.qcf_m = dict()
+
+        df = pd.read_csv(qc_str(self.date))
+        for i in df.index:
+            self.qc_m[df['msa'][i]] = df['qc'][i]
+            self.qca_m[df['msa'][i]] = df['qca'][i]
+            self.qcf_m[df['msa'][i]] = df['qcf'][i]
 
     def __eq__(self, other):
         return self.date == other.date
@@ -201,8 +215,8 @@ class InterMsaG:
 
         for i in th:
             tmp = 0
-            for j in self.msa_qc.keys():
-                if i < self.msa_qc[j]:
+            for j in self.qc_m.keys():
+                if i < self.qc_m[j]:
                     tmp += self.device_count[j]
             remain_msa.append(tmp)
 
@@ -244,19 +258,20 @@ class InterMsaG:
             pos1[j] = (mx[i], my[i])
 
         msas = {0:[], 10:[], 20:[], 30:[], 40:[]}
-        for i in self.msa_qc.keys():
-            if self.msa_qc[i] > 40:
-                msas[40].append(i)
-            elif self.msa_qc[i] > 30:
-                msas[30].append(i)
-            elif self.msa_qc[i] > 20:
-                msas[20].append(i)
-            elif self.msa_qc[i] > 10:
-                msas[10].append(i)
+        for i in self.qc_m.keys():
+            j = str(i)
+            if self.qc_m[i] > 40:
+                msas[40].append(j)
+            elif self.qc_m[i] > 30:
+                msas[30].append(j)
+            elif self.qc_m[i] > 20:
+                msas[20].append(j)
+            elif self.qc_m[i] > 10:
+                msas[10].append(j)
             else:
-                msas[0].append(i)
+                msas[0].append(j)
 
-        colors = ['wheat', 'gold', 'orange', 'orangered', 'red']
+        colors = ['wheat', 'gold', 'orange', 'darkorange', 'red']
 
         iter=0
         for i in msas.keys():
@@ -304,7 +319,7 @@ class InterMsaG:
 
         g0 = g.subgraph(cc[0])
         nx.draw_networkx_nodes(G=g0, node_color='cornflowerblue', nodelist=g0.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/200)**(1/2) for i in g0.nodes()])
+                               node_size=[(self.device_count[i]/250)**(1/2) for i in g0.nodes()])
         for i, j in g0.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
@@ -318,7 +333,7 @@ class InterMsaG:
 
         g1 = g.subgraph(cc[1])
         nx.draw_networkx_nodes(G=g1, node_color='lightgreen', nodelist=g1.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/200)**(1/2) for i in g1.nodes()])
+                               node_size=[(self.device_count[i]/250)**(1/2) for i in g1.nodes()])
         for i, j in g1.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
@@ -332,7 +347,7 @@ class InterMsaG:
 
         g2 = g.subgraph(cc[2])
         nx.draw_networkx_nodes(G=g2, node_color='peachpuff', nodelist=g2.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i] / 200) ** (1 / 2) for i in g2.nodes()])
+                               node_size=[(self.device_count[i] / 250) ** (1 / 2) for i in g2.nodes()])
         for i, j in g2.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
@@ -350,7 +365,7 @@ class InterMsaG:
                 tmp |= i
         g3 = g.subgraph(tmp)
         nx.draw_networkx_nodes(G=g3, node_color='silver', nodelist=g3.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in g3.nodes()])
+                               node_size=[(self.device_count[i]/250) ** (1 / 2) for i in g3.nodes()])
         for i, j in g3.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
@@ -365,7 +380,7 @@ class InterMsaG:
         bn1 = nx.Graph()
         bn1.add_edges_from(self.bottleneck1)
         nx.draw_networkx_nodes(G=bn1, node_color='gold', nodelist=bn1.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i] / 200) ** (1 / 2) for i in bn1.nodes()])
+                               node_size=[(self.device_count[i] / 250) ** (1 / 2) for i in bn1.nodes()])
         for i, j in bn1.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
@@ -380,7 +395,7 @@ class InterMsaG:
         bn = nx.Graph()
         bn.add_edges_from(self.bottleneck)
         nx.draw_networkx_nodes(G=bn, node_color='r', nodelist=bn.nodes(), pos=pos1, alpha=1,
-                               node_size=[(self.device_count[i]/200) ** (1 / 2) for i in bn.nodes()])
+                               node_size=[(self.device_count[i]/250) ** (1 / 2) for i in bn.nodes()])
         for i, j in bn.edges():
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
@@ -399,5 +414,79 @@ class InterMsaG:
         plt.legend(lines, labels, fontsize=7, loc=4)
         plt.title('Inter MSA ' + self.date.strftime('%m/%d') + ' map')
         plt.savefig(self.result_dir() + self.date.strftime('%m_%d') + '_map.png')
+
+        return
+
+    def plot_w_qc_perco(self):
+        colors = ['wheat', 'gold', 'orange', 'darkorange', 'red']
+
+        color_c = {}
+        for i in self.qc_m.keys():
+            j = str(i)
+            if self.qc_m[i] > 40:
+                color_c[j] = 'red'
+            elif self.qc_m[i] > 30:
+                color_c[j] = 'darkorange'
+            elif self.qc_m[i] > 20:
+                color_c[j] = 'orange'
+            elif self.qc_m[i] > 10:
+                color_c[j] = 'gold'
+            else:
+                color_c[j] = 'wheat'
+
+        for i in range(0, 50, 10):
+            tmp_nodes = select(self.qc_m, i)
+            qc_g = self.g.subgraph(tmp_nodes)
+            for j in range(0, 500, 100):
+                if i == j == 0:
+                    continue
+                tmp_g = generate_network_threshold(qc_g, j)
+                plot_qc_map(tmp_g, 'qc', color_c, self.device_count, pos, i, j, self.date)
+
+        color_c = {}
+        for i in self.qca_m.keys():
+            j = str(i)
+            if self.qca_m[i] > 40:
+                color_c[j] = 'red'
+            elif self.qca_m[i] > 30:
+                color_c[j] = 'darkorange'
+            elif self.qca_m[i] > 20:
+                color_c[j] = 'orange'
+            elif self.qca_m[i] > 10:
+                color_c[j] = 'gold'
+            else:
+                color_c[j] = 'wheat'
+
+        for i in range(0, 50, 10):
+            tmp_nodes = select(self.qca_m, i)
+            qc_g = self.g.subgraph(tmp_nodes)
+            for j in range(0, 500, 100):
+                if i == j == 0:
+                    continue
+                tmp_g = generate_network_threshold(qc_g, j)
+                plot_qc_map(tmp_g, 'qca', color_c, self.device_count, pos, i, j, self.date)
+
+        color_c = {}
+        for i in self.qcf_m.keys():
+            j = str(i)
+            if self.qcf_m[i] > 200:
+                color_c[j] = 'red'
+            elif self.qcf_m[i] > 150:
+                color_c[j] = 'darkorange'
+            elif self.qcf_m[i] > 100:
+                color_c[j] = 'orange'
+            elif self.qcf_m[i] > 50:
+                color_c[j] = 'gold'
+            else:
+                color_c[j] = 'wheat'
+
+        for i in range(0, 200, 50):
+            tmp_nodes = select(self.qcf_m, i)
+            qc_g = self.g.subgraph(tmp_nodes)
+            for j in range(0, 500, 100):
+                if i == j == 0:
+                    continue
+                tmp_g = generate_network_threshold(qc_g, j)
+                plot_qc_map(tmp_g, 'qcf', color_c, self.device_count, pos, i, j, self.date)
 
         return

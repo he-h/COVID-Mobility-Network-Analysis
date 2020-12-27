@@ -1,5 +1,6 @@
 from inner_MSA import *
 from inter_MSA import *
+import os
 import csv
 
 
@@ -42,12 +43,12 @@ def file_whole(path):
                     dest[tmp] += dests[i]
                 else:
                     dest[tmp] = dests[i]
-            # else:
-            #     tmp = tuple(sorted([block, str_i]))
-            #     if tmp in m_dest[block_m].keys():
-            #         m_dest[block_m][tmp] += dests[i]
-            #     else:
-            #         m_dest[block_m][tmp] = dests[i]
+            else:
+                tmp = tuple(sorted([block, str_i]))
+                if tmp in m_dest[block_m].keys():
+                    m_dest[block_m][tmp] += dests[i]
+                else:
+                    m_dest[block_m][tmp] = dests[i]
 
     return device_count, dest, m_dest
 
@@ -60,7 +61,7 @@ def read_files_whole(date):
     tmp = date - dt.timedelta(days=3)
 
     for i in range(7):
-        print(i)
+        # print(i)
         tmp_device, tmp_dests, tmp_m_dest = file_whole(file_str(tmp))
         merge(dest, tmp_dests)
         merge(device_count, tmp_device)
@@ -80,31 +81,55 @@ def read_files_whole(date):
 
 class Nation:
     def __init__(self, date):
+        print(date)
         self.date = date
-        device_count, dest, MSA_dest = read_files_whole(date)
+        self.device_count, self.dest, self.MSA_dest = read_files_whole(date)
 
         self.MSAs = default_MSAs_dict()
-        null_msa = set()
 
         qcs = []
 
         for i in self.MSAs.keys():
-            self.MSAs[i] = MSA(i, date, MSA_dest[i])
+            self.MSAs[i] = MSA(i, date, self.MSA_dest[i])
             qcs.append([i, self.MSAs[i].qc, self.MSAs[i].qcb, self.MSAs[i].qcc, self.MSAs[i].thresholds[-1]])
 
-        with open('qc/'+self.date.strftime('%m_%d')+'.csv', mode='x') as edges:
+        msa = ['35620', '31080', '16980', '19100', '26420', '47900', '33100', '37980', '12060', '38060']
 
-            csvwriter = csv.writer(edges)
+        for i in msa:
+            print(i, len(self.MSAs[i].g.nodes()), self.device_count[i]/len(self.MSAs[i].g.nodes()))
 
-            csvwriter.writerow(['msa', 'qc', 'qcb', 'qca', 'qcf'])
-            for i in qcs:
-                csvwriter.writerow(i)
+        if not os.path.exists('qc/'+self.date.strftime('%m_%d')+'.csv'):
+            with open('qc/'+self.date.strftime('%m_%d')+'.csv', mode='x') as edges:
 
-        Msa_qc = default_MSAs_dict()
-        for i in Msa_qc.keys():
-            if i in null_msa:
-                Msa_qc[i] = 0
-            else:
-                Msa_qc[i] = self.MSAs[i].qc
+                csvwriter = csv.writer(edges)
 
-        self.interMSA = InterMsaG(date, dest, device_count, Msa_qc)
+                csvwriter.writerow(['msa', 'qc', 'qcb', 'qca', 'qcf'])
+                for i in qcs:
+                    csvwriter.writerow(i)
+
+        msa = ['35620', '31080', '16980', '19100', '26420']
+        the = [self.MSAs[i].thresholds for i in msa]
+        the.sort(key=len)
+        the = the[-1]
+        a=self.MSAs['35620'].edge_size
+        a=comli(a,len(the))
+        b=self.MSAs['31080'].edge_size
+        b=comli(b,len(the))
+        c=self.MSAs['16980'].edge_size
+        c=comli(c,len(the))
+        d=self.MSAs['19100'].edge_size
+        d=comli(d,len(the))
+        e=self.MSAs['26420'].edge_size
+        e=comli(e,len(the))
+
+        plt.figure()
+        plt.plot(the, a, label='NY')
+        plt.plot(the, b, label='LA')
+        plt.plot(the, c, label='Chicago')
+        plt.plot(the, d, label='Dallas')
+        plt.plot(the, e, label='Houston')
+        plt.yscale("log")
+        plt.xscale("log")
+        plt.legend()
+        plt.title(self.date.strftime('%m/%d')+' edge comparison')
+        plt.savefig('edge_remain/'+self.date.strftime('%m_%d')+'.png')

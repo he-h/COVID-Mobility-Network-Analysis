@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-#import geopandas as gpd
+from mpl_toolkits.basemap import Basemap as Basemap
+from matplotlib.lines import Line2D
 from model import *
 
 # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
@@ -311,4 +312,129 @@ def plot_edge_w(date, y, y_25, y_75, id):
     else:
         plt.savefig('results/' + id + '/edge_w.png')
 
+    return
+
+
+def plot_g_sg_qc(date, qc, qcb, thresholds, num_g, num_sg):
+    plt.figure()
+    figure, axis_1 = plt.subplots()
+
+    axis_1.axvline(qc, linestyle='-.', color='red', label=r'$q_c$')
+    axis_1.axvline(qcb, linestyle='-.', color='orange', label=r'$q_{c2}$')
+    axis_1.set_ylabel('GC Component size', color='dodgerblue')
+    axis_1.plot(thresholds, num_g, color='dodgerblue', label='GC')
+    axis_1.set_xlabel('thresholds')
+
+    axis_2 = axis_1.twinx()
+    axis_2.plot(thresholds, num_sg, color='grey', label='SGC')
+    axis_2.set_ylabel('SGC Component size', color='grey')
+
+    lines_1, labels_1 = axis_1.get_legend_handles_labels()
+    lines_2, labels_2 = axis_2.get_legend_handles_labels()
+
+    lines = lines_1 + lines_2
+    labels = labels_1 + labels_2
+
+    axis_1.legend(lines, labels, loc=0)
+
+    plt.title('Inter MSA ' + date.strftime('%m/%d') + ' percolation component size')
+
+    plt.savefig()
+    return
+
+
+'''
+Plot map with different qc and weight link
+'''
+
+def plot_qc_map(g, qc, color, device_count, pos, q, w, date):
+    plt.figure()
+
+    if len(g.nodes()) == 0:
+        return
+
+    m = Basemap(
+        projection='merc',
+        llcrnrlon=-130,
+        llcrnrlat=25,
+        urcrnrlon=-60,
+        urcrnrlat=50,
+        lat_ts=0,
+        resolution='i',
+        suppress_ticks=True)
+
+    m.drawcountries(linewidth=3)
+    m.drawstates(linewidth=0.2)
+    m.drawcoastlines(linewidth=1)
+    m.fillcontinents(alpha=0.3)
+    # m.drawcounties(linewidth=0.1)
+
+    x, y = [], []
+    for i in pos.keys():
+        x.append(pos[i][0])
+        y.append(pos[i][1])
+    mx, my = m(x, y)
+    pos1 = dict()
+    for i, j in enumerate(pos.keys()):
+        pos1[j] = (mx[i], my[i])
+
+    colors = []
+    for i in g.nodes():
+        colors.append(color[i])
+
+    cc = list(nx.connected_components(g))
+    cc.sort(key=len, reverse=True)
+    ax = plt.gca()
+
+    nx.draw_networkx_nodes(G=g, pos=pos1, nodelist=g.nodes(), node_color=colors,
+                           node_size=[(device_count[i]/250)**(1/2) for i in g.nodes()])
+
+    g0 = g.subgraph(cc[0])
+    for i, j in g0.edges():
+        ax.annotate("",
+                    xy=pos1[i], xycoords='data',
+                    xytext=pos1[j], textcoords='data',
+                    arrowprops=dict(arrowstyle="-", color='royalblue',
+                                    shrinkA=5, shrinkB=5,
+                                    patchA=None, patchB=None,
+                                    connectionstyle="arc3,rad=0.3",
+                                    ),
+                    )
+    if len(cc) > 1:
+        g1 = g.subgraph(cc[1])
+        for i, j in g1.edges():
+            ax.annotate("",
+                        xy=pos1[i], xycoords='data',
+                        xytext=pos1[j], textcoords='data',
+                        arrowprops=dict(arrowstyle="-", color='skyblue',
+                                        shrinkA=5, shrinkB=5,
+                                        patchA=None, patchB=None,
+                                        connectionstyle="arc3,rad=0.3",
+                                        ),
+                        )
+
+    if len(cc) > 2:
+        tmp = set()
+        for i in cc[2:]:
+            if len(i) > 1:
+                tmp |= i
+        g3 = g.subgraph(tmp)
+        for i, j in g3.edges():
+            ax.annotate("",
+                        xy=pos1[i], xycoords='data',
+                        xytext=pos1[j], textcoords='data',
+                        arrowprops=dict(arrowstyle="-", color='silver',
+                                        shrinkA=5, shrinkB=5,
+                                        patchA=None, patchB=None,
+                                        connectionstyle="arc3,rad=0.3",
+                                        ),
+                        )
+
+    labels = ['GC', 'SGC', 'Rest']
+    colors = ['royalblue', 'skyblue', 'silver']
+    lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
+    plt.tight_layout()
+    plt.legend(lines, labels, fontsize=8, loc=4)
+    plt.title(date.strftime('%m/%d') + ' ' + qc + '>' + str(q) + ', weight>' + str(w))
+    plt.savefig('results/interMSA/'+date.strftime('%m/%d') + '/' + str(qc) + '/' + qc + '_' + str(q) + '_w_' + str(w) + '.png')
     return
