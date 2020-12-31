@@ -17,8 +17,8 @@ def generate_file_name(num):
 
 
 if __name__ == '__main__':
-    date = dt.date(2020,1,8)
-    while date < dt.date(2020,8,1):
+    date = dt.date(2020,8,5)
+    while date < dt.date(2020,11,1):
         tmp = Nation(date)
         # device_count, dest, MSA_dest = read_files_whole(date)
         # tmp1 = InterMsaG(date, dest, device_count)
