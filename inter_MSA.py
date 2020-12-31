@@ -242,11 +242,13 @@ class InterMsaG:
             resolution='i',
             suppress_ticks=True)
 
-        m.drawcountries(linewidth=3)
-        m.drawstates(linewidth=0.2)
-        m.drawcoastlines(linewidth=1)
-        m.fillcontinents(alpha=0.3)
-        # m.drawcounties(linewidth=0.1)
+        # m.drawcountries(linewidth=3)
+        # m.drawstates(linewidth=0.2)
+        # m.drawcoastlines(linewidth=1)
+        # m.fillcontinents(alpha=0.3)
+        # # m.drawcounties(linewidth=0.1)
+        m.readshapefile('tl_2017_us_state/tl_2017_us_state', 'states', drawbounds=True)
+        m.drawmapboundary(linewidth=1)
 
         x, y = [], []
         for i in pos.keys():
@@ -257,17 +259,17 @@ class InterMsaG:
         for i, j in enumerate(pos.keys()):
             pos1[j] = (mx[i], my[i])
 
-        msas = {0:[], 10:[], 20:[], 30:[], 40:[]}
+        msas = {0:[], 3:[], 6:[], 9:[], 12:[]}
         for i in self.qc_m.keys():
             j = str(i)
-            if self.qc_m[i] > 40:
-                msas[40].append(j)
-            elif self.qc_m[i] > 30:
-                msas[30].append(j)
-            elif self.qc_m[i] > 20:
-                msas[20].append(j)
-            elif self.qc_m[i] > 10:
-                msas[10].append(j)
+            if self.qc_m[i] > 12:
+                msas[12].append(j)
+            elif self.qc_m[i] > 9:
+                msas[9].append(j)
+            elif self.qc_m[i] > 6:
+                msas[6].append(j)
+            elif self.qc_m[i] > 3:
+                msas[3].append(j)
             else:
                 msas[0].append(j)
 
@@ -298,11 +300,13 @@ class InterMsaG:
             resolution='i',
             suppress_ticks=True)
 
-        m.drawcountries(linewidth=3)
-        m.drawstates(linewidth=0.2)
-        m.drawcoastlines(linewidth=1)
-        m.fillcontinents(alpha=0.3)
+        # m.drawcountries(linewidth=3)
+        # m.drawstates(linewidth=0.2)
+        # m.drawcoastlines(linewidth=1)
+        # m.fillcontinents(alpha=0.3)
         # m.drawcounties(linewidth=0.1)
+        m.readshapefile('tl_2017_us_state/tl_2017_us_state', 'states', drawbounds=True)
+        m.drawmapboundary(linewidth=1)
 
         x, y = [], []
         for i in pos.keys():
@@ -423,18 +427,18 @@ class InterMsaG:
         color_c = {}
         for i in self.qc_m.keys():
             j = str(i)
-            if self.qc_m[i] > 40:
+            if self.qc_m[i] > 12:
                 color_c[j] = 'red'
-            elif self.qc_m[i] > 30:
+            elif self.qc_m[i] > 9:
                 color_c[j] = 'darkorange'
-            elif self.qc_m[i] > 20:
+            elif self.qc_m[i] > 6:
                 color_c[j] = 'orange'
-            elif self.qc_m[i] > 10:
+            elif self.qc_m[i] > 3:
                 color_c[j] = 'gold'
             else:
                 color_c[j] = 'wheat'
 
-        for i in range(0, 50, 10):
+        for i in range(0, 18, 3):
             tmp_nodes = select(self.qc_m, i)
             qc_g = self.g.subgraph(tmp_nodes)
             for j in range(0, 500, 100):
@@ -446,18 +450,18 @@ class InterMsaG:
         color_c = {}
         for i in self.qca_m.keys():
             j = str(i)
-            if self.qca_m[i] > 40:
+            if self.qca_m[i] > 12:
                 color_c[j] = 'red'
-            elif self.qca_m[i] > 30:
+            elif self.qca_m[i] > 9:
                 color_c[j] = 'darkorange'
-            elif self.qca_m[i] > 20:
+            elif self.qca_m[i] > 6:
                 color_c[j] = 'orange'
-            elif self.qca_m[i] > 10:
+            elif self.qca_m[i] > 3:
                 color_c[j] = 'gold'
             else:
                 color_c[j] = 'wheat'
 
-        for i in range(0, 50, 10):
+        for i in range(0, 18, 3):
             tmp_nodes = select(self.qca_m, i)
             qc_g = self.g.subgraph(tmp_nodes)
             for j in range(0, 500, 100):
@@ -469,18 +473,18 @@ class InterMsaG:
         color_c = {}
         for i in self.qcf_m.keys():
             j = str(i)
-            if self.qcf_m[i] > 200:
+            if self.qcf_m[i] > 60:
                 color_c[j] = 'red'
-            elif self.qcf_m[i] > 150:
+            elif self.qcf_m[i] > 45:
                 color_c[j] = 'darkorange'
-            elif self.qcf_m[i] > 100:
+            elif self.qcf_m[i] > 30:
                 color_c[j] = 'orange'
-            elif self.qcf_m[i] > 50:
+            elif self.qcf_m[i] > 15:
                 color_c[j] = 'gold'
             else:
                 color_c[j] = 'wheat'
 
-        for i in range(0, 200, 50):
+        for i in range(0, 75, 15):
             tmp_nodes = select(self.qcf_m, i)
             qc_g = self.g.subgraph(tmp_nodes)
             for j in range(0, 500, 100):

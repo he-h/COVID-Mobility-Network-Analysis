@@ -363,11 +363,13 @@ def plot_qc_map(g, qc, color, device_count, pos, q, w, date):
         resolution='i',
         suppress_ticks=True)
 
-    m.drawcountries(linewidth=3)
-    m.drawstates(linewidth=0.2)
-    m.drawcoastlines(linewidth=1)
-    m.fillcontinents(alpha=0.3)
+    # m.drawcountries(linewidth=3)
+    # m.drawstates(linewidth=0.2)
+    # m.drawcoastlines(linewidth=1)
+    # m.fillcontinents(alpha=0.3)
     # m.drawcounties(linewidth=0.1)
+    m.readshapefile('tl_2017_us_state/tl_2017_us_state', 'states', drawbounds=True)
+    m.drawmapboundary(linewidth=1)
 
     x, y = [], []
     for i in pos.keys():

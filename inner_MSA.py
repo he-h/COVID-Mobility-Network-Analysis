@@ -36,7 +36,6 @@ class MSA:
         self.flux = total_flux(self.g)
 
         if self.flux == 0:
-            print(id)
             self.qc = 0
             self.qcb = 0
             self.qcc = 0
@@ -104,7 +103,7 @@ class MSA:
 
         plt.title(name[str(self.id)]+' '+self.date.strftime('%m/%d'))
 
-        plt.savefig('results/'+str(self.id)+'/'+self.date.strftime('%m_%d')+'_g_sg_size.png')
+        plt.savefig('results/'+str(self.id)+self.date.strftime('/%m/%d/')+self.date.strftime('%m_%d')+'_g_sg_size.png')
         return
 
     def plot_g_sg_device(self):
@@ -130,7 +129,7 @@ class MSA:
 
         plt.title(name[str(self.id)] + ' ' + self.date.strftime('%m/%d'))
 
-        plt.savefig('results/' + str(self.id) + '/' + self.m + '_g_sg_device.png')
+        plt.savefig('results/' + str(self.id) + self.date.strftime('/%m/%d/') + self.date.strftime('%m_%d') + '_g_sg_device.png')
         return
 
     def plot_g_sg_c(self):
@@ -157,5 +156,5 @@ class MSA:
 
         plt.title(name[str(self.id)] + ' ' + self.date.strftime('%m/%d'))
 
-        plt.savefig('results/' + str(self.id) + '/' + self.date.strftime('%m_%d') + '_g_rg_size.png')
+        plt.savefig('results/' + str(self.id) + self.date.strftime('/%m/%d/') + self.date.strftime('%m_%d') + '_g_rg_size.png')
         return

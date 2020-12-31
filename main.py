@@ -17,18 +17,19 @@ def generate_file_name(num):
 
 
 if __name__ == '__main__':
-    date = dt.date(2020,3,21)
+    date = dt.date(2020,1,8)
     while date < dt.date(2020,8,1):
         tmp = Nation(date)
         # device_count, dest, MSA_dest = read_files_whole(date)
         # tmp1 = InterMsaG(date, dest, device_count)
         tmp1 = InterMsaG(tmp.date, tmp.dest, tmp.device_count)
-        # tmp.plot_map(tmp.g_perco)
-        # tmp.plot_g_sg()
-        # tmp.plot_g_sg_c()
-        # tmp.plot_g_sg_device()
-        # tmp.plot_hist()
+        tmp1.plot_map(tmp1.g_perco)
+        tmp1.plot_g_sg()
+        tmp1.plot_g_sg_c()
+        tmp1.plot_g_sg_device()
+        tmp1.plot_hist()
         tmp1.plot_w_qc_perco()
+        tmp1.plot_qc_map()
         msa = ['35620', '31080', '16980', '19100', '26420', '47900', '33100', '37980', '12060', '38060']
         # tmp = Nation(date)
         # tmp.interMSA.plot_msa_qc()
@@ -38,11 +39,10 @@ if __name__ == '__main__':
         # tmp.interMSA.plot_g_sg_device()
         # tmp.interMSA.plot_hist()
         # tmp.interMSA.plot_qc_map()
-        # for i in msa:
-        #     print(i, len(tmp.MSAs[i].g.nodes()), tmp.MSAs[i].flux/len(tmp.MSAs[i].g.nodes()))
-        #     tmp.MSAs[i].plot_g_sg()
-        #     tmp.MSAs[i].plot_g_sg_c()
-        date += dt.timedelta(days=5)
+        for i in msa:
+            tmp.MSAs[i].plot_g_sg()
+            tmp.MSAs[i].plot_g_sg_c()
+        date += dt.timedelta(days=7)
     # start = dt.date(2020, 9, 8)
     # end = dt.date(2020, 9, 9)
     #
