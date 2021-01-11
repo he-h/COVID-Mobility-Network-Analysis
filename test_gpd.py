@@ -31,102 +31,102 @@ def get_xy(pt):
 
 
 
-# def file_whole(path):
-#     dest = dict()
-#     device_count = dict()
-#     m_dest = default_MSAs_dict()
-#
-#     df = pd.read_csv(path)
-#
-#     for ind in df.index:
-#         block = block_str(str(df['origin_census_block_group'][ind]))
-#
-#         block_m = MSA_id(block)
-#         if block_m == -1:
-#             continue
-#
-#         if block_m in device_count.keys():
-#             device_count[block_m] += df['device_count'][ind]
-#         else:
-#             device_count[block_m] = df['device_count'][ind]
-#
-#
-#
-#     return device_count
-#
-#
-# def read_files_whole(date):
-#     device_count = dict()
-#     dest = dict()
-#     MSA_dest = default_MSAs_dict()
-#
-#     tmp = date - dt.timedelta(days=3)
-#
-#     for i in range(7):
-#         # print(i)
-#         tmp_device = file_whole(file_str(tmp))
-#         merge(device_count, tmp_device)
-#         tmp += dt.timedelta(days=1)
-#
-#     for i in device_count.keys():
-#         device_count[i] /= 7
-#
-#     with open("msa_device_count/"+ date.strftime('%m_%d') + ".json", "x") as outfile:
-#         json.dump(device_count, outfile)
-#
-#
-#     return device_count
-#
-# date = dt.date(2020,2,26)
-# while date < dt.date(2020,11,1):
-#     read_files_whole(date)
-#     date+=dt.timedelta(days=7)
+def file_whole(path):
+    dest = dict()
+    device_count = dict()
+    m_dest = default_MSAs_dict()
 
-with open('data/pos.json', 'r') as o:
-    pos = json.load(o)
-plt.figure()
-m = Basemap(
-    projection='merc',
-    llcrnrlon=-130,
-    llcrnrlat=25,
-    urcrnrlon=-60,
-    urcrnrlat=50,
-    lat_ts=0,
-    resolution='i',
-    suppress_ticks=True)
-m.readshapefile('tl_2017_us_state/tl_2017_us_state', 'states', drawbounds=True)
-# m.drawcountries(linewidth=3)
-# m.drawstates(linewidth=0.2)
-# m.drawcoastlines(linewidth=1)
-# m.fillcontinents(alpha=0.3)
-# m.drawcounties(linewidth=0.1)
+    df = pd.read_csv(path)
 
-x, y = [], []
-for i in pos.keys():
-    x.append(pos[i][0])
-    y.append(pos[i][1])
-mx, my = m(x, y)
-pos1 = dict()
-for i, j in enumerate(pos.keys()):
-    pos1[j] = (mx[i], my[i])
+    for ind in df.index:
+        block = block_str(str(df['origin_census_block_group'][ind]))
 
-a=nx.Graph()
-a.add_edge('35620', '31080')
+        block_m = MSA_id(block)
+        if block_m == -1:
+            continue
+
+        if block_m in device_count.keys():
+            device_count[block_m] += df['device_count'][ind]
+        else:
+            device_count[block_m] = df['device_count'][ind]
 
 
-nx.draw_networkx_nodes(G=a, pos=pos1)
-ax=plt.gca()
-for i, j in a.edges():
-    ax.annotate("",
-                xy=pos1[i], xycoords='data',
-                xytext=pos1[j], textcoords='data',
-                arrowprops=dict(arrowstyle="-", color='cornflowerblue',
-                                shrinkA=5, shrinkB=5,
-                                patchA=None, patchB=None,
-                                connectionstyle="arc3,rad=0.3",
-                                ),
-                )
+
+    return device_count
 
 
-plt.tight_layout()
-plt.show()
+def read_files_whole(date):
+    device_count = dict()
+    dest = dict()
+    MSA_dest = default_MSAs_dict()
+
+    tmp = date - dt.timedelta(days=3)
+
+    for i in range(7):
+        # print(i)
+        tmp_device = file_whole(file_str(tmp))
+        merge(device_count, tmp_device)
+        tmp += dt.timedelta(days=1)
+
+    for i in device_count.keys():
+        device_count[i] /= 7
+
+    with open("msa_device_count/"+ date.strftime('%m_%d') + ".json", "x") as outfile:
+        json.dump(device_count, outfile)
+
+
+    return device_count
+
+date = dt.date(2020,1,1)
+while date < dt.date(2021,1,1):
+    read_files_whole(date)
+    date+=dt.timedelta(days=1)
+
+# with open('data/pos.json', 'r') as o:
+#     pos = json.load(o)
+# plt.figure()
+# m = Basemap(
+#     projection='merc',
+#     llcrnrlon=-130,
+#     llcrnrlat=25,
+#     urcrnrlon=-60,
+#     urcrnrlat=50,
+#     lat_ts=0,
+#     resolution='i',
+#     suppress_ticks=True)
+# m.readshapefile('tl_2017_us_state/tl_2017_us_state', 'states', drawbounds=True)
+# # m.drawcountries(linewidth=3)
+# # m.drawstates(linewidth=0.2)
+# # m.drawcoastlines(linewidth=1)
+# # m.fillcontinents(alpha=0.3)
+# # m.drawcounties(linewidth=0.1)
+#
+# x, y = [], []
+# for i in pos.keys():
+#     x.append(pos[i][0])
+#     y.append(pos[i][1])
+# mx, my = m(x, y)
+# pos1 = dict()
+# for i, j in enumerate(pos.keys()):
+#     pos1[j] = (mx[i], my[i])
+#
+# a=nx.Graph()
+# a.add_edge('35620', '31080')
+#
+#
+# nx.draw_networkx_nodes(G=a, pos=pos1)
+# ax=plt.gca()
+# for i, j in a.edges():
+#     ax.annotate("",
+#                 xy=pos1[i], xycoords='data',
+#                 xytext=pos1[j], textcoords='data',
+#                 arrowprops=dict(arrowstyle="-", color='cornflowerblue',
+#                                 shrinkA=5, shrinkB=5,
+#                                 patchA=None, patchB=None,
+#                                 connectionstyle="arc3,rad=0.3",
+#                                 ),
+#                 )
+#
+#
+# plt.tight_layout()
+# plt.show()

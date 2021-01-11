@@ -178,10 +178,8 @@ This function create path for file retraction
 
 
 def file_str(date):
-    month = aug_str(date.month)
-    day = aug_str(date.day)
 
-    return 'data/' + month + '/' + day + '/2020-' + month + '-' + day + '-social-distancing.csv.gz'
+    return date.strftime('data/%Y/%m/%d/%Y-%m-%d-social-distancing.csv.gz')
 
 
 '''
