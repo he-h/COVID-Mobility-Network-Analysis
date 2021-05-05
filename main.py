@@ -1,6 +1,7 @@
 from plot import *
 from whole_network import *
 import time
+from datetime import date
 
 '''
 This function is to generate file names with multiple dates
@@ -17,32 +18,73 @@ def generate_file_name(num):
 
 
 if __name__ == '__main__':
-    date = dt.date(2020,8,5)
-    while date < dt.date(2020,11,1):
-        tmp = Nation(date)
-        # device_count, dest, MSA_dest = read_files_whole(date)
-        # tmp1 = InterMsaG(date, dest, device_count)
-        tmp1 = InterMsaG(tmp.date, tmp.dest, tmp.device_count)
-        tmp1.plot_map(tmp1.g_perco)
-        tmp1.plot_g_sg()
-        tmp1.plot_g_sg_c()
-        tmp1.plot_g_sg_device()
-        tmp1.plot_hist()
-        tmp1.plot_w_qc_perco()
-        tmp1.plot_qc_map()
-        msa = ['35620', '31080', '16980', '19100', '26420', '47900', '33100', '37980', '12060', '38060']
-        # tmp = Nation(date)
-        # tmp.interMSA.plot_msa_qc()
-        # tmp.interMSA.plot_map(tmp.interMSA.g_perco)
-        # tmp.interMSA.plot_g_sg()
-        # tmp.interMSA.plot_g_sg_c()
-        # tmp.interMSA.plot_g_sg_device()
-        # tmp.interMSA.plot_hist()
-        # tmp.interMSA.plot_qc_map()
+    start = date(2020,6,1)
+    end = date(2020,6,1)
+    t_date = start
+
+    msa = ['17820', '35620', '31080', '26420', '23540', '24500']
+
+
+    tmp = time.time()
+    a, b = dest_store(start, end)
+    print(time.time()-tmp)
+
+    tmp = start
+    while tmp <= end:
+        n = Nation(tmp, a, b)
+        # n.interMsa.plot_g_sg()
+        n.interMsa.plot_g_sg_log()
+        n.interMsa.plot_w_qc_perco()
+
+
+
+
+        msa = ['17820', '35620', '31080', '26420', '23540', '24500']
         for i in msa:
-            tmp.MSAs[i].plot_g_sg()
-            tmp.MSAs[i].plot_g_sg_c()
-        date += dt.timedelta(days=7)
+            n.MSAs[i].plot_g_sg()
+            n.MSAs[i].plot_g_sg_c()
+            n.MSAs[i].plot_hist()
+        tmp += dt.timedelta(days=1)
+
+    # plt.figure()
+    # n = Nation(start, a, b)
+    # a, b = dest_store(date(2020,6,1), date(2020,6,1))
+    # m = Nation(date(2020,6,1),a,b)
+    # powerlaw.plot_ccdf(n.interMsa.distances, linestyle='-', color='#9ecae1', label='Before')
+    # powerlaw.plot_ccdf(m.interMsa.distances, linestyle='-', color='#fdae6b', label='After')
+    # plt.ylabel('CCDF', fontsize=18)
+    # plt.xlabel('distance', fontsize=15)
+    # # plt.legend(prop={'size':15})
+    # plt.show()
+    # plt.savefig('ccdf.jpg')
+
+
+
+    # while t_date < dt.date(2020,10,15):
+    #     tmp = Nation(t_date)
+    #     # device_count, dest, MSA_dest = read_files_whole(date)
+    #     # tmp1 = InterMsaG(date, dest, device_count)
+    #     tmp.interMsa.plot_map(tmp.interMsa.g_perco)
+    #     tmp.interMsa.plot_g_sg()
+    #     tmp.interMsa.plot_g_sg_log()
+    #     tmp.interMsa.plot_g_sg_c()
+    #     tmp.interMsa.plot_g_sg_device()
+    #     tmp.interMsa.plot_hist()
+    #     tmp.interMsa.plot_w_qc_perco()
+    #     tmp.interMsa.plot_qc_map()
+    #     msa = ['35620', '31080', '16980', '19100', '26420', '47900', '33100', '37980', '12060', '38060']
+    #     # tmp = Nation(date)
+    #     # tmp.interMSA.plot_msa_qc()
+    #     # tmp.interMSA.plot_map(tmp.interMSA.g_perco)
+    #     # tmp.interMSA.plot_g_sg()
+    #     # tmp.interMSA.plot_g_sg_c()
+    #     # tmp.interMSA.plot_g_sg_device()
+    #     # tmp.interMSA.plot_hist()
+    #     # tmp.interMSA.plot_qc_map()
+    #     for i in msa:
+    #         tmp.MSAs[i].plot_g_sg()
+    #         tmp.MSAs[i].plot_g_sg_c()
+    #     date += dt.timedelta(days=1)
     # start = dt.date(2020, 9, 8)
     # end = dt.date(2020, 9, 9)
     #

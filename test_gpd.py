@@ -63,7 +63,6 @@ def read_files_whole(date):
     tmp = date - dt.timedelta(days=3)
 
     for i in range(7):
-        # print(i)
         tmp_device = file_whole(file_str(tmp))
         merge(device_count, tmp_device)
         tmp += dt.timedelta(days=1)

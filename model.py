@@ -2,8 +2,6 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 
-max_w = 40
-
 
 '''
 This function is to generate a graph with data produced by read_file.py
@@ -44,6 +42,7 @@ this function is to generate percolation step of undirected network with thresho
 
 def generate_network_threshold(g, threshold=0):
     new_g = nx.Graph()
+    new_g.add_nodes_from(g.nodes)
 
     edge_list = list(g.edges)
     for i, j in edge_list:
@@ -127,7 +126,7 @@ This function is to calculate the number of elements in largest and second large
 '''
 
 
-def calc_g_sg(g, start, interval, d1=None):
+def calc_g_sg(g, start, interval, d1=None, final=100):
     node_size = len(g.nodes())
     tmp_g = node_size
 
@@ -140,7 +139,7 @@ def calc_g_sg(g, start, interval, d1=None):
     num_rest = []
     lens=[]
 
-    while tmp_g > node_size/100 and tmp_g != 1:
+    while tmp_g > node_size/final and tmp_g != 1:
 
         tmp_n = generate_network_threshold(g, tmp_t)
         lens.append(len(tmp_n.edges))
@@ -154,7 +153,13 @@ def calc_g_sg(g, start, interval, d1=None):
             num_rest.append(sum(map(len, scc[1:]))/(len(scc)-1))
 
         thresholds.append(tmp_t)
-        tmp_t += interval
+        if final != 100 and tmp_t > 20:
+            break
+
+        if interval > 1 and tmp_t < 100:
+            tmp_t += 1
+        else:
+            tmp_t += interval
 
         if d1 is None:
             continue
@@ -168,7 +173,7 @@ def calc_g_sg(g, start, interval, d1=None):
             dev_sg.append(0)
             dev_g.append(0)
 
-    return thresholds, num_g, num_sg, num_rest, dev_g, dev_sg, lens
+    return np.array(thresholds), np.array(num_g), np.array(num_sg), np.array(num_rest), np.array(dev_g), np.array(dev_sg), np.array(lens)
 
 
 '''

@@ -3,6 +3,8 @@ import matplotlib.dates as mdates
 from mpl_toolkits.basemap import Basemap as Basemap
 from matplotlib.lines import Line2D
 from model import *
+from math import sqrt
+import datetime as dt
 
 # plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
 # plt.gcf().autofmt_xdate()
@@ -186,9 +188,9 @@ def plot_device(date, y, y_25, y_75, id):
 
     plt.title(id + ' device count')
     if id == 'InterMSA':
-        plt.savefig('results/interMSA/device_count.png')
+        plt.savefig('results/interMSA/device_count.jpg')
     else:
-        plt.savefig('results/' + id + '/device_count.png')
+        plt.savefig('results/' + id + '/device_count.jpg')
 
     return
 
@@ -207,9 +209,9 @@ def plot_node_indegree(date, y, y_25, y_75, id):
 
     plt.title(id + ' node indegree')
     if id == 'InterMSA':
-        plt.savefig('results/interMSA/node_indegree.png')
+        plt.savefig('results/interMSA/node_indegree.jpg')
     else:
-        plt.savefig('results/' + id + '/node_indegree.png')
+        plt.savefig('results/' + id + '/node_indegree.jpg')
 
     return
 
@@ -227,9 +229,9 @@ def plot_flux(x, y, id):
 
     plt.title(id + ' total flux')
     if id == 'InterMSA':
-        plt.savefig('results/interMSA/total_flux.png')
+        plt.savefig('results/interMSA/total_flux.jpg')
     else:
-        plt.savefig('results/' + id + '/total_flux.png')
+        plt.savefig('results/' + id + '/total_flux.jpg')
 
     return
 
@@ -247,9 +249,9 @@ def plot_qc(x, y, id):
 
     plt.title(id + ' qc')
     if id == 'InterMSA':
-        plt.savefig('results/interMSA/qc.png')
+        plt.savefig('results/interMSA/qc.jpg')
     else:
-        plt.savefig('results/' + id + '/qc.png')
+        plt.savefig('results/' + id + '/qc.jpg')
 
     return
 
@@ -267,9 +269,9 @@ def plot_node_size(x, y, id):
 
     plt.title(id + ' GC node size')
     if id == 'InterMSA':
-        plt.savefig('results/interMSA/gc_node_size.png')
+        plt.savefig('results/interMSA/gc_node_size.jpg')
     else:
-        plt.savefig('results/' + id + '/gc_node_size.png')
+        plt.savefig('results/' + id + '/gc_node_size.jpg')
 
     return
 
@@ -287,9 +289,9 @@ def plot_ave_node_w(dates, ave, id):
 
     plt.title(id + ' Average edge weight')
     if id == 'InterMSA':
-        plt.savefig('results/interMSA/ave_node_w.png')
+        plt.savefig('results/interMSA/ave_node_w.jpg')
     else:
-        plt.savefig('results/' + id + '/ave_node_w.png')
+        plt.savefig('results/' + id + '/ave_node_w.jpg')
 
     return
 
@@ -308,9 +310,9 @@ def plot_edge_w(date, y, y_25, y_75, id):
 
     plt.title(id + ' edge weight')
     if id == 'InterMSA':
-        plt.savefig('results/interMSA/edge_w.png')
+        plt.savefig('results/interMSA/edge_w.jpg')
     else:
-        plt.savefig('results/' + id + '/edge_w.png')
+        plt.savefig('results/' + id + '/edge_w.jpg')
 
     return
 
@@ -347,8 +349,13 @@ def plot_g_sg_qc(date, qc, qcb, thresholds, num_g, num_sg):
 Plot map with different qc and weight link
 '''
 
-def plot_qc_map(g, qc, color, device_count, pos, q, w, date):
-    plt.figure()
+def plot_qc_map(g, qc, color, device_count, pos, q, w, d, g9):
+    plt.clf()
+    ax = plt.gca()
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.spines['bottom'].set_visible(False)
+    ax.spines['left'].set_visible(False)
 
     if len(g.nodes()) == 0:
         return
@@ -369,7 +376,6 @@ def plot_qc_map(g, qc, color, device_count, pos, q, w, date):
     # m.fillcontinents(alpha=0.3)
     # m.drawcounties(linewidth=0.1)
     m.readshapefile('tl_2017_us_state/tl_2017_us_state', 'states', drawbounds=True)
-    m.drawmapboundary(linewidth=1)
 
     x, y = [], []
     for i in pos.keys():
@@ -388,15 +394,16 @@ def plot_qc_map(g, qc, color, device_count, pos, q, w, date):
     cc.sort(key=len, reverse=True)
     ax = plt.gca()
 
-    nx.draw_networkx_nodes(G=g, pos=pos1, nodelist=g.nodes(), node_color=colors,
-                           node_size=[(device_count[i]/250)**(1/2) for i in g.nodes()])
-
+    nx.draw_networkx_nodes(G=g, pos=pos1, nodelist=g.nodes(), node_color=colors, node_size=[(device_count[i]/250)**(1/2) for i in g.nodes()])
+    tmp1 = []
+    for i, j in g.edges():
+        tmp1.append(g9.edges[i, j]['weight'])
     g0 = g.subgraph(cc[0])
     for i, j in g0.edges():
         ax.annotate("",
                     xy=pos1[i], xycoords='data',
                     xytext=pos1[j], textcoords='data',
-                    arrowprops=dict(arrowstyle="-", color='royalblue',
+                    arrowprops=dict(arrowstyle="-", color='#8da0cb',
                                     shrinkA=5, shrinkB=5,
                                     patchA=None, patchB=None,
                                     connectionstyle="arc3,rad=0.3",
@@ -408,7 +415,7 @@ def plot_qc_map(g, qc, color, device_count, pos, q, w, date):
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
                         xytext=pos1[j], textcoords='data',
-                        arrowprops=dict(arrowstyle="-", color='skyblue',
+                        arrowprops=dict(arrowstyle="-", color='#fc8d62',
                                         shrinkA=5, shrinkB=5,
                                         patchA=None, patchB=None,
                                         connectionstyle="arc3,rad=0.3",
@@ -425,18 +432,24 @@ def plot_qc_map(g, qc, color, device_count, pos, q, w, date):
             ax.annotate("",
                         xy=pos1[i], xycoords='data',
                         xytext=pos1[j], textcoords='data',
-                        arrowprops=dict(arrowstyle="-", color='silver',
+                        arrowprops=dict(arrowstyle="-", color='#66c2a5',
                                         shrinkA=5, shrinkB=5,
                                         patchA=None, patchB=None,
                                         connectionstyle="arc3,rad=0.3",
                                         ),
                         )
 
+    nx.draw_networkx_nodes(G=g, pos=pos1, nodelist=g.nodes(), node_color=colors, node_size=[(device_count[i]/250)**(1/2) for i in g.nodes()])
+    if d == dt.date(2020,2,1) and q == 0:
+        plt.title('weight>' + str(w), fontsize=24)
+    if w == 25:
+        plt.ylabel(r'$q_c>{}$'.format(q), fontsize=24)
     labels = ['GC', 'SGC', 'Rest']
-    colors = ['royalblue', 'skyblue', 'silver']
+    colors = ['#8da0cb', '#fc8d62', '#66c2a5']
     lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]
     plt.tight_layout()
-    plt.legend(lines, labels, fontsize=8, loc=4)
-    plt.title(date.strftime('%m/%d') + ' ' + qc + '>' + str(q) + ', weight>' + str(w))
-    plt.savefig('results/interMSA/'+date.strftime('%m/%d') + '/' + str(qc) + '/' + qc + '_' + str(q) + '_w_' + str(w) + '.png')
+    # plt.legend(lines, labels, fontsize=8, loc=4)
+    # plt.title(r'$q_c>$' + str(q) + ', weight>' + str(w), fontsize=22)
+    plt.savefig('results/interMSA/'+d.strftime('%m/%d') + '/' + str(qc) + '/' + qc + '_' + str(q) + '_w_' + str(w) + '.jpg')
+
     return
