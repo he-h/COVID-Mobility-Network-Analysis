@@ -22,7 +22,6 @@ def dest_store(start, end):
 def file_whole(path, device_count):
     dest = dict()
     m_dest = default_MSAs_dict()
-
     df = pd.read_csv(path)
 
     for ind in df.index:
@@ -110,10 +109,13 @@ class Nation:
         self.MSAs = default_MSAs_dict()
 
         qcs = []
+        total = 0
 
         for i in self.MSAs.keys():
             self.MSAs[i] = MSA(i, date, self.MSA_dest[i])
+            total += len(self.MSAs[i].g.nodes)
             qcs.append([i, self.MSAs[i].qc, self.MSAs[i].qcb, self.MSAs[i].qca, self.MSAs[i].qcf, self.MSAs[i].gc_node_size, self.MSAs[i].flux/self.device_count[i], self.MSAs[i].edge_w_median])
+        print('total',str(total))
 
 
         # if not os.path.exists('qc/'+self.date.strftime('%m_%d')+'.csv'):

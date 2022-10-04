@@ -122,6 +122,9 @@ import numpy as np
 import statsmodels.formula.api as smf
 import seaborn as sns
 plt.clf()
+fig, ax = plt.subplots()
+ax.tick_params(axis='y', labelsize=12)
+ax.tick_params(axis='x', labelsize=12)
 tmp = date(2020,2,1)
 a = pd.read_csv(tmp.strftime('qc/%m_%d.csv'))
 a['gc_size'] = np.log(a['gc_size'])
@@ -138,16 +141,16 @@ sns.regplot(y="qc", x="gc_size", data=a, color='#fdae6b',label='After')
 
 
 
-
-
-
-plt.ylabel(r'$q_c$', fontsize=18)
-plt.xlabel('Largest Component Size(log)', fontsize=18)
-plt.legend(prop={'size':18})
+plt.ylabel(r'$\alpha{q_c}$', fontsize=17)
+plt.xlabel(r'$\alpha{GC}$ Size(log)', fontsize=15)
+plt.legend(prop={'size':21})
 plt.savefig('qc_gc_b.png')
 
 
 plt.clf()
+fig, ax = plt.subplots()
+ax.tick_params(axis='y', labelsize=12)
+ax.tick_params(axis='x', labelsize=12)
 tmp = date(2020,2,1)
 a = pd.read_csv(tmp.strftime('qc/%m_%d.csv'))
 sns.regplot(y="qc", x="flux", data=a, color='#9ecae1',label='Before')
@@ -159,13 +162,16 @@ a = pd.read_csv(tmp.strftime('qc/%m_%d.csv'))
 sns.regplot(y="qc", x="flux", data=a, color='#fdae6b',label='After')
 
 
-plt.ylabel(r'$q_c$', fontsize=18)
-plt.xlabel('Total Flux', fontsize=18)
+plt.ylabel(r'$\alpha{q_c}$', fontsize=17)
+plt.xlabel(r'$\alpha$ Total Flux', fontsize=15)
 
 plt.savefig('qc_flux_b.png')
 
 
 plt.clf()
+fig, ax = plt.subplots()
+ax.tick_params(axis='y', labelsize=12)
+ax.tick_params(axis='x', labelsize=12)
 tmp = date(2020,2,1)
 a = pd.read_csv(tmp.strftime('qc/%m_%d.csv'))
 sns.regplot(y="qc", x="edge_w",data=a, color='#9ecae1',label='Before')
@@ -180,32 +186,35 @@ sns.regplot(y="qc", x="edge_w", data=a, color='#fdae6b',label='After')
 
 
 
-plt.ylabel(r'$q_c$', fontsize=18)
-plt.xlabel('Median Edge Weight', fontsize=18)
+plt.ylabel(r'$\alpha{q_c}$', fontsize=17)
+plt.xlabel(r'$\alpha$ Median Edge Weight', fontsize=15)
 
 plt.savefig('qc_edge_b.png')
 
-# plt.clf()
-# tmp = date(2020,2,1)
-# a = pd.read_csv(tmp.strftime('qc/%m_%d.csv'))
-# # a['gc_size'] = np.log(a['gc_size'])
-# # sns.regplot(x="qc", y="gc_size", data=a, color='#9ecae1',label='Before')
-# tmp = date(2020,4,6)
-#
-#
-# b = pd.read_csv(tmp.strftime('qc/%m_%d.csv'))
-# a['gc_size'] = b['qc']
-# qc = a['qc']
-# q = a['gc_size']
-# # plt.scatter(qc, q, s=10, color='dodgerblue')
-# sns.regplot(x="qc", y="gc_size", data=a, color='#9ecae1')
-#
-#
-#
-#
-#
-#
-# plt.xlabel(r'$q_c$(before)', fontsize=17)
-# plt.ylabel(r'$q_c$(after)', fontsize=18)
-#
-# plt.savefig('m.png')
+plt.clf()
+tmp = date(2020,2,1)
+a = pd.read_csv(tmp.strftime('qc/%m_%d.csv'))
+# a['gc_size'] = np.log(a['gc_size'])
+# sns.regplot(x="qc", y="gc_size", data=a, color='#9ecae1',label='Before')
+tmp = date(2020,4,6)
+
+
+b = pd.read_csv(tmp.strftime('qc/%m_%d.csv'))
+a['gc_size'] = b['qc']
+qc = a['qc']
+q = a['gc_size']
+# plt.scatter(qc, q, s=10, color='dodgerblue')
+fig, ax = plt.subplots()
+ax.tick_params(axis='y', labelsize=12)
+ax.tick_params(axis='x', labelsize=12)
+sns.regplot(x="qc", y="gc_size", data=a, color='#9ecae1')
+
+
+
+
+
+
+plt.xlabel(r'$q_c$(before)', fontsize=16)
+plt.ylabel(r'$q_c$', fontsize=16)
+
+plt.savefig('m.png')

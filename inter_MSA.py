@@ -56,6 +56,7 @@ class InterMsaG:
         interval = self.thresholds[1] - self.thresholds[0]
 
         self.gc_node_size = self.num_g[index_qc]
+        self.index_qc = index_qc
         self.qc = self.thresholds[index_qc]
         self.qcb = self.thresholds[index_qcb]
         self.qca = self.thresholds[[i for i, j in enumerate(self.num_r) if j == max(self.num_r)][0]]
@@ -151,12 +152,14 @@ class InterMsaG:
         axis_1.axvline(self.qc, linestyle='-.', color='red', label=r'$q_c$')
         axis_1.axvline(self.qcb, linestyle='-.', color='orange', label=r'$q_{c2}$')
         # axis_1.set_ylabel('GC Component size', color='dodgerblue')
-        axis_1.plot(self.thresholds, self.num_g, color='dodgerblue', label=r'$1_{st} CC$')
+        axis_1.plot(self.thresholds, self.num_g, color='dodgerblue', label='GC')
         # axis_1.set_xlabel('thresholds', fontsize=18)
-        axis_1.tick_params(axis='y', colors='dodgerblue')
+        axis_1.tick_params(axis='y', colors='dodgerblue', labelsize=16)
+        axis_1.tick_params(axis='x', labelsize=18)
 
         axis_2 = axis_1.twinx()
-        axis_2.plot(self.thresholds, self.num_sg, color='grey', label=r'$2_{nd} CC$')
+        axis_2.plot(self.thresholds, self.num_sg, color='grey', label='SGC')
+        axis_2.tick_params(axis='y', colors='grey', labelsize=16)
         # axis_2.set_ylabel('SGC Component size', color='grey')
 
         lines_1, labels_1 = axis_1.get_legend_handles_labels()
@@ -165,10 +168,13 @@ class InterMsaG:
         lines = lines_1 + lines_2
         labels = labels_1 + labels_2
         if self.date == dt.date(2020,2,1):
-            axis_1.legend(lines, labels, loc=0, prop={'size':17})
-            plt.title('Inter MSA percolation', fontsize=22)
+            axis_1.legend(lines, labels, loc=0, prop={'size':21})
+            plt.title('Inter MSA percolation', fontsize=26)
         else:
-            axis_1.set_xlabel('thresholds', fontsize=18)
+            axis_1.set_xlabel('thresholds', fontsize=23)
+        print('inter' + str(self.gc_node_size) + ' ' + str(self.num_sg[self.index_qc]))
+
+
 
         plt.xscale('log')
 
@@ -494,16 +500,18 @@ class InterMsaG:
             else:
                 color_c[j] = '#fef0d9'
         tmp = []
-        for i in range(0, 18, 5):
+        for i in np.arange(-2, 12, .2):
             tmp_nodes = select(self.qc_m, i)
             qc_g = self.g.subgraph(tmp_nodes)
-            for j in num:
-                if i == j == 0:
-                    continue
-                tmp_g = generate_network_threshold(qc_g, j)
-                if j == 0:
-                    tmp.append((i, *largest_size_qc(tmp_g, self.device_count)))
-                plot_qc_map(tmp_g, 'qc', color_c, self.device_count, pos, i, j, self.date, self.g)
+            thresholds, num_g, num_sg, _, _, _, _ = calc_g_sg(qc_g, -10, 2.5, self.device_count)
+            tmp.append([i, list(thresholds), list(num_g), list(num_sg)])
+            # for j in num:
+            #     if i == j == 0:
+            #         continue
+            #     tmp_g = generate_network_threshold(qc_g, j)
+            #     if j == 0:
+            #         tmp.append((i, *largest_size_qc(tmp_g, self.device_count)))
+            #     plot_qc_map(tmp_g, 'qc', color_c, self.device_count, pos, i, j, self.date, self.g)
         if not os.path.exists('perco_diff_level/'+ self.date.strftime('%m_%d')+'.csv'):
             a='x'
         else:
@@ -512,10 +520,10 @@ class InterMsaG:
 
             csvwriter = csv.writer(edges)
 
-            csvwriter.writerow(['inner_qc_perco', 'qc', 'gc_size'])
-            csvwriter.writerow([0, self.qc, self.gc_node_size])
+            csvwriter.writerow(['alpha', 'thresholds', 'num_g', 'num_sg'])
             for i in tmp:
                 csvwriter.writerow(i)
+
 
         # color_c = {}
         # for i in self.qca_m.keys():

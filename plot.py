@@ -440,10 +440,10 @@ def plot_qc_map(g, qc, color, device_count, pos, q, w, d, g9):
                         )
 
     nx.draw_networkx_nodes(G=g, pos=pos1, nodelist=g.nodes(), node_color=colors, node_size=[(device_count[i]/250)**(1/2) for i in g.nodes()])
-    if d == dt.date(2020,2,1) and q == 0:
-        plt.title('weight>' + str(w), fontsize=24)
-    if w == 25:
-        plt.ylabel(r'$q_c>{}$'.format(q), fontsize=24)
+    # if d == dt.date(2020,2,1) and q == 0:
+    #     plt.title('weight>' + str(w), fontsize=24)
+    # if w == 25:
+    #     plt.ylabel(r'$q_c>{}$'.format(q), fontsize=24)
     labels = ['GC', 'SGC', 'Rest']
     colors = ['#8da0cb', '#fc8d62', '#66c2a5']
     lines = [Line2D([0], [0], color=c, linewidth=2, alpha=0.85) for c in colors]

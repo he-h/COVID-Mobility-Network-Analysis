@@ -49,6 +49,7 @@ class MSA:
 
         self.thresholds, self.num_g, self.num_sg, self.num_r, self.dev_g, self.dev_sg, self.edge_size = calc_g_sg(self.g, 0, .1, final=10000)
         index_qc, index_qcb = l_sl_value(self.num_sg)
+        self.index_qc = index_qc
 
         self.gc_node_size = self.num_g[index_qc]
         self.qc = self.thresholds[index_qc]
@@ -138,28 +139,33 @@ class MSA:
         axis_1.axvline(self.qc, linestyle='-.', color='red', label=r'$q_c$')
         axis_1.axvline(self.qcb, linestyle='-.', color='orange', label=r'$q_{c2}$')
         # axis_1.set_ylabel('GC Component size', color='dodgerblue')
-        axis_1.plot(self.thresholds, self.num_g, color='dodgerblue', label=r'$1_{st} CC$')
+        axis_1.plot(self.thresholds, self.num_g, color='dodgerblue', label='GC')
+        axis_1.tick_params(axis='y', colors='dodgerblue', labelsize=16)
+        axis_1.tick_params(axis='x', labelsize=18)
         # axis_1.set_xlabel('thresholds', fontsize=18)
 
         axis_2 = axis_1.twinx()
-        axis_2.plot(self.thresholds, self.num_sg, color='grey', label=r'$2_{nd} CC$')
+        axis_2.plot(self.thresholds, self.num_sg, color='grey', label='SGC')
+        axis_2.tick_params(axis='y', colors='grey', labelsize=16)
         # axis_2.set_ylabel('SGC Component size', color='grey')
 
         lines_1, labels_1 = axis_1.get_legend_handles_labels()
         lines_2, labels_2 = axis_2.get_legend_handles_labels()
-        axis_1.tick_params(axis='y', colors='dodgerblue')
 
         lines = lines_1 + lines_2
         labels = labels_1 + labels_2
         if self.date == dt.date(2020,2,1):
             if self.id == '31080':
-                axis_1.legend(lines, labels, loc=0, prop={'size':17})
-            plt.title(name[str(self.id)], fontsize=22)
+                axis_1.legend(lines, labels, loc=0, prop={'size':21})
+            plt.title(name[str(self.id)], fontsize=26)
         else:
-            axis_1.set_xlabel('thresholds', fontsize=18)
+            axis_1.set_xlabel('thresholds', fontsize=23)
+        if self.id == '31080' or self.id == '26420':
+            print(self.id + str(len(self.g.nodes)) + ' ' + str(self.num_sg[self.index_qc]))
 
         # axis_1.legend(lines, labels, loc=0, prop={'size':16})
         plt.xlim([0, 20])
+        plt.xticks(fontsize=20)
 
 
 

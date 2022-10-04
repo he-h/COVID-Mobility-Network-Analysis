@@ -25,38 +25,54 @@ if __name__ == '__main__':
     msa = ['17820', '35620', '31080', '26420', '23540', '24500']
 
 
-    tmp = time.time()
+    start_time = time.time()
     a, b = dest_store(start, end)
-    print(time.time()-tmp)
+
 
     tmp = start
     while tmp <= end:
         n = Nation(tmp, a, b)
         # n.interMsa.plot_g_sg()
-        n.interMsa.plot_g_sg_log()
+        # n.interMsa.plot_g_sg_log()
         n.interMsa.plot_w_qc_perco()
 
 
 
 
-        msa = ['17820', '35620', '31080', '26420', '23540', '24500']
-        for i in msa:
-            n.MSAs[i].plot_g_sg()
-            n.MSAs[i].plot_g_sg_c()
-            n.MSAs[i].plot_hist()
+        # msa = ['17820', '35620', '31080', '26420', '23540', '24500']
+        # for i in msa:
+        #     n.MSAs[i].plot_g_sg()
+        #     n.MSAs[i].plot_g_sg_c()
+        #     n.MSAs[i].plot_hist()
         tmp += dt.timedelta(days=1)
-
+    print(time.time() - start_time)
     # plt.figure()
+    # fig, ax = plt.subplots()
     # n = Nation(start, a, b)
     # a, b = dest_store(date(2020,6,1), date(2020,6,1))
     # m = Nation(date(2020,6,1),a,b)
     # powerlaw.plot_ccdf(n.interMsa.distances, linestyle='-', color='#9ecae1', label='Before')
     # powerlaw.plot_ccdf(m.interMsa.distances, linestyle='-', color='#fdae6b', label='After')
-    # plt.ylabel('CCDF', fontsize=18)
-    # plt.xlabel('distance', fontsize=15)
+    # plt.ylabel('CCDF', fontsize=23)
+    # plt.xlabel('distance', fontsize=23)
+    # ax.tick_params(axis='y', labelsize=18)
+    # ax.tick_params(axis='x', labelsize=18)
     # # plt.legend(prop={'size':15})
-    # plt.show()
-    # plt.savefig('ccdf.jpg')
+    # plt.savefig('distance.jpg')
+    # plt.figure()
+
+    # powerlaw.plot_ccdf(n.interMsa.edge_w, linestyle='-', color='#9ecae1', label='Before')
+    # powerlaw.plot_ccdf(m.interMsa.edge_w, linestyle='-', color='#fdae6b', label='After')
+    # plt.ylabel('CCDF', fontsize=23)
+    # plt.xlabel('distance', fontsize=23)
+    # ax.tick_params(axis='y', labelsize=18)
+    # ax.tick_params(axis='x', labelsize=18)
+    # plt.legend(prop={'size':21})
+    # plt.savefig('weight.jpg')
+    #
+    #
+    # plt.legend(prop={'size':21})
+
 
 
 
